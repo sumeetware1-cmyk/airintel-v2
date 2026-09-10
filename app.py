@@ -6,7 +6,7 @@ import os
 
 app = Flask(__name__)
 
-# Verify and load domestic baseline dataset
+# Load domestic baseline dataset
 EXCEL_PATH = os.path.join(os.path.dirname(__file__), 'airfare_domestic.xlsx')
 
 try:
@@ -143,12 +143,10 @@ def recommend():
     origin = data.get('origin', 'BOM').strip().upper()
     destination = data.get('destination', 'DEL').strip().upper()
     travel_date_str = data.get('travel_date', datetime.today().strftime('%Y-%m-%d'))
-    cabin_class = data.get('cabin_class', 'economy')
-    passengers = data.get('passengers', [{'age': 30, 'category': 'regular'}])
+    passengers = data.get('passengers', [{'name': 'Traveler 1', 'age': 26, 'category': 'regular', 'cabin': 'economy'}])
     
     route_key = f"{origin}-{destination}"
     mult = DISTANCE_FACTORS.get(route_key, DISTANCE_FACTORS.get(f"{destination}-{origin}", 1.0))
-    cabin_mult = CABIN_MULTIPLIERS.get(cabin_class, 1.0)
 
     try:
         travel_date = datetime.strptime(travel_date_str, '%Y-%m-%d')
@@ -175,48 +173,48 @@ def recommend():
     ]
 
     deals = []
-    warnings = []
 
     for c in carriers:
-        base_unit_fare = round(base_window_fare * c['variance'] * cabin_mult, 0)
+        carrier_base = base_window_fare * c['variance']
         breakdown = []
         trip_total = 0
 
         for idx, p in enumerate(passengers):
-            age = int(p.get('age', 30))
+            pax_name = p.get('name', f"Passenger {idx+1}")
+            age = int(p.get('age', 26))
             category = p.get('category', 'regular')
+            pax_cabin = p.get('cabin', 'economy')
+            cabin_mult = CABIN_MULTIPLIERS.get(pax_cabin, 1.0)
+            
             discount = 0.0
-            label = "Standard Base Rate"
+            label = "Standard Price"
 
             if age < 2:
                 discount = 1.0
-                label = "DGCA Infant 100% Exemption"
-            elif category == 'student':
-                if 12 <= age <= 26:
-                    discount = 0.15
-                    label = "Student Rebate (15% Off)"
-                else:
-                    warnings.append(f"Passenger {idx+1}: Marked as Student but age ({age}) is outside statutory range (12–26y).")
-            elif category == 'senior':
-                if age >= 60:
-                    discount = 0.20
-                    label = "Senior Citizen Rebate (20% Off)"
-                else:
-                    warnings.append(f"Passenger {idx+1}: Marked as Senior Citizen but age ({age}) is under 60y.")
+                label = "Infant (100% Free Base)"
+            elif category == 'student' and 12 <= age <= 26:
+                discount = 0.15
+                label = "Student Offer (15% Off)"
+            elif category == 'senior' and age >= 60:
+                discount = 0.20
+                label = "Senior Citizen Offer (20% Off)"
             elif category == 'defense':
                 discount = 0.25
-                label = "Armed Forces Rebate (25% Off)"
+                label = "Armed Forces Offer (25% Off)"
             elif category == 'medical':
                 discount = 0.10
-                label = "Healthcare Rebate (10% Off)"
+                label = "Doctor/Nurse Offer (10% Off)"
 
-            final_seat = round(base_unit_fare * (1.0 - discount), 0)
-            trip_total += final_seat
+            cabin_display = pax_cabin.replace('_', ' ').title()
+            seat_price = round((carrier_base * cabin_mult) * (1.0 - discount), 0)
+            trip_total += seat_price
+
             breakdown.append({
-                'passenger': f"Manifest Pax {idx+1}",
+                'passenger': pax_name,
                 'age': age,
-                'concession': label,
-                'seat_fare': final_seat
+                'cabin': cabin_display,
+                'offer': label,
+                'seat_fare': seat_price
             })
 
         deals.append({
@@ -225,7 +223,7 @@ def recommend():
             'departure_time': c['departure_time'],
             'segments': c['segments'],
             'market_share': c['market_share'],
-            'base_fare_per_seat': base_unit_fare,
+            'base_unit_fare': round(carrier_base, 0),
             'total_trip_cost': trip_total,
             'breakdown': breakdown
         })
@@ -236,15 +234,15 @@ def recommend():
     if days_ahead >= 21:
         timing_verdict = "WAIT & MONITOR"
         timing_color = "emerald"
-        timing_sub = f"Travel date is {days_ahead} days away. Fares remain stable; probability of price softening is high."
+        timing_sub = f"Trip is {days_ahead} days away. Prices are stable; chance of price dropping is high."
     elif 7 <= days_ahead < 21:
-        timing_verdict = "OPTIMAL WINDOW (BUY NOW)"
+        timing_verdict = "BEST TIME TO BUY NOW"
         timing_color = "sky"
-        timing_sub = f"Travel date is {days_ahead} days away. Pricing is within historical efficiency bounds."
+        timing_sub = f"Trip is {days_ahead} days away. Prices are at their fairest rate."
     else:
-        timing_verdict = "HIGH SPIKE IMMINENT (LOCK IN)"
+        timing_verdict = "HIGH PRICE SPIKE IMMINENT"
         timing_color = "rose"
-        timing_sub = f"Travel date is in {days_ahead} days. Historical curves show sharp surge within 72 hours of departure."
+        timing_sub = f"Trip is in {days_ahead} days. Airlines usually surge prices sharply in the last 72 hours."
 
     return jsonify({
         'all_deals': deals,
@@ -254,8 +252,7 @@ def recommend():
         'days_ahead': days_ahead,
         'timing_verdict': timing_verdict,
         'timing_color': timing_color,
-        'timing_sub': timing_sub,
-        'validation_warnings': list(set(warnings))
+        'timing_sub': timing_sub
     })
 
 if __name__ == '__main__':
