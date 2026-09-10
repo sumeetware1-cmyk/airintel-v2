@@ -114,9 +114,9 @@
         📊 Price History Analytics
       </button>
 
-      <!-- Light / Dark Mode Toggle Button -->
-      <button onclick="toggleTheme()" class="p-2.5 rounded-xl bg-slate-200 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-yellow-400 hover:scale-105 transition shadow" title="Toggle Light/Dark Theme">
-        <span id="theme-icon" class="text-sm">☀️</span>
+      <!-- Light / Night Mode Text Toggle Button -->
+      <button onclick="toggleTheme()" class="px-3.5 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:scale-105 transition shadow text-xs font-bold mono" title="Toggle Light/Night Theme">
+        <span id="theme-text">Light Mode</span>
       </button>
     </div>
   </nav>
@@ -584,24 +584,25 @@
       'IXC': [30.6735, 76.7885]
     };
 
-    // Theme Toggle Logic
+    // Theme Toggle Logic with Text Replacement
     function toggleTheme() {
       const html = document.documentElement;
-      const icon = document.getElementById('theme-icon');
+      const textSpan = document.getElementById('theme-text');
       if (html.classList.contains('dark')) {
         html.classList.remove('dark');
         localStorage.setItem('theme', 'light');
-        icon.textContent = '🌙';
+        textSpan.textContent = 'Night Mode';
       } else {
         html.classList.add('dark');
         localStorage.setItem('theme', 'dark');
-        icon.textContent = '☀️';
+        textSpan.textContent = 'Light Mode';
       }
     }
 
+    // Load saved theme preference on startup
     if (localStorage.getItem('theme') === 'light') {
       document.documentElement.classList.remove('dark');
-      document.getElementById('theme-icon').textContent = '🌙';
+      document.getElementById('theme-text').textContent = 'Night Mode';
     }
 
     function renderPassengerRoster() {
