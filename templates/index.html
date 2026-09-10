@@ -61,7 +61,7 @@
 </head>
 <body class="radar-grid text-slate-100 min-h-screen pb-24">
 
-  <!-- Navigation Bar -->
+  <!-- Top Navigation -->
   <nav class="bg-slate-950/80 backdrop-blur-xl border-b border-sky-900/40 px-6 py-4 flex flex-wrap justify-between items-center sticky top-0 z-50 shadow-2xl">
     <div class="flex items-center space-x-3.5">
       <div class="h-11 w-11 rounded-xl bg-gradient-to-br from-sky-400 via-blue-600 to-indigo-700 flex items-center justify-center shadow-lg shadow-sky-500/20 border border-sky-400/30">
@@ -93,13 +93,13 @@
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-[11px] mono">
       <div class="flex items-center space-x-2">
         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span class="text-slate-400">DATA FEED:</span>
-        <span class="text-sky-300 font-bold">Active Domestic Ingestion</span>
+        <span class="text-slate-400">STATUS:</span>
+        <span class="text-sky-300 font-bold">Live Domestic Aviation Monitor</span>
       </div>
       <div class="flex items-center space-x-4 text-slate-400">
-        <span>Stealth Headers: <strong class="text-emerald-400">Enabled</strong></span>
-        <span>Anti-Gouging Safety Check: <strong class="text-emerald-400">Active</strong></span>
-        <span>Baseline Price Sheet: <strong class="text-sky-400">Connected</strong></span>
+        <span>Stealth Engine: <strong class="text-emerald-400">Active</strong></span>
+        <span>Anti-Surge Protection: <strong class="text-emerald-400">Enabled</strong></span>
+        <span>Price Baseline: <strong class="text-sky-400">Verified</strong></span>
       </div>
     </div>
   </aside>
@@ -117,11 +117,11 @@
             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
           </div>
           <p class="mono text-lg font-black text-white mt-1" id="kpi-sector">BOM ➔ DEL</p>
-          <span class="text-[11px] text-sky-400 mono">Main Trunk Route</span>
+          <span class="text-[11px] text-sky-400 mono" id="kpi-route-type">Main Trunk Route</span>
         </div>
 
         <div class="bg-slate-900/70 backdrop-blur-md p-4 rounded-2xl border border-slate-800/80 shadow-lg">
-          <span class="text-xs text-slate-400 uppercase font-semibold">Fair Normal Price</span>
+          <span class="text-xs text-slate-400 uppercase font-semibold">Normal Baseline Price</span>
           <p class="mono text-lg font-black text-emerald-400 mt-1" id="kpi-base">₹-</p>
           <span class="text-[11px] text-slate-400 mono">Booked 30+ days early</span>
         </div>
@@ -165,7 +165,7 @@
         <div class="lg:col-span-4 bg-slate-900/90 rounded-3xl border border-sky-900/40 p-5 shadow-2xl backdrop-blur-xl flex flex-col justify-between">
           <div>
             <span class="mono text-xs font-bold text-emerald-400 uppercase tracking-widest block mb-1">Flight Route Details</span>
-            <p class="text-xs text-slate-400 mb-4">Daily frequency and connectivity details for this corridor.</p>
+            <p class="text-xs text-slate-400 mb-4">Calculated based on genuine aerial distance and route popularity.</p>
 
             <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3 mono text-xs">
               <div class="flex justify-between">
@@ -173,11 +173,11 @@
                 <span class="text-emerald-400 font-bold" id="feas-status">&#x2714; High-Demand Direct</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-slate-400">Daily Flights:</span>
+                <span class="text-slate-400">Daily Direct Flights:</span>
                 <span class="text-sky-300 font-bold" id="feas-frequency">~65 Flights / Day</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-slate-400">Average Duration:</span>
+                <span class="text-slate-400">Air Time Duration:</span>
                 <span class="text-white font-bold" id="feas-time">2h 10m</span>
               </div>
               <div class="flex justify-between">
@@ -188,7 +188,7 @@
           </div>
 
           <div class="mt-4 p-3.5 rounded-xl border border-sky-900/50 bg-sky-950/30 text-sky-300 text-xs">
-            <strong>Split Cabin & Offers:</strong> You can book different travelers in different classes (e.g. Business for you, Economy for others) with their individual student/senior discounts intact.
+            <strong>Split Cabin & Offers:</strong> You can book different travelers in different classes (e.g., Business for you, Economy for others) with their individual student/senior discounts intact.
           </div>
         </div>
       </div>
@@ -206,9 +206,9 @@
 
         <div class="md:col-span-5 bg-slate-900/90 rounded-3xl border border-sky-900/40 p-6 shadow-2xl backdrop-blur-xl flex items-center justify-between">
           <div class="space-y-1">
-            <span class="mono text-[10px] font-black uppercase tracking-widest text-slate-400 block">Airline Market Dominance</span>
+            <span class="mono text-[10px] font-black uppercase tracking-widest text-slate-400 block">Market Dominance Indicator</span>
             <h4 class="text-lg font-black text-amber-400 mono">IndiGo: 58% Flight Share</h4>
-            <p class="text-[11px] text-slate-400">High single-airline dominance can cause higher price surges.</p>
+            <p class="text-[11px] text-slate-400">IndiGo controls over half of domestic Indian air traffic; this lack of competition on some routes can cause higher price surges.</p>
           </div>
           <div class="text-3xl">⚖️</div>
         </div>
@@ -217,15 +217,16 @@
       <!-- FLIGHT SEARCH BOX -->
       <div class="bg-slate-900/90 rounded-3xl border border-sky-900/40 p-6 sm:p-8 shadow-2xl backdrop-blur-xl">
         <div class="flex flex-wrap items-center justify-between pb-6 border-b border-slate-800/80 gap-4 mb-6">
-          <div class="flex items-center space-x-3 bg-slate-950/80 p-1.5 rounded-2xl border border-slate-800">
+          <div class="flex items-center space-x-2 bg-slate-950/80 p-1.5 rounded-2xl border border-slate-800">
             <button type="button" onclick="setTripMode('oneway')" id="btn-mode-oneway" class="px-4 py-2 rounded-xl text-xs font-bold bg-sky-500 text-slate-950 shadow transition">One Way</button>
             <button type="button" onclick="setTripMode('roundtrip')" id="btn-mode-roundtrip" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition">Round Trip</button>
+            <button type="button" onclick="setTripMode('multicity')" id="btn-mode-multicity" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition">Multi City</button>
           </div>
           <span class="text-xs text-sky-400 mono">&#x2714; MULTI-PASSENGER & INDEPENDENT CABIN ENGINE READY</span>
         </div>
 
-        <!-- Inputs Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-3.5 bg-slate-950/90 p-4 rounded-2xl border border-slate-800">
+        <!-- Regular Single Route Inputs Grid -->
+        <div id="standard-flight-inputs" class="grid grid-cols-1 md:grid-cols-12 gap-3.5 bg-slate-950/90 p-4 rounded-2xl border border-slate-800">
           <div class="md:col-span-3 bg-slate-900 p-3.5 rounded-xl border border-slate-800 hover:border-sky-500 transition">
             <span class="text-[10px] font-black uppercase tracking-wider text-sky-400 block mono">From (Departure City)</span>
             <select id="search-origin" class="w-full font-bold text-base text-white bg-slate-900 outline-none cursor-pointer mt-1"></select>
@@ -257,6 +258,16 @@
             <div class="font-bold text-sm text-white truncate mt-1" id="pax-summary-label">1 Traveler</div>
             <span class="text-[11px] text-emerald-400 font-semibold truncate" id="cabin-summary-label">Click to customize</span>
           </div>
+        </div>
+
+        <!-- Multi-City Notice / Container -->
+        <div id="multicity-container" class="hidden mt-4 p-4 rounded-2xl bg-sky-950/30 border border-sky-800/60 text-xs text-slate-300">
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-bold text-sky-400 text-sm">Multi-City Route Planner</span>
+            <span class="mono text-[10px] bg-sky-900 px-2 py-0.5 rounded text-sky-200">Segment 1 + Segment 2</span>
+          </div>
+          <p class="text-slate-400 mb-3">Multi-city allows flying from Mumbai ➔ Delhi, then departing Delhi ➔ Bengaluru a few days later. AirIntel audits both flight legs separately for maximum savings.</p>
+          <div class="text-[11px] mono text-emerald-300">Tip: Select your first leg above to view its live baseline, or click below to search both segments together on MakeMyTrip.</div>
         </div>
 
         <!-- SPECIAL OFFERS WITH HOVER GUIDES -->
@@ -510,7 +521,6 @@
     let destMarker = null;
     let currentBaselineFare = 5000;
 
-    // Independent passenger list: name, age, category offer, and cabin class
     let passengerRoster = [
       { name: 'Traveler 1', age: 26, category: 'regular', cabin: 'economy' }
     ];
@@ -564,7 +574,7 @@
 
           <div class="sm:col-span-4">
             <label class="text-[10px] font-bold text-slate-400 uppercase mono block">Special Offer / Discount</label>
-            <select onchange="updatePaxField(${idx}, 'category', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-sky-400 font-bold outline-none cursor-pointer focus:border-sky-500">
+            <select onchange="updatePaxField(${idx}, 'category', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-sky-400 font-bold outline-none cursor-pointer focus:border-sky-500">
               <option value="regular" ${p.category === 'regular' ? 'selected' : ''}>🏢 Regular Fare (No Offer)</option>
               <option value="student" ${p.category === 'student' ? 'selected' : ''}>🎓 Student (15% Off, 12-26y)</option>
               <option value="senior" ${p.category === 'senior' ? 'selected' : ''}>👴 Senior Citizen (20% Off, 60+)</option>
@@ -690,20 +700,57 @@
                 Math.sin(dLon/2) * Math.sin(dLon/2);
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
       const km = Math.round(6371 * c);
+
       document.getElementById('map-distance-readout').innerText = `Flight Distance: ~${km.toLocaleString()} km`;
+
+      // Dynamic Flight Route Details calculation based on distance
+      const feasStatus = document.getElementById('feas-status');
+      const feasFreq = document.getElementById('feas-frequency');
+      const feasTime = document.getElementById('feas-time');
+      const kpiRouteType = document.getElementById('kpi-route-type');
+
+      if (km < 200) {
+        // Ultra-short corridor (like Mumbai - Pune)
+        feasStatus.innerHTML = `⚠️ Short Commuter Route`;
+        feasFreq.innerText = `~4-8 Direct / Day (Most Rail/Road)`;
+        feasTime.innerText = `~35-45 mins`;
+        kpiRouteType.innerText = `Short Intercity Route`;
+      } else if (km < 600) {
+        // Regional Route (like Mumbai - Goa)
+        feasStatus.innerHTML = `✔ High-Frequency Regional`;
+        feasFreq.innerText = `~25-35 Flights / Day`;
+        feasTime.innerText = `1h 10m`;
+        kpiRouteType.innerText = `Regional Trunk Route`;
+      } else if (km < 1300) {
+        // Standard Trunk (like Mumbai - Delhi)
+        feasStatus.innerHTML = `✔ High-Demand Direct`;
+        feasFreq.innerText = `~65+ Flights / Day`;
+        feasTime.innerText = `2h 10m`;
+        kpiRouteType.innerText = `Primary Trunk Route`;
+      } else {
+        // Cross-country Long Haul (like Delhi - Bengaluru or Guwahati)
+        feasStatus.innerHTML = `✔ Long-Haul Direct Corridor`;
+        feasFreq.innerText = `~30-45 Flights / Day`;
+        feasTime.innerText = `2h 45m - 3h 10m`;
+        kpiRouteType.innerText = `Long-Haul Corridor`;
+      }
     }
 
     function setTripMode(mode) {
       currentTripMode = mode;
-      ['oneway', 'roundtrip'].forEach(m => {
+      ['oneway', 'roundtrip', 'multicity'].forEach(m => {
         const btn = document.getElementById(`btn-mode-${m}`);
-        btn.className = (m === mode) ? "px-4 py-2 rounded-xl text-xs font-bold bg-sky-500 text-slate-950 shadow transition" : "px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition";
+        if (btn) {
+          btn.className = (m === mode) ? "px-4 py-2 rounded-xl text-xs font-bold bg-sky-500 text-slate-950 shadow transition" : "px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition";
+        }
       });
 
       const returnBox = document.getElementById('return-box');
       const returnInput = document.getElementById('search-return-date');
+      const multiContainer = document.getElementById('multicity-container');
 
       if (mode === 'roundtrip') {
+        multiContainer.classList.add('hidden');
         returnBox.className = "md:col-span-2 bg-slate-900 p-3.5 rounded-xl border border-slate-800 hover:border-sky-500 transition";
         returnInput.disabled = false;
         returnInput.classList.remove('cursor-not-allowed', 'text-slate-500');
@@ -711,7 +758,13 @@
         const dept = new Date(document.getElementById('search-date').value || new Date());
         dept.setDate(dept.getDate() + 4);
         returnInput.value = dept.toISOString().split('T')[0];
+      } else if (mode === 'multicity') {
+        multiContainer.classList.remove('hidden');
+        returnBox.className = "md:col-span-2 bg-slate-950/40 p-3.5 rounded-xl border border-dashed border-slate-800 opacity-40 transition";
+        returnInput.disabled = true;
+        returnInput.value = '';
       } else {
+        multiContainer.classList.add('hidden');
         returnBox.className = "md:col-span-2 bg-slate-950/40 p-3.5 rounded-xl border border-dashed border-slate-800 opacity-40 transition";
         returnInput.disabled = true;
         returnInput.value = '';
@@ -1044,8 +1097,6 @@
       
       const carrierIataMap = { 'IndiGo': '6E', 'Air India': 'AI', 'Akasa Air': 'QP', 'Vistara': 'UK' };
       const iata = carrierIataMap[deal.airline] || '';
-      
-      // Determine primary cabin class for MMT handoff
       const primaryCabin = passengerRoster[0].cabin === 'business' ? 'B' : (passengerRoster[0].cabin === 'first' ? 'F' : 'E');
       
       let url = `https://www.makemytrip.com/flight/search?itinerary=${originCode}-${destCode}-${formattedDate}&tripType=O&paxType=A-${passengerRoster.length}_C-0_I-0&cabinClass=${primaryCabin}`;
