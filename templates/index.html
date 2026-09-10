@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AirIntel Pro | National Aviation Intelligence & Anti-Gouging Matrix</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Leaflet Radar Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Space Grotesk', sans-serif; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    
+    .radar-grid {
+      background-color: #030712;
+      background-image: 
+        linear-gradient(rgba(14, 165, 233, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(14, 165, 233, 0.04) 1px, transparent 1px),
+        radial-gradient(ellipse at 50% 0%, rgba(30, 58, 138, 0.4) 0%, transparent 75%);
+      background-size: 35px 35px, 35px 35px, 100% 100%;
+    }
+
+    select option {
+      background-color: #0f172a !important;
+      color: #f8fafc !important;
+      padding: 10px;
+    }
+
+    #air-radar-map {
+      height: 380px;
+      border-radius: 1.25rem;
+      z-index: 10;
+    }
+
+    .dark-radar-tile {
+      filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%) !important;
+    }
+
+    .leaflet-container {
+      background: #030712 !important;
+    }
+
+    @media print {
+      body * { visibility: hidden !important; }
+      #booking-modal, #booking-modal * { visibility: visible !important; }
+      #booking-modal {
+        position: fixed !important; inset: 0 !important;
+        background: white !important; display: flex !important;
+        align-items: center !important; justify-content: center !important;
+      }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body class="radar-grid text-slate-100 min-h-screen pb-24">
+
+  <!-- Top Global Navigation Header -->
+  <nav class="bg-slate-950/80 backdrop-blur-xl border-b border-sky-900/40 px-6 py-4 flex flex-wrap justify-between items-center sticky top-0 z-50 shadow-2xl">
+    <div class="flex items-center space-x-3.5">
+      <div class="h-11 w-11 rounded-xl bg-gradient-to-br from-sky-400 via-blue-600 to-indigo-700 flex items-center justify-center shadow-lg shadow-sky-500/20 border border-sky-400/30">
+        <svg class="w-6 h-6 text-white transform -rotate-45" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+        </svg>
+      </div>
+      <div>
+        <div class="flex items-center space-x-2">
+          <span class="mono text-[10px] font-black tracking-widest text-sky-400 uppercase bg-sky-950/90 px-2 py-0.5 rounded border border-sky-800">DGCA &bull; MoSPI AUDIT GATEWAY</span>
+          <h1 class="font-bold text-base sm:text-lg text-white tracking-wide">National Airfare Surveillance Matrix</h1>
+        </div>
+        <p class="text-[11px] text-slate-400">Predatory Surge Auditor, Statutory Concession Engine & MoSPI Inflation Tracker</p>
+      </div>
+    </div>
+    
+    <div class="flex space-x-2.5 mt-3 sm:mt-0">
+      <button onclick="switchTab('booking')" id="tab-booking" class="px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg shadow-sky-500/20 border border-sky-400/30 transition">
+        ✈️ Corridor Surveillance
+      </button>
+      <button onclick="switchTab('analytics')" id="tab-analytics" class="px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">
+        📊 MoSPI CPI Inflation Analytics
+      </button>
+    </div>
+  </nav>
+
+  <!-- Live Ingestion Telemetry Console -->
+  <aside aria-label="Ingestion Pipeline Telemetry" class="bg-slate-950 border-b border-slate-800/90 px-6 py-2 shadow-sm">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-[11px] mono">
+      <div class="flex items-center space-x-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="text-slate-400">INGESTION ENGINE:</span>
+        <span class="text-sky-300 font-bold">Playwright Chromium (Headless Session Mode)</span>
+      </div>
+      <div class="flex items-center space-x-4 text-slate-400">
+        <span>Stealth Headers: <strong class="text-emerald-400">Emulated</strong></span>
+        <span>Jitter Delay: <strong class="text-emerald-400">2000ms</strong></span>
+        <span>Baseline Fail-Safe: <strong class="text-sky-400">airfare_domestic.xlsx (Active)</strong></span>
+      </div>
+    </div>
+  </aside>
+
+  <main class="max-w-7xl mx-auto px-4 mt-8">
+
+    <!-- TAB 1: CORRIDOR SURVEILLANCE & RADAR -->
+    <section id="section-booking" class="space-y-8">
+
+      <!-- KEY AIRSPACE KPI TILES -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-slate-900/70 backdrop-blur-md p-4 rounded-2xl border border-slate-800/80 shadow-lg">
+          <div class="flex items-center justify-between">
+            <span class="text-xs text-slate-400 uppercase font-semibold">Audited Sector</span>
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          </div>
+          <p class="mono text-lg font-black text-white mt-1" id="kpi-sector">BOM ➔ DEL</p>
+          <span class="text-[11px] text-sky-400 mono">Primary Trunk Route</span>
+        </div>
+
+        <div class="bg-slate-900/70 backdrop-blur-md p-4 rounded-2xl border border-slate-800/80 shadow-lg">
+          <span class="text-xs text-slate-400 uppercase font-semibold">MoSPI Baseline (30-45d)</span>
+          <p class="mono text-lg font-black text-emerald-400 mt-1" id="kpi-base">₹-</p>
+          <span class="text-[11px] text-slate-400 mono">Statutory Base = 100</span>
+        </div>
+
+        <div class="bg-slate-900/70 backdrop-blur-md p-4 rounded-2xl border border-slate-800/80 shadow-lg">
+          <span class="text-xs text-slate-400 uppercase font-semibold">Spot Market Fare (1d)</span>
+          <p class="mono text-lg font-black text-amber-400 mt-1" id="kpi-spot">₹-</p>
+          <span class="text-[11px] text-amber-300 mono" id="kpi-surge">+--% Surge Rate</span>
+        </div>
+
+        <div class="bg-slate-900/70 backdrop-blur-md p-4 rounded-2xl border border-slate-800/80 shadow-lg">
+          <span class="text-xs text-slate-400 uppercase font-semibold">Active Concession</span>
+          <p class="mono text-lg font-black text-sky-400 mt-1" id="kpi-concession">Regular</p>
+          <span class="text-[11px] text-slate-400 mono">Audit Algorithm Verified</span>
+        </div>
+      </div>
+
+      <!-- RADAR MAP & ROUTE FEASIBILITY INSPECTOR -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-8 bg-slate-900/90 rounded-3xl border border-sky-900/40 p-5 shadow-2xl backdrop-blur-xl">
+          <div class="flex items-center justify-between mb-3">
+            <span class="mono text-xs font-bold text-sky-400 uppercase tracking-widest flex items-center space-x-2">
+              <span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span>
+              <span>National Airspace Telemetry & Corridor Radar</span>
+            </span>
+            <span class="mono text-[10px] text-emerald-400 bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">
+              ● LIVE RADAR TELEMETRY FEED
+            </span>
+          </div>
+          <div id="air-radar-map" class="border border-slate-800"></div>
+          <div class="flex flex-wrap items-center justify-between mt-3 text-xs mono text-slate-400">
+            <div class="flex items-center space-x-4">
+              <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span><span>Fair Base Tariff</span></span>
+              <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span><span>Surge Range (15-30%)</span></span>
+              <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span><span>High Gouge Alert (&gt;35%)</span></span>
+            </div>
+            <span id="map-distance-readout" class="text-sky-300 font-bold">Corridor Distance: ~1,148 km</span>
+          </div>
+        </div>
+
+        <div class="lg:col-span-4 bg-slate-900/90 rounded-3xl border border-sky-900/40 p-5 shadow-2xl backdrop-blur-xl flex flex-col justify-between">
+          <div>
+            <span class="mono text-xs font-bold text-emerald-400 uppercase tracking-widest block mb-1">Route Feasibility Diagnostic</span>
+            <p class="text-xs text-slate-400 mb-4">Direct vs. Hub-and-Spoke viability analysis under DGCA operational rules.</p>
+
+            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3 mono text-xs">
+              <div class="flex justify-between">
+                <span class="text-slate-400">Sector Status:</span>
+                <span class="text-emerald-400 font-bold" id="feas-status">&#x2714; High-Density Direct</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">Daily Flight Frequency:</span>
+                <span class="text-sky-300 font-bold" id="feas-frequency">~65 Flights / Day</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">Avg Flight Duration:</span>
+                <span class="text-white font-bold" id="feas-time">2h 10m</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">UDAN Connectivity:</span>
+                <span class="text-slate-400 font-bold" id="feas-udan">Trunk Route (Non-RCS)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 p-3.5 rounded-xl border border-sky-900/50 bg-sky-950/30 text-sky-300 text-xs">
+            <strong>DGCA Price Cap Status:</strong> Fares on this corridor are continuously monitored against statutory price-gouging thresholds.
+          </div>
+        </div>
+      </div>
+
+      <!-- PREDICTIVE BUY CLOCK & MONOPOLY AUDITOR -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div class="md:col-span-7 bg-slate-900/90 rounded-3xl border border-sky-900/40 p-6 shadow-2xl backdrop-blur-xl flex items-center justify-between">
+          <div class="space-y-1.5">
+            <span class="mono text-[10px] font-black uppercase tracking-widest text-slate-400 block">AI Price Timing Predictive Model</span>
+            <h3 class="text-xl font-black text-sky-400 mono" id="timing-verdict-title">OPTIMAL WINDOW (BUY NOW)</h3>
+            <p class="text-xs text-slate-400 max-w-md" id="timing-verdict-sub">Historical curve evaluating dynamic pricing spikes across departure windows.</p>
+          </div>
+          <div class="text-4xl" id="timing-icon">🎯</div>
+        </div>
+
+        <div class="md:col-span-5 bg-slate-900/90 rounded-3xl border border-sky-900/40 p-6 shadow-2xl backdrop-blur-xl flex items-center justify-between">
+          <div class="space-y-1">
+            <span class="mono text-[10px] font-black uppercase tracking-widest text-slate-400 block">Carrier Monopolization Index</span>
+            <h4 class="text-lg font-black text-amber-400 mono">IndiGo: 58% Capacity</h4>
+            <p class="text-[11px] text-slate-400">High single-carrier dominance can lead to artificial pricing surges.</p>
+          </div>
+          <div class="text-3xl">⚖️</div>
+        </div>
+      </div>
+
+      <!-- FLIGHT DISPATCH CONTROL CONSOLE -->
+      <div class="bg-slate-900/90 rounded-3xl border border-sky-900/40 p-6 sm:p-8 shadow-2xl backdrop-blur-xl">
+        <div class="flex flex-wrap items-center justify-between pb-6 border-b border-slate-800/80 gap-4 mb-6">
+          <div class="flex items-center space-x-3 bg-slate-950/80 p-1.5 rounded-2xl border border-slate-800">
+            <button type="button" onclick="setTripMode('oneway')" id="btn-mode-oneway" class="px-4 py-2 rounded-xl text-xs font-bold bg-sky-500 text-slate-950 shadow transition">One Way</button>
+            <button type="button" onclick="setTripMode('roundtrip')" id="btn-mode-roundtrip" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition">Round Trip</button>
+            <button type="button" onclick="setTripMode('multicity')" id="btn-mode-multicity" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition">Multi City</button>
+          </div>
+          <span class="text-xs text-sky-400 mono">&#x2714; STATUTORY BASELINE CONNECTED</span>
+        </div>
+
+        <!-- Input Parameters Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3.5 bg-slate-950/90 p-4 rounded-2xl border border-slate-800">
+          <div class="md:col-span-3 bg-slate-900 p-3.5 rounded-xl border border-slate-800 hover:border-sky-500 transition">
+            <span class="text-[10px] font-black uppercase tracking-wider text-sky-400 block mono">Departure Hub (DEP)</span>
+            <select id="search-origin" class="w-full font-bold text-base text-white bg-slate-900 outline-none cursor-pointer mt-1"></select>
+            <span class="text-[11px] text-slate-400 block truncate" id="origin-subtext">Origin Airport</span>
+          </div>
+
+          <div class="hidden md:flex items-center justify-center -mx-4 z-10">
+            <div class="w-8 h-8 rounded-full bg-slate-800 text-sky-400 flex items-center justify-center shadow-lg border border-sky-500/30">✈️</div>
+          </div>
+
+          <div class="md:col-span-3 bg-slate-900 p-3.5 rounded-xl border border-slate-800 hover:border-sky-500 transition">
+            <span class="text-[10px] font-black uppercase tracking-wider text-emerald-400 block mono">Arrival Hub (ARR)</span>
+            <select id="search-destination" class="w-full font-bold text-base text-white bg-slate-900 outline-none cursor-pointer mt-1"></select>
+            <span class="text-[11px] text-slate-400 block truncate" id="dest-subtext">Destination Airport</span>
+          </div>
+
+          <div class="md:col-span-2 bg-slate-900 p-3.5 rounded-xl border border-slate-800 hover:border-sky-500 transition">
+            <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 block mono">Departure Date</span>
+            <input type="date" id="search-date" class="w-full font-bold text-xs text-white bg-transparent outline-none mt-2 [color-scheme:dark]">
+          </div>
+
+          <div id="return-box" class="md:col-span-2 bg-slate-950/40 p-3.5 rounded-xl border border-dashed border-slate-800 opacity-40 transition">
+            <span class="text-[10px] font-black uppercase tracking-wider text-slate-500 block mono">Return Date</span>
+            <input type="date" id="search-return-date" disabled class="w-full font-bold text-xs text-slate-500 bg-transparent outline-none mt-2 cursor-not-allowed [color-scheme:dark]">
+          </div>
+
+          <div onclick="togglePaxModal()" class="md:col-span-2 bg-slate-900 p-3.5 rounded-xl border border-slate-800 hover:border-sky-500 transition cursor-pointer flex flex-col justify-center">
+            <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 block mono">Manifest & Cabin</span>
+            <div class="font-bold text-sm text-white truncate mt-1" id="pax-summary-label">1 Passenger</div>
+            <span class="text-[11px] text-sky-400 font-semibold truncate" id="cabin-summary-label">Economy</span>
+          </div>
+        </div>
+
+        <!-- Concession Buttons -->
+        <div class="mt-6">
+          <span class="mono text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-2.5">DGCA Statutory Concession Registry:</span>
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5" id="special-fares-container">
+            <button type="button" onclick="selectSpecialFare('regular')" id="fare-regular" class="fare-pill border-2 border-sky-400 bg-sky-950/60 text-sky-200 p-3 rounded-xl text-xs font-bold transition text-left">
+              <span>🏢 Regular Base</span>
+              <span class="block text-[10px] font-normal text-slate-400 mt-0.5">Standard Market Fare</span>
+            </button>
+            <button type="button" onclick="selectSpecialFare('student')" id="fare-student" class="fare-pill border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-300 p-3 rounded-xl text-xs font-bold transition text-left">
+              <span>🎓 Student (12-26y)</span>
+              <span class="block text-[10px] font-normal text-slate-400 mt-0.5">15% Rebate + Extra Bags</span>
+            </button>
+            <button type="button" onclick="selectSpecialFare('senior')" id="fare-senior" class="fare-pill border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-300 p-3 rounded-xl text-xs font-bold transition text-left">
+              <span>👴 Senior (60+)</span>
+              <span class="block text-[10px] font-normal text-slate-400 mt-0.5">20% Statutory Rebate</span>
+            </button>
+            <button type="button" onclick="selectSpecialFare('defense')" id="fare-defense" class="fare-pill border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-300 p-3 rounded-xl text-xs font-bold transition text-left">
+              <span>🎖️ Armed Forces</span>
+              <span class="block text-[10px] font-normal text-slate-400 mt-0.5">25% Base Rebate</span>
+            </button>
+            <button type="button" onclick="selectSpecialFare('medical')" id="fare-medical" class="fare-pill border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-300 p-3 rounded-xl text-xs font-bold transition text-left">
+              <span>🩺 Healthcare</span>
+              <span class="block text-[10px] font-normal text-slate-400 mt-0.5">10% Dedicated Rebate</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-8">
+          <button onclick="searchFlights()" class="w-full bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-slate-950 font-black py-4 rounded-2xl text-sm sm:text-base shadow-xl shadow-sky-500/20 transition flex items-center justify-center space-x-3">
+            <span>EXECUTE RADAR SURVEILLANCE & CORRIDOR AUDIT</span>
+            <span>➔</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- SIDE-BY-SIDE CARRIER BENCHMARK & SURGE COMPARATOR -->
+      <div class="bg-slate-900/90 rounded-3xl border border-sky-900/40 p-6 shadow-2xl backdrop-blur-xl">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-base font-bold text-white flex items-center space-x-2">
+            <span>📊 Side-by-Side Carrier Benchmark & Concession Matrix</span>
+          </h3>
+          <span class="mono text-xs text-sky-400">DGCA Baseline Surge Audit</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs mono border-collapse">
+            <thead>
+              <tr class="border-b border-slate-800 text-slate-400">
+                <th class="py-3 px-4">Carrier & Flight</th>
+                <th class="py-3 px-4">Departure Time</th>
+                <th class="py-3 px-4">Base Unit Fare</th>
+                <th class="py-3 px-4">Baseline Comparison</th>
+                <th class="py-3 px-4">Total Manifest Cost</th>
+                <th class="py-3 px-4">Checked Baggage</th>
+                <th class="py-3 px-4">Seat Pitch</th>
+                <th class="py-3 px-4">Historical OTP</th>
+                <th class="py-3 px-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="comparator-tbody" class="divide-y divide-slate-800/60 text-slate-200"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Flight Boarding Passes Grid -->
+      <div>
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-black text-white flex items-center space-x-2">
+            <span>Verified Domestic Flight Inventory</span>
+            <span class="text-xs text-slate-400 font-normal">(Ranked by DGCA FairFare Baseline)</span>
+          </h3>
+          <span class="mono text-xs text-sky-400 bg-sky-950/80 border border-sky-800 px-3 py-1 rounded-full font-bold" id="results-count-badge">Loading Flights...</span>
+        </div>
+        <div id="deals-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+      </div>
+    </section>
+
+    <!-- TAB 2: MOSPI STATISTICAL ANALYTICS -->
+    <section id="section-analytics" class="hidden space-y-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800 shadow-xl">
+          <p class="text-xs font-semibold text-slate-400">Total Analyzed Records</p>
+          <h4 id="stat-records" class="mono text-2xl font-black text-white mt-1">-</h4>
+          <span class="text-xs text-sky-400 bg-sky-950 px-2 py-0.5 rounded font-medium border border-sky-900">Domestic Corridors</span>
+        </div>
+        <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800 shadow-xl">
+          <p class="text-xs font-semibold text-slate-400">Baseline Fare (30-45 Days)</p>
+          <h4 id="stat-base" class="mono text-2xl font-black text-emerald-400 mt-1">₹-</h4>
+          <span class="text-xs text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded font-medium border border-emerald-900">MoSPI Base = 100</span>
+        </div>
+        <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800 shadow-xl">
+          <p class="text-xs font-semibold text-slate-400">Last-Minute Spot Fare (1 Day)</p>
+          <h4 id="stat-spot" class="mono text-2xl font-black text-amber-400 mt-1">₹-</h4>
+          <span class="text-xs text-amber-400 bg-amber-950 px-2 py-0.5 rounded font-medium border border-amber-900">+Dynamic Surge</span>
+        </div>
+        <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800 shadow-xl">
+          <p class="text-xs font-semibold text-slate-400">MoSPI CPI Sub-Index</p>
+          <h4 id="stat-cpi" class="mono text-2xl font-black text-blue-400 mt-1">-</h4>
+          <span id="stat-inflation" class="mono text-xs text-red-400 bg-red-950 px-2 py-0.5 rounded font-medium border border-red-900">-% Inflation</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-slate-900/80 p-6 rounded-2xl border border-slate-800 shadow-xl">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="font-bold text-white text-sm sm:text-base">Dynamic Pricing Curve by Booking Window</h3>
+            <select id="route-select" onchange="loadTrendChart()" class="text-xs border border-slate-700 rounded-lg p-1.5 bg-slate-800 text-white font-semibold outline-none"></select>
+          </div>
+          <div class="h-64"><canvas id="trendChart"></canvas></div>
+        </div>
+
+        <div class="bg-slate-900/80 p-6 rounded-2xl border border-slate-800 shadow-xl">
+          <h3 class="font-bold text-white mb-4 text-sm sm:text-base">Carrier Price Competitiveness Comparison</h3>
+          <div class="h-64"><canvas id="airlineChart"></canvas></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- POPUP 1: PASSENGER MANIFEST MODAL -->
+  <div id="pax-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 rounded-3xl max-w-lg w-full p-6 shadow-2xl relative border border-slate-800">
+      <button onclick="togglePaxModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white font-black text-lg">✕</button>
+      <h3 class="text-base font-black text-white">Passenger Manifest & Cabin Tier</h3>
+      <p class="text-xs text-slate-400 mb-5">Statutory classification for DGCA airfare concessions</p>
+
+      <div class="space-y-3">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+          <div><h4 class="font-bold text-xs text-white">ADULTS (12y +)</h4><p class="text-[10px] text-slate-400">Standard passenger</p></div>
+          <div class="flex items-center space-x-2">
+            <button onclick="adjustPax('adults', -1)" class="w-7 h-7 rounded-lg border border-slate-700 text-slate-300 font-bold hover:bg-slate-800">-</button>
+            <span id="count-adults" class="w-6 text-center font-black text-xs text-white mono">1</span>
+            <button onclick="adjustPax('adults', 1)" class="w-7 h-7 rounded-lg border border-slate-700 text-slate-300 font-bold hover:bg-slate-800">+</button>
+          </div>
+        </div>
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+          <div><h4 class="font-bold text-xs text-white">CHILDREN (2y - 12y)</h4><p class="text-[10px] text-slate-400">Child seating allocation</p></div>
+          <div class="flex items-center space-x-2">
+            <button onclick="adjustPax('children', -1)" class="w-7 h-7 rounded-lg border border-slate-700 text-slate-300 font-bold hover:bg-slate-800">-</button>
+            <span id="count-children" class="w-6 text-center font-black text-xs text-white mono">0</span>
+            <button onclick="adjustPax('children', 1)" class="w-7 h-7 rounded-lg border border-slate-700 text-slate-300 font-bold hover:bg-slate-800">+</button>
+          </div>
+        </div>
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+          <div><h4 class="font-bold text-xs text-white">INFANTS (under 2y)</h4><p class="text-[10px] text-slate-400">Statutory 100% Base Fare Exemption</p></div>
+          <div class="flex items-center space-x-2">
+            <button onclick="adjustPax('infants', -1)" class="w-7 h-7 rounded-lg border border-slate-700 text-slate-300 font-bold hover:bg-slate-800">-</button>
+            <span id="count-infants" class="w-6 text-center font-black text-xs text-white mono">0</span>
+            <button onclick="adjustPax('infants', 1)" class="w-7 h-7 rounded-lg border border-slate-700 text-slate-300 font-bold hover:bg-slate-800">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5">
+        <span class="mono text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2 block">Cabin Tier</span>
+        <div class="grid grid-cols-2 gap-2">
+          <label class="border-2 border-sky-400 bg-sky-950/40 p-2.5 rounded-xl cursor-pointer flex items-center space-x-2">
+            <input type="radio" name="cabinChoice" value="economy" checked class="text-sky-500">
+            <span class="text-xs font-bold text-white">Economy</span>
+          </label>
+          <label class="border border-slate-800 bg-slate-950 p-2.5 rounded-xl cursor-pointer flex items-center space-x-2">
+            <input type="radio" name="cabinChoice" value="premium_economy" class="text-sky-500">
+            <span class="text-xs font-bold text-white">Premium Economy</span>
+          </label>
+          <label class="border border-slate-800 bg-slate-950 p-2.5 rounded-xl cursor-pointer flex items-center space-x-2">
+            <input type="radio" name="cabinChoice" value="business" class="text-sky-500">
+            <span class="text-xs font-bold text-white">Business</span>
+          </label>
+          <label class="border border-slate-800 bg-slate-950 p-2.5 rounded-xl cursor-pointer flex items-center space-x-2">
+            <input type="radio" name="cabinChoice" value="first" class="text-sky-500">
+            <span class="text-xs font-bold text-white">First Class</span>
+          </label>
+        </div>
+      </div>
+
+      <button onclick="applyPaxModal()" class="mt-5 w-full bg-sky-400 hover:bg-sky-300 text-slate-950 font-black py-2.5 rounded-xl text-xs shadow-lg transition">
+        Confirm Manifest Settings
+      </button>
+    </div>
+  </div>
+
+  <!-- POPUP 2: DIGITAL BOARDING MANIFEST MODAL -->
+  <div id="booking-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="modal-card bg-slate-900 rounded-3xl max-w-md w-full p-6 shadow-2xl relative border border-slate-800 text-slate-100">
+      <button onclick="closeModal()" class="no-print absolute top-4 right-4 text-slate-400 hover:text-white font-bold text-lg">✕</button>
+      
+      <div class="text-center pb-4 border-b border-slate-800">
+        <span class="mono text-[10px] font-black uppercase tracking-widest text-sky-400 bg-sky-950 px-3 py-1 rounded-full border border-sky-800">MoSPI & DGCA Official Flight Manifest</span>
+        <h3 class="text-xl font-black text-white mt-2" id="ticket-airline">-</h3>
+        <p class="mono text-xs text-sky-400 font-bold" id="ticket-flight-no">-</p>
+      </div>
+
+      <div class="py-4 space-y-3">
+        <div class="flex justify-between items-center bg-slate-950 p-3 rounded-xl text-xs border border-slate-800 mono">
+          <div>
+            <p class="text-[9px] text-slate-500 font-bold uppercase">DEP SECTOR</p>
+            <p class="font-black text-white text-sm" id="ticket-from">-</p>
+          </div>
+          <div class="text-sky-400 text-base">✈️</div>
+          <div class="text-right">
+            <p class="text-[9px] text-slate-500 font-bold uppercase">ARR SECTOR</p>
+            <p class="font-black text-white text-sm" id="ticket-to">-</p>
+          </div>
+        </div>
+
+        <div class="border border-slate-800 rounded-xl p-3 bg-slate-950/50">
+          <p class="text-[11px] font-bold text-slate-300 mb-2">Statutory Demographic Breakdown:</p>
+          <div id="ticket-breakdown" class="text-xs text-slate-400 space-y-1.5 mono"></div>
+        </div>
+
+        <div class="flex justify-between items-center text-xs pt-2 bg-slate-950 p-3 rounded-xl border border-slate-800">
+          <span class="font-bold text-slate-300">Audited Manifest Tariff:</span>
+          <span class="text-xl font-black text-emerald-400 mono" id="ticket-fare">₹-</span>
+        </div>
+      </div>
+
+      <div class="space-y-2 no-print pt-2">
+        <button onclick="window.print()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-xs shadow transition flex items-center justify-center space-x-2">
+          <span>🖨️ Print Statutory Boarding Slip</span>
+        </button>
+        <button id="mmt-redirect-btn" onclick="redirectToMMT()" class="w-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold py-2.5 rounded-xl text-xs shadow transition flex items-center justify-center space-x-2">
+          <span>🔗 Hand-off: Book Real Ticket on MakeMyTrip</span>
+        </button>
+        <button onclick="closeModal()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white font-medium py-2 rounded-xl text-xs transition">
+          Dismiss Window
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let trendChart = null;
+    let airlineChart = null;
+    let selectedSpecialCategory = 'regular';
+    let currentSelectedDeal = null;
+    let currentTripMode = 'oneway';
+    let radarMap = null;
+    let routeLine = null;
+    let originMarker = null;
+    let destMarker = null;
+    let currentBaselineFare = 5000;
+
+    const AIRPORT_COORDS = {
+      'DEL': [28.5562, 77.1000],
+      'BOM': [19.0896, 72.8656],
+      'BLR': [13.1986, 77.7066],
+      'HYD': [17.2403, 78.4294],
+      'CCU': [22.6547, 88.4467],
+      'MAA': [12.9941, 80.1709],
+      'PNQ': [18.5822, 73.9197],
+      'GOI': [15.3808, 73.8314],
+      'AMD': [23.0772, 72.6347],
+      'JAI': [26.8242, 75.8122],
+      'LKO': [26.7606, 80.8893],
+      'COK': [10.1518, 76.3930],
+      'GAU': [26.1061, 91.5859],
+      'PAT': [25.5913, 85.0880],
+      'IXC': [30.6735, 76.7885]
+    };
+
+    let paxState = {
+      adults: 1,
+      children: 0,
+      infants: 0,
+      cabin: 'economy'
+    };
+
+    function initRadarMap() {
+      radarMap = L.map('air-radar-map', { zoomControl: false }).setView([20.5937, 78.9629], 4.5);
+      
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        className: 'dark-radar-tile',
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 18
+      }).addTo(radarMap);
+
+      updateRadarRoute('BOM', 'DEL');
+    }
+
+    function updateRadarRoute(originCode, destCode) {
+      if (!radarMap) return;
+
+      const originCoord = AIRPORT_COORDS[originCode] || [19.0896, 72.8656];
+      const destCoord = AIRPORT_COORDS[destCode] || [28.5562, 77.1000];
+
+      if (routeLine) radarMap.removeLayer(routeLine);
+      if (originMarker) radarMap.removeLayer(originMarker);
+      if (destMarker) radarMap.removeLayer(destMarker);
+
+      originMarker = L.circleMarker(originCoord, { radius: 7, color: '#38bdf8', fillColor: '#0284c7', fillOpacity: 0.9 }).addTo(radarMap).bindPopup(`Origin Hub: ${originCode}`);
+      destMarker = L.circleMarker(destCoord, { radius: 7, color: '#10b981', fillColor: '#059669', fillOpacity: 0.9 }).addTo(radarMap).bindPopup(`Destination Hub: ${destCode}`);
+
+      routeLine = L.polyline([originCoord, destCoord], {
+        color: '#38bdf8',
+        weight: 3,
+        opacity: 0.8,
+        dashArray: '8, 8'
+      }).addTo(radarMap);
+
+      radarMap.fitBounds([originCoord, destCoord], { padding: [40, 40] });
+
+      const dLat = (destCoord[0] - originCoord[0]) * Math.PI / 180;
+      const dLon = (destCoord[1] - originCoord[1]) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(originCoord[0] * Math.PI / 180) * Math.cos(destCoord[0] * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      const km = Math.round(6371 * c);
+      document.getElementById('map-distance-readout').innerText = `Direct Corridor Distance: ~${km.toLocaleString()} km`;
+    }
+
+    function setTripMode(mode) {
+      currentTripMode = mode;
+      ['oneway', 'roundtrip', 'multicity'].forEach(m => {
+        const btn = document.getElementById(`btn-mode-${m}`);
+        btn.className = (m === mode) ? "px-4 py-2 rounded-xl text-xs font-bold bg-sky-500 text-slate-950 shadow transition" : "px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition";
+      });
+
+      const returnBox = document.getElementById('return-box');
+      const returnInput = document.getElementById('search-return-date');
+
+      if (mode === 'roundtrip') {
+        returnBox.className = "md:col-span-2 bg-slate-900 p-3.5 rounded-xl border border-slate-800 hover:border-sky-500 transition";
+        returnInput.disabled = false;
+        returnInput.classList.remove('cursor-not-allowed', 'text-slate-500');
+        returnInput.classList.add('text-white');
+        const dept = new Date(document.getElementById('search-date').value || new Date());
+        dept.setDate(dept.getDate() + 4);
+        returnInput.value = dept.toISOString().split('T')[0];
+      } else {
+        returnBox.className = "md:col-span-2 bg-slate-950/40 p-3.5 rounded-xl border border-dashed border-slate-800 opacity-40 transition";
+        returnInput.disabled = true;
+        returnInput.value = '';
+      }
+    }
+
+    function togglePaxModal() {
+      document.getElementById('pax-modal').classList.toggle('hidden');
+    }
+
+    function adjustPax(type, delta) {
+      if (type === 'adults') paxState.adults = Math.max(1, Math.min(9, paxState.adults + delta));
+      if (type === 'children') paxState.children = Math.max(0, Math.min(6, paxState.children + delta));
+      if (type === 'infants') paxState.infants = Math.max(0, Math.min(paxState.adults, paxState.infants + delta));
+      
+      document.getElementById('count-adults').innerText = paxState.adults;
+      document.getElementById('count-children').innerText = paxState.children;
+      document.getElementById('count-infants').innerText = paxState.infants;
+    }
+
+    function applyPaxModal() {
+      paxState.cabin = document.querySelector('input[name="cabinChoice"]:checked').value;
+      const totalTravellers = paxState.adults + paxState.children + paxState.infants;
+      document.getElementById('pax-summary-label').innerText = `${totalTravellers} Passenger${totalTravellers > 1 ? 's' : ''}`;
+      
+      const cabinTitles = { 'economy': 'Economy', 'premium_economy': 'Prem. Economy', 'business': 'Business', 'first': 'First Class' };
+      document.getElementById('cabin-summary-label').innerText = cabinTitles[paxState.cabin];
+      togglePaxModal();
+    }
+
+    function selectSpecialFare(cat) {
+      selectedSpecialCategory = cat;
+      document.querySelectorAll('.fare-pill').forEach(p => {
+        p.className = "fare-pill border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-300 p-3 rounded-xl text-xs font-bold transition text-left";
+      });
+      document.getElementById(`fare-${cat}`).className = "fare-pill border-2 border-sky-400 bg-sky-950/60 text-sky-200 p-3 rounded-xl text-xs font-bold transition text-left";
+
+      const labels = { 'regular': 'Standard', 'student': 'Student 15%', 'senior': 'Senior 20%', 'defense': 'Armed 25%', 'medical': 'Medical 10%' };
+      document.getElementById('kpi-concession').innerText = labels[cat];
+    }
+
+    function switchTab(tab) {
+      if (tab === 'booking') {
+        document.getElementById('section-booking').classList.remove('hidden');
+        document.getElementById('section-analytics').classList.add('hidden');
+        document.getElementById('tab-booking').className = "px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg shadow-sky-500/20 border border-sky-400/30 transition";
+        document.getElementById('tab-analytics').className = "px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800 transition";
+      } else {
+        document.getElementById('section-booking').classList.add('hidden');
+        document.getElementById('section-analytics').classList.remove('hidden');
+        document.getElementById('tab-analytics').className = "px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg shadow-sky-500/20 border border-sky-400/30 transition";
+        document.getElementById('tab-booking').className = "px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800 transition";
+      }
+    }
+
+    async function initDashboard() {
+      const today = new Date();
+      today.setDate(today.getDate() + 7);
+      document.getElementById('search-date').value = today.toISOString().split('T')[0];
+
+      try {
+        const resAirports = await fetch('/api/airports');
+        const airports = await resAirports.json();
+        
+        const originSel = document.getElementById('search-origin');
+        const destSel = document.getElementById('search-destination');
+        originSel.innerHTML = '';
+        destSel.innerHTML = '';
+
+        Object.entries(airports).forEach(([code, name]) => {
+          const opt1 = document.createElement('option');
+          opt1.value = code;
+          opt1.textContent = `${name} (${code})`;
+          opt1.className = "bg-slate-900 text-slate-100 py-1";
+          originSel.appendChild(opt1);
+
+          const opt2 = document.createElement('option');
+          opt2.value = code;
+          opt2.textContent = `${name} (${code})`;
+          opt2.className = "bg-slate-900 text-slate-100 py-1";
+          destSel.appendChild(opt2);
+        });
+
+        originSel.value = 'BOM';
+        destSel.value = 'DEL';
+
+        originSel.addEventListener('change', () => {
+          updateRadarRoute(originSel.value, destSel.value);
+        });
+        destSel.addEventListener('change', () => {
+          updateRadarRoute(originSel.value, destSel.value);
+        });
+
+      } catch (err) {
+        console.error("Airport fetch error:", err);
+      }
+
+      initRadarMap();
+
+      try {
+        const resStats = await fetch('/api/stats');
+        const stats = await resStats.json();
+
+        currentBaselineFare = stats.base_fare || 5000;
+        document.getElementById('stat-records').innerText = stats.total_records.toLocaleString();
+        document.getElementById('stat-base').innerText = '₹' + stats.base_fare.toLocaleString();
+        document.getElementById('stat-spot').innerText = '₹' + stats.spot_fare.toLocaleString();
+        document.getElementById('stat-cpi').innerText = stats.cpi_index;
+        document.getElementById('stat-inflation').innerText = `+${stats.inflation_rate}% Surge`;
+
+        document.getElementById('kpi-base').innerText = '₹' + stats.base_fare.toLocaleString();
+        document.getElementById('kpi-spot').innerText = '₹' + stats.spot_fare.toLocaleString();
+        document.getElementById('kpi-surge').innerText = `+${stats.inflation_rate}% Surge`;
+
+        const routeSelect = document.getElementById('route-select');
+        routeSelect.innerHTML = '';
+        stats.routes.forEach(r => {
+          const opt = document.createElement('option');
+          opt.value = r;
+          opt.textContent = r;
+          opt.className = "bg-slate-900 text-slate-100";
+          routeSelect.appendChild(opt);
+        });
+        routeSelect.value = stats.routes[0] || 'BOM-DEL';
+
+        renderAirlineChart(stats.airline_avg);
+        loadTrendChart();
+      } catch (err) {
+        console.error("Stats fetch error:", err);
+      }
+
+      searchFlights();
+    }
+
+    async function searchFlights() {
+      const origin = document.getElementById('search-origin').value || 'BOM';
+      const destination = document.getElementById('search-destination').value || 'DEL';
+      const travelDate = document.getElementById('search-date').value;
+
+      document.getElementById('kpi-sector').innerText = `${origin} ➔ ${destination}`;
+      updateRadarRoute(origin, destination);
+
+      const passengers = [];
+      for (let i = 0; i < paxState.adults; i++) {
+        let age = (selectedSpecialCategory === 'senior') ? 65 : ((selectedSpecialCategory === 'student') ? 21 : 30);
+        passengers.push({ age: age, category: selectedSpecialCategory });
+      }
+      for (let i = 0; i < paxState.children; i++) passengers.push({ age: 8, category: 'general' });
+      for (let i = 0; i < paxState.infants; i++) passengers.push({ age: 1, category: 'general' });
+
+      const payload = { origin, destination, travel_date: travelDate, cabin_class: paxState.cabin, passengers };
+
+      try {
+        const res = await fetch('/api/recommend', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        // Update AI Buy Timing Clock (with local computation fallback)
+        const titleEl = document.getElementById('timing-verdict-title');
+        const subEl = document.getElementById('timing-verdict-sub');
+        const iconEl = document.getElementById('timing-icon');
+
+        const selectedDate = new Date(travelDate);
+        const todayDate = new Date();
+        const diffDays = Math.max(0, Math.round((selectedDate - todayDate) / (1000 * 60 * 60 * 24)));
+
+        let verdict = data.timing_verdict;
+        let subText = data.timing_sub;
+        let color = data.timing_color;
+
+        if (!verdict) {
+          if (diffDays >= 21) {
+            verdict = "WAIT & MONITOR";
+            color = "emerald";
+            subText = `Travel is ${diffDays} days away. Historical curve indicates fares remain stable in this tier.`;
+          } else if (diffDays >= 7) {
+            verdict = "OPTIMAL WINDOW (BUY NOW)";
+            color = "sky";
+            subText = `Travel is ${diffDays} days away. Sector is pricing within optimal efficiency bands.`;
+          } else {
+            verdict = "HIGH SPIKE ALERT (LOCK IN)";
+            color = "rose";
+            subText = `Travel is in ${diffDays} days. Spot curves indicate sharp dynamic surge within 72h.`;
+          }
+        }
+
+        titleEl.innerText = verdict;
+        subEl.innerText = subText;
+        
+        if (color === 'rose') {
+          titleEl.className = "text-xl font-black text-rose-400 mono";
+          iconEl.innerText = "🚨";
+        } else if (color === 'sky') {
+          titleEl.className = "text-xl font-black text-sky-400 mono";
+          iconEl.innerText = "🎯";
+        } else {
+          titleEl.className = "text-xl font-black text-emerald-400 mono";
+          iconEl.innerText = "⏳";
+        }
+
+        document.getElementById('results-count-badge').innerText = `${data.all_deals.length} Options Ingested`;
+
+        // Side-by-Side Comparator Table
+        const tbody = document.getElementById('comparator-tbody');
+        tbody.innerHTML = '';
+        
+        const specs = {
+          'IndiGo': { baggage: '15 kg', pitch: '29-30 in', otp: '88.4%' },
+          'Akasa Air': { baggage: '15 kg', pitch: '30 in', otp: '89.1%' },
+          'Air India': { baggage: '20 kg', pitch: '31-32 in', otp: '82.6%' },
+          'Vistara': { baggage: '15 kg (Meal Inc.)', pitch: '30-31 in', otp: '87.2%' }
+        };
+
+        data.all_deals.forEach(d => {
+          const sp = specs[d.airline] || { baggage: '15 kg', pitch: '30 in', otp: '85%' };
+          
+          const fareDiff = d.base_fare_per_seat - currentBaselineFare;
+          const pctDiff = Math.round((fareDiff / currentBaselineFare) * 100);
+          
+          let surgeBadge = '';
+          if (fareDiff > 0) {
+            surgeBadge = `<span class="bg-rose-950/80 text-rose-300 border border-rose-800/80 px-2 py-0.5 rounded text-[10px] font-bold">▲ ₹${fareDiff.toLocaleString()} Above Base (+${pctDiff}%)</span>`;
+          } else {
+            surgeBadge = `<span class="bg-emerald-950/80 text-emerald-300 border border-emerald-800/80 px-2 py-0.5 rounded text-[10px] font-bold">✔ Within Base (Fair Fare)</span>`;
+          }
+
+          const row = document.createElement('tr');
+          row.className = "hover:bg-slate-800/40 transition";
+          row.innerHTML = `
+            <td class="py-3 px-4 font-bold text-white flex items-center space-x-2">
+              <span>✈️</span> <span>${d.airline} (${d.flight_number})</span>
+            </td>
+            <td class="py-3 px-4 text-sky-300">${d.departure_time} IST</td>
+            <td class="py-3 px-4 font-mono font-bold">₹${d.base_fare_per_seat.toLocaleString()}</td>
+            <td class="py-3 px-4">${surgeBadge}</td>
+            <td class="py-3 px-4 font-bold text-emerald-400">₹${d.total_trip_cost.toLocaleString()}</td>
+            <td class="py-3 px-4 text-slate-300">${sp.baggage}</td>
+            <td class="py-3 px-4 text-slate-300">${sp.pitch}</td>
+            <td class="py-3 px-4 text-emerald-400 font-bold">${sp.otp}</td>
+            <td class="py-3 px-4">
+              <button onclick='launchPreciseMMT(${JSON.stringify(d)}, "${origin}", "${destination}")' class="bg-red-950 hover:bg-red-900 text-rose-300 border border-red-800 px-3 py-1 rounded-lg text-[11px] font-bold transition">
+                Book Ticket ↗
+              </button>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+
+        // Flight Boarding Cards
+        const grid = document.getElementById('deals-grid');
+        grid.innerHTML = '';
+
+        data.all_deals.forEach((deal, idx) => {
+          const isBest = idx === 0;
+          const fareDiff = deal.base_fare_per_seat - currentBaselineFare;
+          const pctDiff = Math.round((fareDiff / currentBaselineFare) * 100);
+
+          let cardSurgeNotice = '';
+          if (fareDiff > 0) {
+            cardSurgeNotice = `
+              <div class="mt-2 text-[10px] mono text-rose-300 bg-rose-950/60 border border-rose-800/60 px-2 py-1 rounded-lg flex items-center justify-between">
+                <span>⚠️ SURGE DETECTED</span>
+                <span class="font-bold">+₹${fareDiff.toLocaleString()} Above Baseline (${pctDiff}%)</span>
+              </div>
+            `;
+          } else {
+            cardSurgeNotice = `
+              <div class="mt-2 text-[10px] mono text-emerald-300 bg-emerald-950/60 border border-emerald-800/60 px-2 py-1 rounded-lg flex items-center justify-between">
+                <span>✔ FAIR TARIFF</span>
+                <span class="font-bold">Compliant With Base</span>
+              </div>
+            `;
+          }
+
+          const card = document.createElement('div');
+          card.className = `p-4 rounded-2xl border bg-slate-900/90 shadow-xl flex flex-col justify-between ${isBest ? 'border-sky-400 ring-2 ring-sky-500/20' : 'border-slate-800'}`;
+          
+          card.innerHTML = `
+            <div>
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="mono text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded ${isBest ? 'bg-sky-950 text-sky-300 border border-sky-800' : 'bg-slate-800 text-slate-300'}">
+                    ${isBest ? '🏆 MoSPI FairFare Leader' : deal.airline}
+                  </span>
+                  <h4 class="font-black text-white text-base mt-1.5">${deal.airline} <span class="text-[11px] font-semibold text-slate-400 mono">(${deal.flight_number})</span></h4>
+                </div>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-sky-400 border border-slate-700 mono">${deal.segments}</span>
+              </div>
+
+              <div class="mt-3 flex items-center justify-between text-[11px] text-slate-400 bg-slate-950 p-2.5 rounded-xl border border-slate-800/80 mono">
+                <span>DEP: <strong class="text-white">${deal.departure_time} IST</strong></span>
+                <span class="text-emerald-400 font-bold">&#x2714; Verified</span>
+              </div>
+
+              ${cardSurgeNotice}
+
+              <div class="mt-3 pt-2.5 border-t border-slate-800">
+                <p class="text-[10px] text-slate-400">Base Unit Rate: ₹${deal.base_fare_per_seat.toLocaleString()} / seat</p>
+                <div class="flex items-baseline space-x-1.5">
+                  <h3 class="text-xl font-black text-emerald-400 mono mt-0.5">₹${deal.total_trip_cost.toLocaleString()}</h3>
+                  <span class="text-[10px] text-slate-400">(${data.seats} Manifest)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-800 grid grid-cols-2 gap-2">
+              <button onclick='openBooking(${JSON.stringify(deal)}, "${data.origin_city}", "${data.destination_city}")' class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-black py-2 rounded-xl text-xs transition shadow">
+                Manifest Slip
+              </button>
+              <button onclick='launchPreciseMMT(${JSON.stringify(deal)}, "${origin}", "${destination}")' class="bg-red-950/80 hover:bg-red-900 text-rose-200 border border-red-800/80 font-bold py-2 rounded-xl text-xs transition flex items-center justify-center space-x-1">
+                <span>Book Ticket</span>
+                <span>↗</span>
+              </button>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+
+      } catch (err) {
+        console.error("Flight search error:", err);
+      }
+    }
+
+    function openBooking(deal, fromCity, toCity) {
+      currentSelectedDeal = { deal, fromCity, toCity };
+      document.getElementById('ticket-airline').innerText = deal.airline;
+      document.getElementById('ticket-flight-no').innerText = `${deal.airline} Flight ${deal.flight_number}`;
+      document.getElementById('ticket-from').innerText = fromCity;
+      document.getElementById('ticket-to').innerText = toCity;
+      document.getElementById('ticket-fare').innerText = '₹' + deal.total_trip_cost.toLocaleString();
+
+      const bd = document.getElementById('ticket-breakdown');
+      bd.innerHTML = deal.breakdown.map(b => `
+        <div class="flex justify-between border-b border-slate-800 pb-1 text-xs mono">
+          <span>${b.passenger} (Age ${b.age}) - ${b.concession}</span>
+          <span class="font-bold text-sky-400">₹${b.seat_fare.toLocaleString()}</span>
+        </div>
+      `).join('');
+
+      document.getElementById('booking-modal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('booking-modal').classList.add('hidden');
+    }
+
+    function launchPreciseMMT(deal, originCode, destCode) {
+      const dateRaw = document.getElementById('search-date').value; 
+      const dateParts = dateRaw.split('-');
+      const formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+      
+      const carrierIataMap = { 'IndiGo': '6E', 'Air India': 'AI', 'Akasa Air': 'QP', 'Vistara': 'UK' };
+      const iata = carrierIataMap[deal.airline] || '';
+      
+      let url = `https://www.makemytrip.com/flight/search?itinerary=${originCode}-${destCode}-${formattedDate}&tripType=O&paxType=A-${paxState.adults}_C-${paxState.children}_I-${paxState.infants}&cabinClass=${paxState.cabin === 'business' ? 'B' : 'E'}`;
+      if (iata) url += `&airlineFilter=${iata}`;
+      
+      window.open(url, '_blank');
+    }
+
+    function redirectToMMT() {
+      if (currentSelectedDeal) {
+        const origin = document.getElementById('search-origin').value;
+        const destination = document.getElementById('search-destination').value;
+        launchPreciseMMT(currentSelectedDeal.deal, origin, destination);
+      }
+    }
+
+    async function loadTrendChart() {
+      const route = document.getElementById('route-select').value;
+      const res = await fetch(`/api/route-trend?route=${route}`);
+      const data = await res.json();
+
+      if (trendChart) trendChart.destroy();
+      const ctx = document.getElementById('trendChart').getContext('2d');
+      trendChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.days.map(d => `${d} Days`),
+          datasets: [{
+            label: `Dynamic Fare (₹) on ${route}`,
+            data: data.fares,
+            borderColor: '#38bdf8',
+            backgroundColor: 'rgba(56, 189, 248, 0.15)',
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: false,
+          scales: {
+            x: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } },
+            y: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } }
+          },
+          plugins: { legend: { labels: { color: '#e2e8f0' } } }
+        }
+      });
+    }
+
+    function renderAirlineChart(airlineData) {
+      if (airlineChart) airlineChart.destroy();
+      const ctx = document.getElementById('airlineChart').getContext('2d');
+      airlineChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(airlineData),
+          datasets: [{
+            label: 'Average Fare Across Routes (₹)',
+            data: Object.values(airlineData),
+            backgroundColor: '#38bdf8'
+          }]
+        },
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: false,
+          scales: {
+            x: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } },
+            y: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } }
+          },
+          plugins: { legend: { labels: { color: '#e2e8f0' } } }
+        }
+      });
+    }
+
+    window.onload = initDashboard;
+  </script>
+</body>
+</html>
