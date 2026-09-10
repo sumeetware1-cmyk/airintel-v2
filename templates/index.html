@@ -225,7 +225,7 @@
           <span class="text-xs text-sky-400 mono">&#x2714; MULTI-PASSENGER & INDEPENDENT CABIN ENGINE READY</span>
         </div>
 
-        <!-- Regular Single Route Inputs Grid -->
+        <!-- MODE A: ONE WAY & ROUND TRIP BAR -->
         <div id="standard-flight-inputs" class="grid grid-cols-1 md:grid-cols-12 gap-3.5 bg-slate-950/90 p-4 rounded-2xl border border-slate-800">
           <div class="md:col-span-3 bg-slate-900 p-3.5 rounded-xl border border-slate-800 hover:border-sky-500 transition">
             <span class="text-[10px] font-black uppercase tracking-wider text-sky-400 block mono">From (Departure City)</span>
@@ -260,14 +260,26 @@
           </div>
         </div>
 
-        <!-- Multi-City Notice / Container -->
-        <div id="multicity-container" class="hidden mt-4 p-4 rounded-2xl bg-sky-950/30 border border-sky-800/60 text-xs text-slate-300">
-          <div class="flex items-center justify-between mb-2">
-            <span class="font-bold text-sky-400 text-sm">Multi-City Route Planner</span>
-            <span class="mono text-[10px] bg-sky-900 px-2 py-0.5 rounded text-sky-200">Segment 1 + Segment 2</span>
+        <!-- MODE B: MAKEMYTRIP-STYLE MULTI-CITY ROWS -->
+        <div id="multicity-flight-inputs" class="hidden space-y-3">
+          <!-- Multi-City Global Travelers Pill -->
+          <div class="flex justify-between items-center bg-slate-950 p-3 rounded-xl border border-slate-800">
+            <span class="text-xs font-bold text-slate-300">Multi-City Segment Routing</span>
+            <div onclick="togglePaxModal()" class="cursor-pointer bg-sky-950/80 border border-sky-700 px-3 py-1.5 rounded-lg text-xs text-sky-300 font-bold hover:bg-sky-900 transition flex items-center space-x-1.5">
+              <span>👥 Configure Travelers & Cabins</span>
+              <span id="multicity-pax-count-badge" class="bg-sky-500 text-slate-950 px-1.5 py-0.2 rounded font-black text-[10px]">1</span>
+            </div>
           </div>
-          <p class="text-slate-400 mb-3">Multi-city allows flying from Mumbai ➔ Delhi, then departing Delhi ➔ Bengaluru a few days later. AirIntel audits both flight legs separately for maximum savings.</p>
-          <div class="text-[11px] mono text-emerald-300">Tip: Select your first leg above to view its live baseline, or click below to search both segments together on MakeMyTrip.</div>
+
+          <!-- Dynamic Segments Container -->
+          <div id="multicity-rows-container" class="space-y-3"></div>
+
+          <!-- Add Another City Button -->
+          <div class="pt-2">
+            <button type="button" onclick="addMultiCitySegment()" class="px-4 py-2.5 rounded-xl border-2 border-dashed border-sky-500/60 bg-sky-950/30 hover:bg-sky-950/70 text-sky-400 hover:text-sky-300 font-bold text-xs flex items-center space-x-2 transition">
+              <span>+ ADD ANOTHER CITY</span>
+            </button>
+          </div>
         </div>
 
         <!-- SPECIAL OFFERS WITH HOVER GUIDES -->
@@ -520,9 +532,16 @@
     let originMarker = null;
     let destMarker = null;
     let currentBaselineFare = 5000;
+    let globalAirportMap = {};
 
     let passengerRoster = [
       { name: 'Traveler 1', age: 26, category: 'regular', cabin: 'economy' }
+    ];
+
+    // Multi-City segments store
+    let multiCitySegments = [
+      { origin: 'DEL', destination: 'BLR', date: '' },
+      { origin: 'BLR', destination: 'PNQ', date: '' }
     ];
 
     const AIRPORT_COORDS = {
@@ -638,6 +657,7 @@
     function applyPaxModal() {
       const count = passengerRoster.length;
       document.getElementById('pax-summary-label').innerText = `${count} Traveler${count > 1 ? 's' : ''}`;
+      document.getElementById('multicity-pax-count-badge').innerText = `${count}`;
       
       const cabins = [...new Set(passengerRoster.map(p => p.cabin.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())))];
       const offers = [...new Set(passengerRoster.map(p => {
@@ -657,6 +677,87 @@
 
       togglePaxModal();
       searchFlights();
+    }
+
+    function renderMultiCityRows() {
+      const container = document.getElementById('multicity-rows-container');
+      container.innerHTML = '';
+
+      multiCitySegments.forEach((seg, idx) => {
+        const row = document.createElement('div');
+        row.className = "grid grid-cols-1 md:grid-cols-12 gap-3 bg-slate-950/90 p-4 rounded-2xl border border-slate-800 items-center relative";
+
+        let originOptions = '';
+        let destOptions = '';
+        Object.entries(globalAirportMap).forEach(([code, name]) => {
+          originOptions += `<option value="${code}" ${seg.origin === code ? 'selected' : ''}>${name} (${code})</option>`;
+          destOptions += `<option value="${code}" ${seg.destination === code ? 'selected' : ''}>${name} (${code})</option>`;
+        });
+
+        row.innerHTML = `
+          <div class="md:col-span-1 flex items-center justify-center">
+            <span class="mono text-[10px] font-black uppercase text-sky-400 bg-sky-950 border border-sky-800 px-2 py-1 rounded">LEG ${idx+1}</span>
+          </div>
+
+          <div class="md:col-span-4 bg-slate-900 p-3 rounded-xl border border-slate-800">
+            <span class="text-[10px] font-black uppercase tracking-wider text-sky-400 block mono">From</span>
+            <select onchange="updateMultiCitySegment(${idx}, 'origin', this.value)" class="w-full font-bold text-sm text-white bg-slate-900 outline-none cursor-pointer mt-1">
+              ${originOptions}
+            </select>
+          </div>
+
+          <div class="md:col-span-4 bg-slate-900 p-3 rounded-xl border border-slate-800">
+            <span class="text-[10px] font-black uppercase tracking-wider text-emerald-400 block mono">To</span>
+            <select onchange="updateMultiCitySegment(${idx}, 'destination', this.value)" class="w-full font-bold text-sm text-white bg-slate-900 outline-none cursor-pointer mt-1">
+              ${destOptions}
+            </select>
+          </div>
+
+          <div class="md:col-span-2 bg-slate-900 p-3 rounded-xl border border-slate-800">
+            <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 block mono">Date</span>
+            <input type="date" value="${seg.date}" onchange="updateMultiCitySegment(${idx}, 'date', this.value)" class="w-full font-bold text-xs text-white bg-transparent outline-none mt-1 [color-scheme:dark]">
+          </div>
+
+          <div class="md:col-span-1 flex justify-center">
+            ${idx >= 2 ? `
+              <button type="button" onclick="removeMultiCitySegment(${idx})" class="text-rose-400 hover:text-rose-300 font-bold text-sm p-1">✕</button>
+            ` : `<span class="text-slate-600 text-xs">Required</span>`}
+          </div>
+        `;
+
+        container.appendChild(row);
+      });
+    }
+
+    function addMultiCitySegment() {
+      if (multiCitySegments.length >= 5) return;
+      const lastDest = multiCitySegments[multiCitySegments.length - 1].destination || 'DEL';
+      const nextDate = new Date();
+      nextDate.setDate(nextDate.getDate() + 10 + (multiCitySegments.length * 2));
+
+      multiCitySegments.push({
+        origin: lastDest,
+        destination: 'BOM',
+        date: nextDate.toISOString().split('T')[0]
+      });
+      renderMultiCityRows();
+    }
+
+    function removeMultiCitySegment(idx) {
+      if (multiCitySegments.length <= 2) return;
+      multiCitySegments.splice(idx, 1);
+      renderMultiCityRows();
+    }
+
+    function updateMultiCitySegment(idx, field, val) {
+      multiCitySegments[idx][field] = val;
+      if (field === 'destination' && idx + 1 < multiCitySegments.length) {
+        multiCitySegments[idx + 1].origin = val;
+      }
+      renderMultiCityRows();
+      if (idx === 0) {
+        updateRadarRoute(multiCitySegments[0].origin, multiCitySegments[0].destination);
+      }
     }
 
     function initRadarMap() {
@@ -703,32 +804,27 @@
 
       document.getElementById('map-distance-readout').innerText = `Flight Distance: ~${km.toLocaleString()} km`;
 
-      // Dynamic Flight Route Details calculation based on distance
       const feasStatus = document.getElementById('feas-status');
       const feasFreq = document.getElementById('feas-frequency');
       const feasTime = document.getElementById('feas-time');
       const kpiRouteType = document.getElementById('kpi-route-type');
 
       if (km < 200) {
-        // Ultra-short corridor (like Mumbai - Pune)
         feasStatus.innerHTML = `⚠️ Short Commuter Route`;
         feasFreq.innerText = `~4-8 Direct / Day (Most Rail/Road)`;
         feasTime.innerText = `~35-45 mins`;
         kpiRouteType.innerText = `Short Intercity Route`;
       } else if (km < 600) {
-        // Regional Route (like Mumbai - Goa)
         feasStatus.innerHTML = `✔ High-Frequency Regional`;
         feasFreq.innerText = `~25-35 Flights / Day`;
         feasTime.innerText = `1h 10m`;
         kpiRouteType.innerText = `Regional Trunk Route`;
       } else if (km < 1300) {
-        // Standard Trunk (like Mumbai - Delhi)
         feasStatus.innerHTML = `✔ High-Demand Direct`;
         feasFreq.innerText = `~65+ Flights / Day`;
         feasTime.innerText = `2h 10m`;
         kpiRouteType.innerText = `Primary Trunk Route`;
       } else {
-        // Cross-country Long Haul (like Delhi - Bengaluru or Guwahati)
         feasStatus.innerHTML = `✔ Long-Haul Direct Corridor`;
         feasFreq.innerText = `~30-45 Flights / Day`;
         feasTime.innerText = `2h 45m - 3h 10m`;
@@ -745,29 +841,34 @@
         }
       });
 
+      const singleBox = document.getElementById('standard-flight-inputs');
+      const multiBox = document.getElementById('multicity-flight-inputs');
       const returnBox = document.getElementById('return-box');
       const returnInput = document.getElementById('search-return-date');
-      const multiContainer = document.getElementById('multicity-container');
 
-      if (mode === 'roundtrip') {
-        multiContainer.classList.add('hidden');
-        returnBox.className = "md:col-span-2 bg-slate-900 p-3.5 rounded-xl border border-slate-800 hover:border-sky-500 transition";
-        returnInput.disabled = false;
-        returnInput.classList.remove('cursor-not-allowed', 'text-slate-500');
-        returnInput.classList.add('text-white');
-        const dept = new Date(document.getElementById('search-date').value || new Date());
-        dept.setDate(dept.getDate() + 4);
-        returnInput.value = dept.toISOString().split('T')[0];
-      } else if (mode === 'multicity') {
-        multiContainer.classList.remove('hidden');
-        returnBox.className = "md:col-span-2 bg-slate-950/40 p-3.5 rounded-xl border border-dashed border-slate-800 opacity-40 transition";
-        returnInput.disabled = true;
-        returnInput.value = '';
+      if (mode === 'multicity') {
+        singleBox.classList.add('hidden');
+        multiBox.classList.remove('hidden');
+        renderMultiCityRows();
+        updateRadarRoute(multiCitySegments[0].origin, multiCitySegments[0].destination);
       } else {
-        multiContainer.classList.add('hidden');
-        returnBox.className = "md:col-span-2 bg-slate-950/40 p-3.5 rounded-xl border border-dashed border-slate-800 opacity-40 transition";
-        returnInput.disabled = true;
-        returnInput.value = '';
+        singleBox.classList.remove('hidden');
+        multiBox.classList.add('hidden');
+        
+        if (mode === 'roundtrip') {
+          returnBox.className = "md:col-span-2 bg-slate-900 p-3.5 rounded-xl border border-slate-800 hover:border-sky-500 transition";
+          returnInput.disabled = false;
+          returnInput.classList.remove('cursor-not-allowed', 'text-slate-500');
+          returnInput.classList.add('text-white');
+          const dept = new Date(document.getElementById('search-date').value || new Date());
+          dept.setDate(dept.getDate() + 4);
+          returnInput.value = dept.toISOString().split('T')[0];
+        } else {
+          returnBox.className = "md:col-span-2 bg-slate-950/40 p-3.5 rounded-xl border border-dashed border-slate-800 opacity-40 transition";
+          returnInput.disabled = true;
+          returnInput.value = '';
+        }
+        updateRadarRoute(document.getElementById('search-origin').value || 'BOM', document.getElementById('search-destination').value || 'DEL');
       }
     }
 
@@ -790,16 +891,22 @@
       today.setDate(today.getDate() + 7);
       document.getElementById('search-date').value = today.toISOString().split('T')[0];
 
+      // Init multi city dates
+      const m1 = new Date(); m1.setDate(m1.getDate() + 7);
+      const m2 = new Date(); m2.setDate(m2.getDate() + 10);
+      multiCitySegments[0].date = m1.toISOString().split('T')[0];
+      multiCitySegments[1].date = m2.toISOString().split('T')[0];
+
       try {
         const resAirports = await fetch('/api/airports');
-        const airports = await resAirports.json();
+        globalAirportMap = await resAirports.json();
         
         const originSel = document.getElementById('search-origin');
         const destSel = document.getElementById('search-destination');
         originSel.innerHTML = '';
         destSel.innerHTML = '';
 
-        Object.entries(airports).forEach(([code, name]) => {
+        Object.entries(globalAirportMap).forEach(([code, name]) => {
           const opt1 = document.createElement('option');
           opt1.value = code;
           opt1.textContent = `${name} (${code})`;
@@ -862,11 +969,21 @@
     }
 
     async function searchFlights() {
-      const origin = document.getElementById('search-origin').value || 'BOM';
-      const destination = document.getElementById('search-destination').value || 'DEL';
-      const travelDate = document.getElementById('search-date').value;
+      let origin = 'BOM';
+      let destination = 'DEL';
+      let travelDate = document.getElementById('search-date').value;
 
-      document.getElementById('kpi-sector').innerText = `${origin} ➔ ${destination}`;
+      if (currentTripMode === 'multicity') {
+        origin = multiCitySegments[0].origin;
+        destination = multiCitySegments[0].destination;
+        travelDate = multiCitySegments[0].date;
+        document.getElementById('kpi-sector').innerText = multiCitySegments.map(s => s.origin).concat([multiCitySegments[multiCitySegments.length - 1].destination]).join(' ➔ ');
+      } else {
+        origin = document.getElementById('search-origin').value || 'BOM';
+        destination = document.getElementById('search-destination').value || 'DEL';
+        document.getElementById('kpi-sector').innerText = `${origin} ➔ ${destination}`;
+      }
+
       updateRadarRoute(origin, destination);
 
       const payload = { 
@@ -1091,24 +1208,38 @@
     }
 
     function launchPreciseMMT(deal, originCode, destCode) {
-      const dateRaw = document.getElementById('search-date').value; 
-      const dateParts = dateRaw.split('-');
-      const formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
-      
+      const primaryCabin = passengerRoster[0].cabin === 'business' ? 'B' : (passengerRoster[0].cabin === 'first' ? 'F' : 'E');
       const carrierIataMap = { 'IndiGo': '6E', 'Air India': 'AI', 'Akasa Air': 'QP', 'Vistara': 'UK' };
       const iata = carrierIataMap[deal.airline] || '';
-      const primaryCabin = passengerRoster[0].cabin === 'business' ? 'B' : (passengerRoster[0].cabin === 'first' ? 'F' : 'E');
-      
-      let url = `https://www.makemytrip.com/flight/search?itinerary=${originCode}-${destCode}-${formattedDate}&tripType=O&paxType=A-${passengerRoster.length}_C-0_I-0&cabinClass=${primaryCabin}`;
-      if (iata) url += `&airlineFilter=${iata}`;
-      
-      window.open(url, '_blank');
+
+      if (currentTripMode === 'multicity') {
+        const segParams = multiCitySegments.map(s => {
+          const p = s.date.split('-');
+          return `${s.origin}-${s.destination}-${p[2]}/${p[1]}/${p[0]}`;
+        }).join('_');
+        
+        let url = `https://www.makemytrip.com/flight/search?itinerary=${segParams}&tripType=M&paxType=A-${passengerRoster.length}_C-0_I-0&cabinClass=${primaryCabin}`;
+        if (iata) url += `&airlineFilter=${iata}`;
+        window.open(url, '_blank');
+      } else {
+        const dateRaw = document.getElementById('search-date').value; 
+        const dateParts = dateRaw.split('-');
+        const formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+        
+        let url = `https://www.makemytrip.com/flight/search?itinerary=${originCode}-${destCode}-${formattedDate}&tripType=O&paxType=A-${passengerRoster.length}_C-0_I-0&cabinClass=${primaryCabin}`;
+        if (iata) url += `&airlineFilter=${iata}`;
+        window.open(url, '_blank');
+      }
     }
 
     function redirectToMMT() {
       if (currentSelectedDeal) {
-        const origin = document.getElementById('search-origin').value;
-        const destination = document.getElementById('search-destination').value;
+        let origin = document.getElementById('search-origin').value;
+        let destination = document.getElementById('search-destination').value;
+        if (currentTripMode === 'multicity') {
+          origin = multiCitySegments[0].origin;
+          destination = multiCitySegments[0].destination;
+        }
         launchPreciseMMT(currentSelectedDeal.deal, origin, destination);
       }
     }
