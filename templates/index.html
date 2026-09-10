@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,23 +14,51 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            darkbg: '#030712',
+            cardbg: '#0f172a'
+          }
+        }
+      }
+    }
+  </script>
+
   <style>
     body { font-family: 'Space Grotesk', sans-serif; }
     .mono { font-family: 'JetBrains Mono', monospace; }
     
     .radar-grid {
+      background-color: #f8fafc;
+      background-image: 
+        linear-gradient(rgba(14, 165, 233, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(14, 165, 233, 0.03) 1px, transparent 1px),
+        radial-gradient(ellipse at 50% 0%, rgba(224, 242, 254, 0.5) 0%, transparent 75%);
+      background-size: 35px 35px, 35px 35px, 100% 100%;
+    }
+
+    .dark .radar-grid {
       background-color: #030712;
       background-image: 
         linear-gradient(rgba(14, 165, 233, 0.04) 1px, transparent 1px),
         linear-gradient(90deg, rgba(14, 165, 233, 0.04) 1px, transparent 1px),
         radial-gradient(ellipse at 50% 0%, rgba(30, 58, 138, 0.4) 0%, transparent 75%);
-      background-size: 35px 35px, 35px 35px, 100% 100%;
     }
 
     select option {
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+      padding: 8px;
+    }
+
+    .dark select option {
       background-color: #0f172a !important;
       color: #f8fafc !important;
-      padding: 8px;
     }
 
     #air-radar-map {
@@ -44,7 +72,7 @@
     }
 
     .leaflet-container {
-      background: #030712 !important;
+      background: #0f172a !important;
     }
 
     @media print {
@@ -59,10 +87,10 @@
     }
   </style>
 </head>
-<body class="radar-grid text-slate-100 min-h-screen pb-24">
+<body class="radar-grid text-slate-900 dark:text-slate-100 min-h-screen pb-24 transition-colors duration-200">
 
   <!-- Top Navigation -->
-  <nav class="bg-slate-950/80 backdrop-blur-xl border-b border-sky-900/40 px-6 py-4 flex flex-wrap justify-between items-center sticky top-0 z-50 shadow-2xl">
+  <nav class="bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200 dark:border-sky-900/40 px-6 py-4 flex flex-wrap justify-between items-center sticky top-0 z-50 shadow-lg dark:shadow-2xl">
     <div class="flex items-center space-x-3.5">
       <div class="h-11 w-11 rounded-xl bg-gradient-to-br from-sky-400 via-blue-600 to-indigo-700 flex items-center justify-center shadow-lg shadow-sky-500/20 border border-sky-400/30">
         <svg class="w-6 h-6 text-white transform -rotate-45" fill="currentColor" viewBox="0 0 24 24">
@@ -71,35 +99,40 @@
       </div>
       <div>
         <div class="flex items-center space-x-2">
-          <span class="mono text-[10px] font-black tracking-widest text-sky-400 uppercase bg-sky-950/90 px-2 py-0.5 rounded border border-sky-800">SMART FLIGHT MONITOR</span>
-          <h1 class="font-bold text-base sm:text-lg text-white tracking-wide">AirIntel Pro</h1>
+          <span class="mono text-[10px] font-black tracking-widest text-sky-600 dark:text-sky-400 uppercase bg-sky-100 dark:bg-sky-950/90 px-2 py-0.5 rounded border border-sky-300 dark:border-sky-800">SMART FLIGHT MONITOR</span>
+          <h1 class="font-bold text-base sm:text-lg tracking-wide">AirIntel Pro</h1>
         </div>
-        <p class="text-[11px] text-slate-400">Domestic Fair-Fare Tracker, Multi-Passenger Deals & Price Surge Detector</p>
+        <p class="text-[11px] text-slate-500 dark:text-slate-400">Domestic Fair-Fare Tracker, Multi-Passenger Deals & Price Surge Detector</p>
       </div>
     </div>
     
-    <div class="flex space-x-2.5 mt-3 sm:mt-0">
+    <div class="flex items-center space-x-3 mt-3 sm:mt-0">
       <button onclick="switchTab('booking')" id="tab-booking" class="px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg shadow-sky-500/20 border border-sky-400/30 transition">
         ✈️ Search & Price Radar
       </button>
-      <button onclick="switchTab('analytics')" id="tab-analytics" class="px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">
+      <button onclick="switchTab('analytics')" id="tab-analytics" class="px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-slate-200 dark:bg-slate-900/80 hover:bg-slate-300 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-800 transition">
         📊 Price History Analytics
+      </button>
+
+      <!-- Light / Dark Mode Toggle Button -->
+      <button onclick="toggleTheme()" class="p-2.5 rounded-xl bg-slate-200 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-yellow-400 hover:scale-105 transition shadow" title="Toggle Light/Dark Theme">
+        <span id="theme-icon" class="text-sm">☀️</span>
       </button>
     </div>
   </nav>
 
   <!-- Live Status Bar -->
-  <aside aria-label="Pipeline Telemetry" class="bg-slate-950 border-b border-slate-800/90 px-6 py-2 shadow-sm">
+  <aside aria-label="Pipeline Telemetry" class="bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800/90 px-6 py-2 shadow-sm">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-[11px] mono">
       <div class="flex items-center space-x-2">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span class="text-slate-400">STATUS:</span>
-        <span class="text-sky-300 font-bold">Live Domestic Aviation Monitor</span>
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span class="text-slate-500 dark:text-slate-400">STATUS:</span>
+        <span class="text-sky-600 dark:text-sky-300 font-bold">Live Domestic Aviation Monitor</span>
       </div>
-      <div class="flex items-center space-x-4 text-slate-400">
-        <span>Stealth Engine: <strong class="text-emerald-400">Active</strong></span>
-        <span>Anti-Surge Protection: <strong class="text-emerald-400">Enabled</strong></span>
-        <span>Price Baseline: <strong class="text-sky-400">Verified</strong></span>
+      <div class="flex items-center space-x-4 text-slate-500 dark:text-slate-400">
+        <span>Stealth Engine: <strong class="text-emerald-600 dark:text-emerald-400">Active</strong></span>
+        <span>Anti-Surge Protection: <strong class="text-emerald-600 dark:text-emerald-400">Enabled</strong></span>
+        <span>Price Baseline: <strong class="text-sky-600 dark:text-sky-400">Verified</strong></span>
       </div>
     </div>
   </aside>
@@ -111,83 +144,83 @@
 
       <!-- QUICK STAT TILES -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-slate-900/70 backdrop-blur-md p-4 rounded-2xl border border-slate-800/80 shadow-lg">
+        <div class="bg-white/90 dark:bg-slate-900/70 backdrop-blur-md p-4 rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-lg">
           <div class="flex items-center justify-between">
-            <span class="text-xs text-slate-400 uppercase font-semibold">Selected Route</span>
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span class="text-xs text-slate-500 dark:text-slate-400 uppercase font-semibold">Selected Route</span>
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
           </div>
-          <p class="mono text-lg font-black text-white mt-1" id="kpi-sector">BOM ➔ DEL</p>
-          <span class="text-[11px] text-sky-400 mono" id="kpi-route-type">Main Trunk Route</span>
+          <p class="mono text-lg font-black mt-1" id="kpi-sector">BOM ➔ DEL</p>
+          <span class="text-[11px] text-sky-600 dark:text-sky-400 mono" id="kpi-route-type">Main Trunk Route</span>
         </div>
 
-        <div class="bg-slate-900/70 backdrop-blur-md p-4 rounded-2xl border border-slate-800/80 shadow-lg">
-          <span class="text-xs text-slate-400 uppercase font-semibold">Normal Baseline Price</span>
-          <p class="mono text-lg font-black text-emerald-400 mt-1" id="kpi-base">₹-</p>
-          <span class="text-[11px] text-slate-400 mono">Booked 30+ days early</span>
+        <div class="bg-white/90 dark:bg-slate-900/70 backdrop-blur-md p-4 rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-lg">
+          <span class="text-xs text-slate-500 dark:text-slate-400 uppercase font-semibold">Normal Baseline Price</span>
+          <p class="mono text-lg font-black text-emerald-600 dark:text-emerald-400 mt-1" id="kpi-base">₹-</p>
+          <span class="text-[11px] text-slate-500 dark:text-slate-400 mono">Booked 30+ days early</span>
         </div>
 
-        <div class="bg-slate-900/70 backdrop-blur-md p-4 rounded-2xl border border-slate-800/80 shadow-lg">
-          <span class="text-xs text-slate-400 uppercase font-semibold">Last-Minute Price</span>
-          <p class="mono text-lg font-black text-amber-400 mt-1" id="kpi-spot">₹-</p>
-          <span class="text-[11px] text-amber-300 mono" id="kpi-surge">+--% Price Surge</span>
+        <div class="bg-white/90 dark:bg-slate-900/70 backdrop-blur-md p-4 rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-lg">
+          <span class="text-xs text-slate-500 dark:text-slate-400 uppercase font-semibold">Last-Minute Price</span>
+          <p class="mono text-lg font-black text-amber-600 dark:text-amber-400 mt-1" id="kpi-spot">₹-</p>
+          <span class="text-[11px] text-amber-700 dark:text-amber-300 mono" id="kpi-surge">+--% Price Surge</span>
         </div>
 
-        <div class="bg-slate-900/70 backdrop-blur-md p-4 rounded-2xl border border-slate-800/80 shadow-lg">
-          <span class="text-xs text-slate-400 uppercase font-semibold">Travelers</span>
-          <p class="mono text-lg font-black text-sky-400 mt-1" id="kpi-concession">1 Traveler</p>
-          <span class="text-[11px] text-slate-400 mono">Independent Offers Active</span>
+        <div class="bg-white/90 dark:bg-slate-900/70 backdrop-blur-md p-4 rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-lg">
+          <span class="text-xs text-slate-500 dark:text-slate-400 uppercase font-semibold">Travelers</span>
+          <p class="mono text-lg font-black text-sky-600 dark:text-sky-400 mt-1" id="kpi-concession">1 Traveler</p>
+          <span class="text-[11px] text-slate-500 dark:text-slate-400 mono">Independent Offers Active</span>
         </div>
       </div>
 
       <!-- RADAR MAP & ROUTE DETAILS -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div class="lg:col-span-8 bg-slate-900/90 rounded-3xl border border-sky-900/40 p-5 shadow-2xl backdrop-blur-xl">
+        <div class="lg:col-span-8 bg-white/90 dark:bg-slate-900/90 rounded-3xl border border-slate-200 dark:border-sky-900/40 p-5 shadow-2xl backdrop-blur-xl">
           <div class="flex items-center justify-between mb-3">
-            <span class="mono text-xs font-bold text-sky-400 uppercase tracking-widest flex items-center space-x-2">
-              <span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span>
+            <span class="mono text-xs font-bold text-sky-600 dark:text-sky-400 uppercase tracking-widest flex items-center space-x-2">
+              <span class="w-2 h-2 rounded-full bg-sky-500 animate-ping"></span>
               <span>Interactive Flight Path & Radar</span>
             </span>
-            <span class="mono text-[10px] text-emerald-400 bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">
+            <span class="mono text-[10px] text-emerald-600 dark:text-emerald-400 bg-slate-100 dark:bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-800">
               ● LIVE AIRSPACE TRACKER
             </span>
           </div>
-          <div id="air-radar-map" class="border border-slate-800"></div>
-          <div class="flex flex-wrap items-center justify-between mt-3 text-xs mono text-slate-400">
+          <div id="air-radar-map" class="border border-slate-200 dark:border-slate-800"></div>
+          <div class="flex flex-wrap items-center justify-between mt-3 text-xs mono text-slate-500 dark:text-slate-400">
             <div class="flex items-center space-x-4">
-              <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span><span>Fair Price</span></span>
-              <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span><span>Normal Surge (15-30%)</span></span>
+              <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span><span>Fair Price</span></span>
+              <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span><span>Normal Surge (15-30%)</span></span>
               <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span><span>High Surge Alert (&gt;35%)</span></span>
             </div>
-            <span id="map-distance-readout" class="text-sky-300 font-bold">Flight Distance: ~1,148 km</span>
+            <span id="map-distance-readout" class="text-sky-600 dark:text-sky-300 font-bold">Flight Distance: ~1,148 km</span>
           </div>
         </div>
 
-        <div class="lg:col-span-4 bg-slate-900/90 rounded-3xl border border-sky-900/40 p-5 shadow-2xl backdrop-blur-xl flex flex-col justify-between">
+        <div class="lg:col-span-4 bg-white/90 dark:bg-slate-900/90 rounded-3xl border border-slate-200 dark:border-sky-900/40 p-5 shadow-2xl backdrop-blur-xl flex flex-col justify-between">
           <div>
-            <span class="mono text-xs font-bold text-emerald-400 uppercase tracking-widest block mb-1">Flight Route Details</span>
-            <p class="text-xs text-slate-400 mb-4">Calculated based on genuine aerial distance and route popularity.</p>
+            <span class="mono text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest block mb-1">Flight Route Details</span>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Calculated based on genuine aerial distance and route popularity.</p>
 
-            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3 mono text-xs">
+            <div class="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3 mono text-xs">
               <div class="flex justify-between">
-                <span class="text-slate-400">Route Type:</span>
-                <span class="text-emerald-400 font-bold" id="feas-status">&#x2714; High-Demand Direct</span>
+                <span class="text-slate-500 dark:text-slate-400">Route Type:</span>
+                <span class="text-emerald-600 dark:text-emerald-400 font-bold" id="feas-status">&#x2714; High-Demand Direct</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-slate-400">Daily Direct Flights:</span>
-                <span class="text-sky-300 font-bold" id="feas-frequency">~65 Flights / Day</span>
+                <span class="text-slate-500 dark:text-slate-400">Daily Direct Flights:</span>
+                <span class="text-sky-600 dark:text-sky-300 font-bold" id="feas-frequency">~65 Flights / Day</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-slate-400">Air Time Duration:</span>
-                <span class="text-white font-bold" id="feas-time">2h 10m</span>
+                <span class="text-slate-500 dark:text-slate-400">Air Time Duration:</span>
+                <span class="font-bold" id="feas-time">2h 10m</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-slate-400">Pricing Policy:</span>
-                <span class="text-slate-300 font-bold" id="feas-udan">Fair-Fare Monitored</span>
+                <span class="text-slate-500 dark:text-slate-400">Pricing Policy:</span>
+                <span class="text-slate-700 dark:text-slate-300 font-bold" id="feas-udan">Fair-Fare Monitored</span>
               </div>
             </div>
           </div>
 
-          <div class="mt-4 p-3.5 rounded-xl border border-sky-900/50 bg-sky-950/30 text-sky-300 text-xs">
+          <div class="mt-4 p-3.5 rounded-xl border border-sky-200 dark:border-sky-900/50 bg-sky-50 dark:bg-sky-950/30 text-sky-800 dark:text-sky-300 text-xs">
             <strong>Split Cabin & Offers:</strong> You can book different travelers in different classes (e.g., Business for you, Economy for others) with their individual student/senior discounts intact.
           </div>
         </div>
@@ -195,88 +228,85 @@
 
       <!-- AI BUY TIMING & AIRLINE DOMINANCE -->
       <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
-        <div class="md:col-span-7 bg-slate-900/90 rounded-3xl border border-sky-900/40 p-6 shadow-2xl backdrop-blur-xl flex items-center justify-between">
+        <div class="md:col-span-7 bg-white/90 dark:bg-slate-900/90 rounded-3xl border border-slate-200 dark:border-sky-900/40 p-6 shadow-2xl backdrop-blur-xl flex items-center justify-between">
           <div class="space-y-1.5">
-            <span class="mono text-[10px] font-black uppercase tracking-widest text-slate-400 block">AI Price Timing Model (When to Buy)</span>
-            <h3 class="text-xl font-black text-sky-400 mono" id="timing-verdict-title">BEST TIME TO BUY NOW</h3>
-            <p class="text-xs text-slate-400 max-w-md" id="timing-verdict-sub">Calculates historical curves to tell you whether to lock in now or wait.</p>
+            <span class="mono text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block">AI Price Timing Model (When to Buy)</span>
+            <h3 class="text-xl font-black text-sky-600 dark:text-sky-400 mono" id="timing-verdict-title">BEST TIME TO BUY NOW</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md" id="timing-verdict-sub">Calculates historical curves to tell you whether to lock in now or wait.</p>
           </div>
           <div class="text-4xl" id="timing-icon">🎯</div>
         </div>
 
-        <div class="md:col-span-5 bg-slate-900/90 rounded-3xl border border-sky-900/40 p-6 shadow-2xl backdrop-blur-xl flex items-center justify-between">
+        <div class="md:col-span-5 bg-white/90 dark:bg-slate-900/90 rounded-3xl border border-slate-200 dark:border-sky-900/40 p-6 shadow-2xl backdrop-blur-xl flex items-center justify-between">
           <div class="space-y-1">
-            <span class="mono text-[10px] font-black uppercase tracking-widest text-slate-400 block">Market Dominance Indicator</span>
-            <h4 class="text-lg font-black text-amber-400 mono">IndiGo: 58% Flight Share</h4>
-            <p class="text-[11px] text-slate-400">IndiGo controls over half of domestic Indian air traffic; this lack of competition on some routes can cause higher price surges.</p>
+            <span class="mono text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block">Market Dominance Indicator</span>
+            <h4 class="text-lg font-black text-amber-600 dark:text-amber-400 mono">IndiGo: 58% Flight Share</h4>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400">IndiGo controls over half of domestic Indian air traffic; this lack of competition on some routes can cause higher price surges.</p>
           </div>
           <div class="text-3xl">⚖️</div>
         </div>
       </div>
 
       <!-- FLIGHT SEARCH BOX -->
-      <div class="bg-slate-900/90 rounded-3xl border border-sky-900/40 p-6 sm:p-8 shadow-2xl backdrop-blur-xl">
-        <div class="flex flex-wrap items-center justify-between pb-6 border-b border-slate-800/80 gap-4 mb-6">
-          <div class="flex items-center space-x-2 bg-slate-950/80 p-1.5 rounded-2xl border border-slate-800">
-            <button type="button" onclick="setTripMode('oneway')" id="btn-mode-oneway" class="px-4 py-2 rounded-xl text-xs font-bold bg-sky-500 text-slate-950 shadow transition">One Way</button>
-            <button type="button" onclick="setTripMode('roundtrip')" id="btn-mode-roundtrip" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition">Round Trip</button>
-            <button type="button" onclick="setTripMode('multicity')" id="btn-mode-multicity" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition">Multi City</button>
+      <div class="bg-white/90 dark:bg-slate-900/90 rounded-3xl border border-slate-200 dark:border-sky-900/40 p-6 sm:p-8 shadow-2xl backdrop-blur-xl">
+        <div class="flex flex-wrap items-center justify-between pb-6 border-b border-slate-200 dark:border-slate-800/80 gap-4 mb-6">
+          <div class="flex items-center space-x-2 bg-slate-100 dark:bg-slate-950/80 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800">
+            <button type="button" onclick="setTripMode('oneway')" id="btn-mode-oneway" class="px-4 py-2 rounded-xl text-xs font-bold bg-sky-500 text-white dark:text-slate-950 shadow transition">One Way</button>
+            <button type="button" onclick="setTripMode('roundtrip')" id="btn-mode-roundtrip" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">Round Trip</button>
+            <button type="button" onclick="setTripMode('multicity')" id="btn-mode-multicity" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">Multi City</button>
           </div>
-          <span class="text-xs text-sky-400 mono">&#x2714; MULTI-PASSENGER & INDEPENDENT CABIN ENGINE READY</span>
+          <span class="text-xs text-sky-600 dark:text-sky-400 mono">&#x2714; MULTI-PASSENGER & INDEPENDENT CABIN ENGINE READY</span>
         </div>
 
         <!-- MODE A: ONE WAY & ROUND TRIP BAR -->
-        <div id="standard-flight-inputs" class="grid grid-cols-1 md:grid-cols-12 gap-3.5 bg-slate-950/90 p-4 rounded-2xl border border-slate-800">
-          <div class="md:col-span-3 bg-slate-900 p-3.5 rounded-xl border border-slate-800 hover:border-sky-500 transition">
-            <span class="text-[10px] font-black uppercase tracking-wider text-sky-400 block mono">From (Departure City)</span>
-            <select id="search-origin" class="w-full font-bold text-base text-white bg-slate-900 outline-none cursor-pointer mt-1"></select>
-            <span class="text-[11px] text-slate-400 block truncate" id="origin-subtext">Origin Airport</span>
+        <div id="standard-flight-inputs" class="grid grid-cols-1 md:grid-cols-12 gap-3.5 bg-slate-50 dark:bg-slate-950/90 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <div class="md:col-span-3 bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-sky-500 transition">
+            <span class="text-[10px] font-black uppercase tracking-wider text-sky-600 dark:text-sky-400 block mono">From (Departure City)</span>
+            <select id="search-origin" class="w-full font-bold text-base bg-white dark:bg-slate-900 outline-none cursor-pointer mt-1"></select>
+            <span class="text-[11px] text-slate-500 dark:text-slate-400 block truncate" id="origin-subtext">Origin Airport</span>
           </div>
 
           <div class="hidden md:flex items-center justify-center -mx-4 z-10">
-            <div class="w-8 h-8 rounded-full bg-slate-800 text-sky-400 flex items-center justify-center shadow-lg border border-sky-500/30">✈️</div>
+            <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 text-sky-600 dark:text-sky-400 flex items-center justify-center shadow-lg border border-sky-500/30">✈️</div>
           </div>
 
-          <div class="md:col-span-3 bg-slate-900 p-3.5 rounded-xl border border-slate-800 hover:border-sky-500 transition">
-            <span class="text-[10px] font-black uppercase tracking-wider text-emerald-400 block mono">To (Arrival City)</span>
-            <select id="search-destination" class="w-full font-bold text-base text-white bg-slate-900 outline-none cursor-pointer mt-1"></select>
-            <span class="text-[11px] text-slate-400 block truncate" id="dest-subtext">Destination Airport</span>
+          <div class="md:col-span-3 bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-sky-500 transition">
+            <span class="text-[10px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block mono">To (Arrival City)</span>
+            <select id="search-destination" class="w-full font-bold text-base bg-white dark:bg-slate-900 outline-none cursor-pointer mt-1"></select>
+            <span class="text-[11px] text-slate-500 dark:text-slate-400 block truncate" id="dest-subtext">Destination Airport</span>
           </div>
 
-          <div class="md:col-span-2 bg-slate-900 p-3.5 rounded-xl border border-slate-800 hover:border-sky-500 transition">
-            <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 block mono">Departure Date</span>
-            <input type="date" id="search-date" class="w-full font-bold text-xs text-white bg-transparent outline-none mt-2 [color-scheme:dark]">
+          <div class="md:col-span-2 bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-sky-500 transition">
+            <span class="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 block mono">Departure Date</span>
+            <input type="date" id="search-date" class="w-full font-bold text-xs bg-transparent outline-none mt-2 [color-scheme:light] dark:[color-scheme:dark]">
           </div>
 
-          <div id="return-box" class="md:col-span-2 bg-slate-950/40 p-3.5 rounded-xl border border-dashed border-slate-800 opacity-40 transition">
-            <span class="text-[10px] font-black uppercase tracking-wider text-slate-500 block mono">Return Date</span>
-            <input type="date" id="search-return-date" disabled class="w-full font-bold text-xs text-slate-500 bg-transparent outline-none mt-2 cursor-not-allowed [color-scheme:dark]">
+          <div id="return-box" class="md:col-span-2 bg-slate-100 dark:bg-slate-950/40 p-3.5 rounded-xl border border-dashed border-slate-300 dark:border-slate-800 opacity-40 transition">
+            <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 block mono">Return Date</span>
+            <input type="date" id="search-return-date" disabled class="w-full font-bold text-xs text-slate-400 dark:text-slate-500 bg-transparent outline-none mt-2 cursor-not-allowed [color-scheme:light] dark:[color-scheme:dark]">
           </div>
 
-          <div onclick="togglePaxModal()" class="md:col-span-2 bg-sky-950/40 border border-sky-600/50 p-3.5 rounded-xl hover:border-sky-400 transition cursor-pointer flex flex-col justify-center">
-            <span class="text-[10px] font-black uppercase tracking-wider text-sky-400 block mono">Travelers & Cabins ⚙️</span>
-            <div class="font-bold text-sm text-white truncate mt-1" id="pax-summary-label">1 Traveler</div>
-            <span class="text-[11px] text-emerald-400 font-semibold truncate" id="cabin-summary-label">Click to customize</span>
+          <div onclick="togglePaxModal()" class="md:col-span-2 bg-sky-50 dark:bg-sky-950/40 border border-sky-300 dark:border-sky-600/50 p-3.5 rounded-xl hover:border-sky-500 transition cursor-pointer flex flex-col justify-center">
+            <span class="text-[10px] font-black uppercase tracking-wider text-sky-600 dark:text-sky-400 block mono">Travelers & Cabins ⚙️</span>
+            <div class="font-bold text-sm truncate mt-1" id="pax-summary-label">1 Traveler</div>
+            <span class="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold truncate" id="cabin-summary-label">Click to customize</span>
           </div>
         </div>
 
         <!-- MODE B: MAKEMYTRIP-STYLE MULTI-CITY ROWS -->
         <div id="multicity-flight-inputs" class="hidden space-y-3">
-          <!-- Multi-City Global Travelers Pill -->
-          <div class="flex justify-between items-center bg-slate-950 p-3 rounded-xl border border-slate-800">
-            <span class="text-xs font-bold text-slate-300">Multi-City Segment Routing</span>
-            <div onclick="togglePaxModal()" class="cursor-pointer bg-sky-950/80 border border-sky-700 px-3 py-1.5 rounded-lg text-xs text-sky-300 font-bold hover:bg-sky-900 transition flex items-center space-x-1.5">
+          <div class="flex justify-between items-center bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">Multi-City Segment Routing</span>
+            <div onclick="togglePaxModal()" class="cursor-pointer bg-sky-100 dark:bg-sky-950/80 border border-sky-300 dark:border-sky-700 px-3 py-1.5 rounded-lg text-xs text-sky-700 dark:text-sky-300 font-bold hover:bg-sky-200 dark:hover:bg-sky-900 transition flex items-center space-x-1.5">
               <span>👥 Configure Travelers & Cabins</span>
-              <span id="multicity-pax-count-badge" class="bg-sky-500 text-slate-950 px-1.5 py-0.2 rounded font-black text-[10px]">1</span>
+              <span id="multicity-pax-count-badge" class="bg-sky-500 text-white dark:text-slate-950 px-1.5 py-0.2 rounded font-black text-[10px]">1</span>
             </div>
           </div>
 
-          <!-- Dynamic Segments Container -->
           <div id="multicity-rows-container" class="space-y-3"></div>
 
-          <!-- Add Another City Button -->
           <div class="pt-2">
-            <button type="button" onclick="addMultiCitySegment()" class="px-4 py-2.5 rounded-xl border-2 border-dashed border-sky-500/60 bg-sky-950/30 hover:bg-sky-950/70 text-sky-400 hover:text-sky-300 font-bold text-xs flex items-center space-x-2 transition">
+            <button type="button" onclick="addMultiCitySegment()" class="px-4 py-2.5 rounded-xl border-2 border-dashed border-sky-400 dark:border-sky-500/60 bg-sky-50 dark:bg-sky-950/30 hover:bg-sky-100 dark:hover:bg-sky-950/70 text-sky-700 dark:text-sky-400 font-bold text-xs flex items-center space-x-2 transition">
               <span>+ ADD ANOTHER CITY</span>
             </button>
           </div>
@@ -285,66 +315,61 @@
         <!-- SPECIAL OFFERS WITH HOVER GUIDES -->
         <div class="mt-6">
           <div class="flex items-center justify-between mb-2.5">
-            <span class="mono text-[11px] font-bold uppercase tracking-wider text-slate-400">Available Special Flight Offers:</span>
-            <span class="text-[11px] text-sky-400 mono">Hover over any offer for eligibility rules ℹ️</span>
+            <span class="mono text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Available Special Flight Offers:</span>
+            <span class="text-[11px] text-sky-600 dark:text-sky-400 mono">Hover over any offer for eligibility rules ℹ️</span>
           </div>
           
           <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5" id="special-fares-container">
             
-            <!-- Regular Base -->
             <div class="relative group">
-              <button type="button" onclick="quickApplyOffer('regular')" id="fare-regular" class="w-full fare-pill border-2 border-sky-400 bg-sky-950/60 text-sky-200 p-3 rounded-xl text-xs font-bold transition text-left">
+              <button type="button" onclick="quickApplyOffer('regular')" id="fare-regular" class="w-full fare-pill border-2 border-sky-500 bg-sky-50 dark:bg-sky-950/60 text-sky-900 dark:text-sky-200 p-3 rounded-xl text-xs font-bold transition text-left">
                 <span>🏢 Regular Fare</span>
-                <span class="block text-[10px] font-normal text-slate-400 mt-0.5">Standard Ticket Price</span>
+                <span class="block text-[10px] font-normal text-slate-500 dark:text-slate-400 mt-0.5">Standard Ticket Price</span>
               </button>
-              <div class="absolute bottom-full left-0 mb-2 hidden group-hover:block z-30 w-56 p-2.5 bg-slate-950 text-slate-200 text-[11px] rounded-xl border border-sky-500/40 shadow-2xl pointer-events-none">
+              <div class="absolute bottom-full left-0 mb-2 hidden group-hover:block z-30 w-56 p-2.5 bg-slate-900 text-slate-200 text-[11px] rounded-xl border border-sky-500/40 shadow-2xl pointer-events-none">
                 Standard ticket rate without special category quotas. Anyone can book this.
               </div>
             </div>
 
-            <!-- Student -->
             <div class="relative group">
-              <button type="button" onclick="quickApplyOffer('student')" id="fare-student" class="w-full fare-pill border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-300 p-3 rounded-xl text-xs font-bold transition text-left">
+              <button type="button" onclick="quickApplyOffer('student')" id="fare-student" class="w-full fare-pill border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-950 hover:border-slate-400 text-slate-700 dark:text-slate-300 p-3 rounded-xl text-xs font-bold transition text-left">
                 <span>🎓 Student (12y+)</span>
-                <span class="block text-[10px] font-normal text-slate-400 mt-0.5">15% Off + Extra Baggage</span>
+                <span class="block text-[10px] font-normal text-slate-500 dark:text-slate-400 mt-0.5">15% Off + Extra Baggage</span>
               </button>
-              <div class="absolute bottom-full left-0 mb-2 hidden group-hover:block z-30 w-64 p-3 bg-slate-950 text-slate-200 text-[11px] rounded-xl border border-sky-500/40 shadow-2xl pointer-events-none">
+              <div class="absolute bottom-full left-0 mb-2 hidden group-hover:block z-30 w-64 p-3 bg-slate-900 text-slate-200 text-[11px] rounded-xl border border-sky-500/40 shadow-2xl pointer-events-none">
                 <strong class="text-sky-400 block mb-1">Student Offer Eligibility:</strong>
                 Valid for students aged 12 to 26 enrolled in recognized schools/colleges. Requires valid physical student ID card at airport check-in. Includes <strong>+10 kg free extra baggage</strong> on most domestic airlines.
               </div>
             </div>
 
-            <!-- Senior Citizen -->
             <div class="relative group">
-              <button type="button" onclick="quickApplyOffer('senior')" id="fare-senior" class="w-full fare-pill border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-300 p-3 rounded-xl text-xs font-bold transition text-left">
+              <button type="button" onclick="quickApplyOffer('senior')" id="fare-senior" class="w-full fare-pill border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-950 hover:border-slate-400 text-slate-700 dark:text-slate-300 p-3 rounded-xl text-xs font-bold transition text-left">
                 <span>👴 Senior Citizen</span>
-                <span class="block text-[10px] font-normal text-slate-400 mt-0.5">20% Off Base Fare</span>
+                <span class="block text-[10px] font-normal text-slate-500 dark:text-slate-400 mt-0.5">20% Off Base Fare</span>
               </button>
-              <div class="absolute bottom-full left-0 mb-2 hidden group-hover:block z-30 w-64 p-3 bg-slate-950 text-slate-200 text-[11px] rounded-xl border border-sky-500/40 shadow-2xl pointer-events-none">
+              <div class="absolute bottom-full left-0 mb-2 hidden group-hover:block z-30 w-64 p-3 bg-slate-900 text-slate-200 text-[11px] rounded-xl border border-sky-500/40 shadow-2xl pointer-events-none">
                 <strong class="text-sky-400 block mb-1">Senior Citizen Offer Eligibility:</strong>
                 Available for Indian citizens aged 60 years and above on the day of travel. Government-issued photo ID showing date of birth (Aadhaar, Passport, Voter ID) required at check-in.
               </div>
             </div>
 
-            <!-- Armed Forces -->
             <div class="relative group">
-              <button type="button" onclick="quickApplyOffer('defense')" id="fare-defense" class="w-full fare-pill border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-300 p-3 rounded-xl text-xs font-bold transition text-left">
+              <button type="button" onclick="quickApplyOffer('defense')" id="fare-defense" class="w-full fare-pill border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-950 hover:border-slate-400 text-slate-700 dark:text-slate-300 p-3 rounded-xl text-xs font-bold transition text-left">
                 <span>🎖️ Armed Forces</span>
-                <span class="block text-[10px] font-normal text-slate-400 mt-0.5">25% Off Base Fare</span>
+                <span class="block text-[10px] font-normal text-slate-500 dark:text-slate-400 mt-0.5">25% Off Base Fare</span>
               </button>
-              <div class="absolute bottom-full left-0 mb-2 hidden group-hover:block z-30 w-64 p-3 bg-slate-950 text-slate-200 text-[11px] rounded-xl border border-sky-500/40 shadow-2xl pointer-events-none">
+              <div class="absolute bottom-full left-0 mb-2 hidden group-hover:block z-30 w-64 p-3 bg-slate-900 text-slate-200 text-[11px] rounded-xl border border-sky-500/40 shadow-2xl pointer-events-none">
                 <strong class="text-sky-400 block mb-1">Armed Forces Eligibility:</strong>
                 Valid for serving and retired military personnel of the Army, Navy, Air Force, and their dependent family members. Official Armed Forces ID required.
               </div>
             </div>
 
-            <!-- Doctors & Nurses -->
             <div class="relative group">
-              <button type="button" onclick="quickApplyOffer('medical')" id="fare-medical" class="w-full fare-pill border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-300 p-3 rounded-xl text-xs font-bold transition text-left">
+              <button type="button" onclick="quickApplyOffer('medical')" id="fare-medical" class="w-full fare-pill border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-950 hover:border-slate-400 text-slate-700 dark:text-slate-300 p-3 rounded-xl text-xs font-bold transition text-left">
                 <span>🩺 Doctors & Nurses</span>
-                <span class="block text-[10px] font-normal text-slate-400 mt-0.5">10% Off Base Fare</span>
+                <span class="block text-[10px] font-normal text-slate-500 dark:text-slate-400 mt-0.5">10% Off Base Fare</span>
               </button>
-              <div class="absolute bottom-full right-0 mb-2 hidden group-hover:block z-30 w-64 p-3 bg-slate-950 text-slate-200 text-[11px] rounded-xl border border-sky-500/40 shadow-2xl pointer-events-none">
+              <div class="absolute bottom-full right-0 mb-2 hidden group-hover:block z-30 w-64 p-3 bg-slate-900 text-slate-200 text-[11px] rounded-xl border border-sky-500/40 shadow-2xl pointer-events-none">
                 <strong class="text-sky-400 block mb-1">Doctor & Nurse Eligibility:</strong>
                 Special discount for registered medical doctors and nurses. Medical Council registration number or hospital work ID card required at airport counter.
               </div>
@@ -354,7 +379,7 @@
         </div>
 
         <div class="mt-8">
-          <button onclick="searchFlights()" class="w-full bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-slate-950 font-black py-4 rounded-2xl text-sm sm:text-base shadow-xl shadow-sky-500/20 transition flex items-center justify-center space-x-3">
+          <button onclick="searchFlights()" class="w-full bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-black py-4 rounded-2xl text-sm sm:text-base shadow-xl shadow-sky-500/20 transition flex items-center justify-center space-x-3">
             <span>FIND FLIGHTS & AUDIT PRICES</span>
             <span>➔</span>
           </button>
@@ -362,17 +387,17 @@
       </div>
 
       <!-- SIDE-BY-SIDE AIRLINE COMPARISON TABLE -->
-      <div class="bg-slate-900/90 rounded-3xl border border-sky-900/40 p-6 shadow-2xl backdrop-blur-xl">
+      <div class="bg-white/90 dark:bg-slate-900/90 rounded-3xl border border-slate-200 dark:border-sky-900/40 p-6 shadow-2xl backdrop-blur-xl">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-base font-bold text-white flex items-center space-x-2">
+          <h3 class="text-base font-bold flex items-center space-x-2">
             <span>📊 Side-by-Side Airline Comparison & Price Surge Analysis</span>
           </h3>
-          <span class="mono text-xs text-sky-400">Fair-Price Comparison</span>
+          <span class="mono text-xs text-sky-600 dark:text-sky-400">Fair-Price Comparison</span>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs mono border-collapse">
             <thead>
-              <tr class="border-b border-slate-800 text-slate-400">
+              <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400">
                 <th class="py-3 px-4">Airline & Flight</th>
                 <th class="py-3 px-4">Departure Time</th>
                 <th class="py-3 px-4">Base Seat Fare</th>
@@ -384,7 +409,7 @@
                 <th class="py-3 px-4">Book</th>
               </tr>
             </thead>
-            <tbody id="comparator-tbody" class="divide-y divide-slate-800/60 text-slate-200"></tbody>
+            <tbody id="comparator-tbody" class="divide-y divide-slate-200 dark:divide-slate-800/60 text-slate-800 dark:text-slate-200"></tbody>
           </table>
         </div>
       </div>
@@ -392,11 +417,11 @@
       <!-- FLIGHT CARDS GRID -->
       <div>
         <div class="flex justify-between items-center mb-4">
-          <h3 class="text-lg font-black text-white flex items-center space-x-2">
+          <h3 class="text-lg font-black flex items-center space-x-2">
             <span>Available Flights</span>
-            <span class="text-xs text-slate-400 font-normal">(Ranked by Best Fair-Price Value)</span>
+            <span class="text-xs text-slate-500 dark:text-slate-400 font-normal">(Ranked by Best Fair-Price Value)</span>
           </h3>
-          <span class="mono text-xs text-sky-400 bg-sky-950/80 border border-sky-800 px-3 py-1 rounded-full font-bold" id="results-count-badge">Searching...</span>
+          <span class="mono text-xs text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/80 border border-sky-300 dark:border-sky-800 px-3 py-1 rounded-full font-bold" id="results-count-badge">Searching...</span>
         </div>
         <div id="deals-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"></div>
       </div>
@@ -405,39 +430,39 @@
     <!-- TAB 2: PRICE HISTORY & STATS -->
     <section id="section-analytics" class="hidden space-y-6">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800 shadow-xl">
-          <p class="text-xs font-semibold text-slate-400">Total Analyzed Records</p>
-          <h4 id="stat-records" class="mono text-2xl font-black text-white mt-1">-</h4>
-          <span class="text-xs text-sky-400 bg-sky-950 px-2 py-0.5 rounded font-medium border border-sky-900">Domestic Routes</span>
+        <div class="bg-white/80 dark:bg-slate-900/80 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl">
+          <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Total Analyzed Records</p>
+          <h4 id="stat-records" class="mono text-2xl font-black mt-1">-</h4>
+          <span class="text-xs text-sky-600 dark:text-sky-400 bg-sky-100 dark:bg-sky-950 px-2 py-0.5 rounded font-medium border border-sky-300 dark:border-sky-900">Domestic Routes</span>
         </div>
-        <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800 shadow-xl">
-          <p class="text-xs font-semibold text-slate-400">Normal Baseline Price (30+ Days)</p>
-          <h4 id="stat-base" class="mono text-2xl font-black text-emerald-400 mt-1">₹-</h4>
-          <span class="text-xs text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded font-medium border border-emerald-900">Base Fair Index = 100</span>
+        <div class="bg-white/80 dark:bg-slate-900/80 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl">
+          <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Normal Baseline Price (30+ Days)</p>
+          <h4 id="stat-base" class="mono text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">₹-</h4>
+          <span class="text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950 px-2 py-0.5 rounded font-medium border border-emerald-300 dark:border-emerald-900">Base Fair Index = 100</span>
         </div>
-        <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800 shadow-xl">
-          <p class="text-xs font-semibold text-slate-400">Last-Minute Spot Price (1 Day)</p>
-          <h4 id="stat-spot" class="mono text-2xl font-black text-amber-400 mt-1">₹-</h4>
-          <span class="text-xs text-amber-400 bg-amber-950 px-2 py-0.5 rounded font-medium border border-amber-900">+Surge Rate</span>
+        <div class="bg-white/80 dark:bg-slate-900/80 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl">
+          <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Last-Minute Spot Price (1 Day)</p>
+          <h4 id="stat-spot" class="mono text-2xl font-black text-amber-600 dark:text-amber-400 mt-1">₹-</h4>
+          <span class="text-xs text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-950 px-2 py-0.5 rounded font-medium border border-amber-300 dark:border-amber-900">+Surge Rate</span>
         </div>
-        <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800 shadow-xl">
-          <p class="text-xs font-semibold text-slate-400">Price Inflation Index</p>
-          <h4 id="stat-cpi" class="mono text-2xl font-black text-blue-400 mt-1">-</h4>
-          <span id="stat-inflation" class="mono text-xs text-red-400 bg-red-950 px-2 py-0.5 rounded font-medium border border-red-900">-% Spike</span>
+        <div class="bg-white/80 dark:bg-slate-900/80 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl">
+          <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Price Inflation Index</p>
+          <h4 id="stat-cpi" class="mono text-2xl font-black text-blue-600 dark:text-blue-400 mt-1">-</h4>
+          <span id="stat-inflation" class="mono text-xs text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-950 px-2 py-0.5 rounded font-medium border border-red-300 dark:border-red-900">-% Spike</span>
         </div>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="bg-slate-900/80 p-6 rounded-2xl border border-slate-800 shadow-xl">
+        <div class="bg-white/80 dark:bg-slate-900/80 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl">
           <div class="flex justify-between items-center mb-4">
-            <h3 class="font-bold text-white text-sm sm:text-base">Price Increase as Travel Date Approaches</h3>
-            <select id="route-select" onchange="loadTrendChart()" class="text-xs border border-slate-700 rounded-lg p-1.5 bg-slate-800 text-white font-semibold outline-none"></select>
+            <h3 class="font-bold text-sm sm:text-base">Price Increase as Travel Date Approaches</h3>
+            <select id="route-select" onchange="loadTrendChart()" class="text-xs border border-slate-300 dark:border-slate-700 rounded-lg p-1.5 bg-slate-100 dark:bg-slate-800 font-semibold outline-none"></select>
           </div>
           <div class="h-64"><canvas id="trendChart"></canvas></div>
         </div>
 
-        <div class="bg-slate-900/80 p-6 rounded-2xl border border-slate-800 shadow-xl">
-          <h3 class="font-bold text-white mb-4 text-sm sm:text-base">Airline Price Comparison</h3>
+        <div class="bg-white/80 dark:bg-slate-900/80 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl">
+          <h3 class="font-bold mb-4 text-sm sm:text-base">Airline Price Comparison</h3>
           <div class="h-64"><canvas id="airlineChart"></canvas></div>
         </div>
       </div>
@@ -446,28 +471,26 @@
 
   <!-- POPUP 1: PASSENGERS & INDIVIDUAL CABIN/OFFER MANAGER -->
   <div id="pax-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-    <div class="bg-slate-900 rounded-3xl max-w-3xl w-full p-6 shadow-2xl relative border border-slate-800 max-h-[90vh] overflow-y-auto">
-      <button onclick="togglePaxModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white font-black text-lg">✕</button>
-      <h3 class="text-lg font-black text-white">Passenger List, Cabins & Individual Offers</h3>
-      <p class="text-xs text-slate-400 mb-5">Configure each passenger's cabin class (Economy, Business, First), age, and special discounts separately.</p>
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-3xl w-full p-6 shadow-2xl relative border border-slate-200 dark:border-slate-800 max-h-[90vh] overflow-y-auto">
+      <button onclick="togglePaxModal()" class="absolute top-5 right-5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-black text-lg">✕</button>
+      <h3 class="text-lg font-black">Passenger List, Cabins & Individual Offers</h3>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mb-5">Configure each passenger's cabin class (Economy, Business, First), age, and special discounts separately.</p>
 
-      <!-- Passenger Count Bar -->
-      <div class="flex items-center justify-between bg-slate-950 p-4 rounded-2xl border border-slate-800 mb-5">
+      <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 mb-5">
         <div>
-          <h4 class="font-bold text-sm text-white">Number of Travelers</h4>
-          <p class="text-xs text-slate-400">Add or remove passengers in your group</p>
+          <h4 class="font-bold text-sm">Number of Travelers</h4>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Add or remove passengers in your group</p>
         </div>
         <div class="flex items-center space-x-3">
-          <button onclick="removePassenger()" class="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 font-bold hover:bg-slate-700">-</button>
-          <span id="manifest-pax-count" class="w-8 text-center font-black text-sm text-sky-400 mono">1</span>
-          <button onclick="addPassenger()" class="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 font-bold hover:bg-slate-700">+</button>
+          <button onclick="removePassenger()" class="w-8 h-8 rounded-xl bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 font-bold hover:bg-slate-300 dark:hover:bg-slate-700">-</button>
+          <span id="manifest-pax-count" class="w-8 text-center font-black text-sm text-sky-600 dark:text-sky-400 mono">1</span>
+          <button onclick="addPassenger()" class="w-8 h-8 rounded-xl bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 font-bold hover:bg-slate-300 dark:hover:bg-slate-700">+</button>
         </div>
       </div>
 
-      <!-- Passenger List Roster -->
       <div class="space-y-3" id="passenger-roster-list"></div>
 
-      <button onclick="applyPaxModal()" class="mt-6 w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-slate-950 font-black py-3 rounded-xl text-xs shadow-lg transition">
+      <button onclick="applyPaxModal()" class="mt-6 w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-black py-3 rounded-xl text-xs shadow-lg transition">
         Apply Settings & Update Prices
       </button>
     </div>
@@ -475,36 +498,36 @@
 
   <!-- POPUP 2: DIGITAL TICKET & PRICE BREAKDOWN RECEIPT -->
   <div id="booking-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-    <div class="modal-card bg-slate-900 rounded-3xl max-w-md w-full p-6 shadow-2xl relative border border-slate-800 text-slate-100">
-      <button onclick="closeModal()" class="no-print absolute top-4 right-4 text-slate-400 hover:text-white font-bold text-lg">✕</button>
+    <div class="modal-card bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 shadow-2xl relative border border-slate-200 dark:border-slate-800">
+      <button onclick="closeModal()" class="no-print absolute top-4 right-4 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-bold text-lg">✕</button>
       
-      <div class="text-center pb-4 border-b border-slate-800">
-        <span class="mono text-[10px] font-black uppercase tracking-widest text-sky-400 bg-sky-950 px-3 py-1 rounded-full border border-sky-800">Verified Flight Summary</span>
-        <h3 class="text-xl font-black text-white mt-2" id="ticket-airline">-</h3>
-        <p class="mono text-xs text-sky-400 font-bold" id="ticket-flight-no">-</p>
+      <div class="text-center pb-4 border-b border-slate-200 dark:border-slate-800">
+        <span class="mono text-[10px] font-black uppercase tracking-widest text-sky-600 dark:text-sky-400 bg-sky-100 dark:bg-sky-950 px-3 py-1 rounded-full border border-sky-300 dark:border-sky-800">Verified Flight Summary</span>
+        <h3 class="text-xl font-black mt-2" id="ticket-airline">-</h3>
+        <p class="mono text-xs text-sky-600 dark:text-sky-400 font-bold" id="ticket-flight-no">-</p>
       </div>
 
       <div class="py-4 space-y-3">
-        <div class="flex justify-between items-center bg-slate-950 p-3 rounded-xl text-xs border border-slate-800 mono">
+        <div class="flex justify-between items-center bg-slate-50 dark:bg-slate-950 p-3 rounded-xl text-xs border border-slate-200 dark:border-slate-800 mono">
           <div>
-            <p class="text-[9px] text-slate-500 font-bold uppercase">DEPARTURE</p>
-            <p class="font-black text-white text-sm" id="ticket-from">-</p>
+            <p class="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase">DEPARTURE</p>
+            <p class="font-black text-sm" id="ticket-from">-</p>
           </div>
-          <div class="text-sky-400 text-base">✈️</div>
+          <div class="text-sky-600 dark:text-sky-400 text-base">✈️</div>
           <div class="text-right">
-            <p class="text-[9px] text-slate-500 font-bold uppercase">ARRIVAL</p>
-            <p class="font-black text-white text-sm" id="ticket-to">-</p>
+            <p class="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase">ARRIVAL</p>
+            <p class="font-black text-sm" id="ticket-to">-</p>
           </div>
         </div>
 
-        <div class="border border-slate-800 rounded-xl p-3 bg-slate-950/50">
-          <p class="text-[11px] font-bold text-slate-300 mb-2">Price Breakdown Per Person:</p>
-          <div id="ticket-breakdown" class="text-xs text-slate-400 space-y-2 mono"></div>
+        <div class="border border-slate-200 dark:border-slate-800 rounded-xl p-3 bg-slate-50 dark:bg-slate-950/50">
+          <p class="text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-2">Price Breakdown Per Person:</p>
+          <div id="ticket-breakdown" class="text-xs text-slate-600 dark:text-slate-400 space-y-2 mono"></div>
         </div>
 
-        <div class="flex justify-between items-center text-xs pt-2 bg-slate-950 p-3 rounded-xl border border-slate-800">
-          <span class="font-bold text-slate-300">Total Group Fare:</span>
-          <span class="text-xl font-black text-emerald-400 mono" id="ticket-fare">₹-</span>
+        <div class="flex justify-between items-center text-xs pt-2 bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+          <span class="font-bold text-slate-700 dark:text-slate-300">Total Group Fare:</span>
+          <span class="text-xl font-black text-emerald-600 dark:text-emerald-400 mono" id="ticket-fare">₹-</span>
         </div>
       </div>
 
@@ -515,7 +538,7 @@
         <button id="mmt-redirect-btn" onclick="redirectToMMT()" class="w-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold py-2.5 rounded-xl text-xs shadow transition flex items-center justify-center space-x-2">
           <span>🔗 Book Real Tickets on MakeMyTrip</span>
         </button>
-        <button onclick="closeModal()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white font-medium py-2 rounded-xl text-xs transition">
+        <button onclick="closeModal()" class="w-full bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-400 font-medium py-2 rounded-xl text-xs transition">
           Close
         </button>
       </div>
@@ -538,7 +561,6 @@
       { name: 'Traveler 1', age: 26, category: 'regular', cabin: 'economy' }
     ];
 
-    // Multi-City segments store
     let multiCitySegments = [
       { origin: 'DEL', destination: 'BLR', date: '' },
       { origin: 'BLR', destination: 'PNQ', date: '' }
@@ -562,28 +584,48 @@
       'IXC': [30.6735, 76.7885]
     };
 
+    // Theme Toggle Logic
+    function toggleTheme() {
+      const html = document.documentElement;
+      const icon = document.getElementById('theme-icon');
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+        icon.textContent = '🌙';
+      } else {
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+        icon.textContent = '☀️';
+      }
+    }
+
+    if (localStorage.getItem('theme') === 'light') {
+      document.documentElement.classList.remove('dark');
+      document.getElementById('theme-icon').textContent = '🌙';
+    }
+
     function renderPassengerRoster() {
       const container = document.getElementById('passenger-roster-list');
       container.innerHTML = '';
 
       passengerRoster.forEach((p, idx) => {
         const card = document.createElement('div');
-        card.className = "bg-slate-950 p-4 rounded-xl border border-slate-800 grid grid-cols-1 sm:grid-cols-12 gap-3 items-center";
+        card.className = "bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-12 gap-3 items-center";
         
         card.innerHTML = `
           <div class="sm:col-span-3">
-            <span class="text-xs font-bold text-white block">${p.name || `Traveler ${idx+1}`}</span>
-            <span class="text-[10px] text-slate-500 mono">Passenger #${idx+1}</span>
+            <span class="text-xs font-bold block">${p.name || `Traveler ${idx+1}`}</span>
+            <span class="text-[10px] text-slate-400 dark:text-slate-500 mono">Passenger #${idx+1}</span>
           </div>
 
           <div class="sm:col-span-2">
-            <label class="text-[10px] font-bold text-slate-400 uppercase mono block">Age</label>
-            <input type="number" min="0" max="100" value="${p.age}" onchange="updatePaxField(${idx}, 'age', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-white font-bold mono outline-none focus:border-sky-500">
+            <label class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase mono block">Age</label>
+            <input type="number" min="0" max="100" value="${p.age}" onchange="updatePaxField(${idx}, 'age', this.value)" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1 text-xs font-bold mono outline-none focus:border-sky-500">
           </div>
 
           <div class="sm:col-span-3">
-            <label class="text-[10px] font-bold text-slate-400 uppercase mono block">Cabin Class</label>
-            <select onchange="updatePaxField(${idx}, 'cabin', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-emerald-400 font-bold outline-none cursor-pointer focus:border-sky-500">
+            <label class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase mono block">Cabin Class</label>
+            <select onchange="updatePaxField(${idx}, 'cabin', this.value)" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-2 py-1 text-xs text-emerald-600 dark:text-emerald-400 font-bold outline-none cursor-pointer focus:border-sky-500">
               <option value="economy" ${p.cabin === 'economy' ? 'selected' : ''}>Economy</option>
               <option value="premium_economy" ${p.cabin === 'premium_economy' ? 'selected' : ''}>Prem. Economy</option>
               <option value="business" ${p.cabin === 'business' ? 'selected' : ''}>Business</option>
@@ -592,8 +634,8 @@
           </div>
 
           <div class="sm:col-span-4">
-            <label class="text-[10px] font-bold text-slate-400 uppercase mono block">Special Offer / Discount</label>
-            <select onchange="updatePaxField(${idx}, 'category', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-sky-400 font-bold outline-none cursor-pointer focus:border-sky-500">
+            <label class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase mono block">Special Offer / Discount</label>
+            <select onchange="updatePaxField(${idx}, 'category', this.value)" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1 text-xs text-sky-600 dark:text-sky-400 font-bold outline-none cursor-pointer focus:border-sky-500">
               <option value="regular" ${p.category === 'regular' ? 'selected' : ''}>🏢 Regular Fare (No Offer)</option>
               <option value="student" ${p.category === 'student' ? 'selected' : ''}>🎓 Student (15% Off, 12-26y)</option>
               <option value="senior" ${p.category === 'senior' ? 'selected' : ''}>👴 Senior Citizen (20% Off, 60+)</option>
@@ -631,9 +673,9 @@
 
     function quickApplyOffer(cat) {
       document.querySelectorAll('.fare-pill').forEach(p => {
-        p.className = "w-full fare-pill border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-300 p-3 rounded-xl text-xs font-bold transition text-left";
+        p.className = "w-full fare-pill border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-950 hover:border-slate-400 text-slate-700 dark:text-slate-300 p-3 rounded-xl text-xs font-bold transition text-left";
       });
-      document.getElementById(`fare-${cat}`).className = "w-full fare-pill border-2 border-sky-400 bg-sky-950/60 text-sky-200 p-3 rounded-xl text-xs font-bold transition text-left";
+      document.getElementById(`fare-${cat}`).className = "w-full fare-pill border-2 border-sky-500 bg-sky-50 dark:bg-sky-950/60 text-sky-900 dark:text-sky-200 p-3 rounded-xl text-xs font-bold transition text-left";
 
       if (passengerRoster.length === 1) {
         passengerRoster[0].category = cat;
@@ -685,7 +727,7 @@
 
       multiCitySegments.forEach((seg, idx) => {
         const row = document.createElement('div');
-        row.className = "grid grid-cols-1 md:grid-cols-12 gap-3 bg-slate-950/90 p-4 rounded-2xl border border-slate-800 items-center relative";
+        row.className = "grid grid-cols-1 md:grid-cols-12 gap-3 bg-slate-50 dark:bg-slate-950/90 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 items-center relative";
 
         let originOptions = '';
         let destOptions = '';
@@ -696,32 +738,32 @@
 
         row.innerHTML = `
           <div class="md:col-span-1 flex items-center justify-center">
-            <span class="mono text-[10px] font-black uppercase text-sky-400 bg-sky-950 border border-sky-800 px-2 py-1 rounded">LEG ${idx+1}</span>
+            <span class="mono text-[10px] font-black uppercase text-sky-600 dark:text-sky-400 bg-sky-100 dark:bg-sky-950 border border-sky-300 dark:border-sky-800 px-2 py-1 rounded">LEG ${idx+1}</span>
           </div>
 
-          <div class="md:col-span-4 bg-slate-900 p-3 rounded-xl border border-slate-800">
-            <span class="text-[10px] font-black uppercase tracking-wider text-sky-400 block mono">From</span>
-            <select onchange="updateMultiCitySegment(${idx}, 'origin', this.value)" class="w-full font-bold text-sm text-white bg-slate-900 outline-none cursor-pointer mt-1">
+          <div class="md:col-span-4 bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+            <span class="text-[10px] font-black uppercase tracking-wider text-sky-600 dark:text-sky-400 block mono">From</span>
+            <select onchange="updateMultiCitySegment(${idx}, 'origin', this.value)" class="w-full font-bold text-sm bg-white dark:bg-slate-900 outline-none cursor-pointer mt-1">
               ${originOptions}
             </select>
           </div>
 
-          <div class="md:col-span-4 bg-slate-900 p-3 rounded-xl border border-slate-800">
-            <span class="text-[10px] font-black uppercase tracking-wider text-emerald-400 block mono">To</span>
-            <select onchange="updateMultiCitySegment(${idx}, 'destination', this.value)" class="w-full font-bold text-sm text-white bg-slate-900 outline-none cursor-pointer mt-1">
+          <div class="md:col-span-4 bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+            <span class="text-[10px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block mono">To</span>
+            <select onchange="updateMultiCitySegment(${idx}, 'destination', this.value)" class="w-full font-bold text-sm bg-white dark:bg-slate-900 outline-none cursor-pointer mt-1">
               ${destOptions}
             </select>
           </div>
 
-          <div class="md:col-span-2 bg-slate-900 p-3 rounded-xl border border-slate-800">
-            <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 block mono">Date</span>
-            <input type="date" value="${seg.date}" onchange="updateMultiCitySegment(${idx}, 'date', this.value)" class="w-full font-bold text-xs text-white bg-transparent outline-none mt-1 [color-scheme:dark]">
+          <div class="md:col-span-2 bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+            <span class="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 block mono">Date</span>
+            <input type="date" value="${seg.date}" onchange="updateMultiCitySegment(${idx}, 'date', this.value)" class="w-full font-bold text-xs bg-transparent outline-none mt-1 [color-scheme:light] dark:[color-scheme:dark]">
           </div>
 
           <div class="md:col-span-1 flex justify-center">
             ${idx >= 2 ? `
-              <button type="button" onclick="removeMultiCitySegment(${idx})" class="text-rose-400 hover:text-rose-300 font-bold text-sm p-1">✕</button>
-            ` : `<span class="text-slate-600 text-xs">Required</span>`}
+              <button type="button" onclick="removeMultiCitySegment(${idx})" class="text-rose-500 dark:text-rose-400 hover:text-rose-600 font-bold text-sm p-1">✕</button>
+            ` : `<span class="text-slate-400 text-xs">Required</span>`}
           </div>
         `;
 
@@ -782,11 +824,11 @@
       if (originMarker) radarMap.removeLayer(originMarker);
       if (destMarker) radarMap.removeLayer(destMarker);
 
-      originMarker = L.circleMarker(originCoord, { radius: 7, color: '#38bdf8', fillColor: '#0284c7', fillOpacity: 0.9 }).addTo(radarMap).bindPopup(`Departure: ${originCode}`);
-      destMarker = L.circleMarker(destCoord, { radius: 7, color: '#10b981', fillColor: '#059669', fillOpacity: 0.9 }).addTo(radarMap).bindPopup(`Arrival: ${destCode}`);
+      originMarker = L.circleMarker(originCoord, { radius: 7, color: '#0284c7', fillColor: '#38bdf8', fillOpacity: 0.9 }).addTo(radarMap).bindPopup(`Departure: ${originCode}`);
+      destMarker = L.circleMarker(destCoord, { radius: 7, color: '#059669', fillColor: '#10b981', fillOpacity: 0.9 }).addTo(radarMap).bindPopup(`Arrival: ${destCode}`);
 
       routeLine = L.polyline([originCoord, destCoord], {
-        color: '#38bdf8',
+        color: '#0284c7',
         weight: 3,
         opacity: 0.8,
         dashArray: '8, 8'
@@ -837,7 +879,7 @@
       ['oneway', 'roundtrip', 'multicity'].forEach(m => {
         const btn = document.getElementById(`btn-mode-${m}`);
         if (btn) {
-          btn.className = (m === mode) ? "px-4 py-2 rounded-xl text-xs font-bold bg-sky-500 text-slate-950 shadow transition" : "px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition";
+          btn.className = (m === mode) ? "px-4 py-2 rounded-xl text-xs font-bold bg-sky-500 text-white shadow transition" : "px-4 py-2 rounded-xl text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition";
         }
       });
 
@@ -856,15 +898,15 @@
         multiBox.classList.add('hidden');
         
         if (mode === 'roundtrip') {
-          returnBox.className = "md:col-span-2 bg-slate-900 p-3.5 rounded-xl border border-slate-800 hover:border-sky-500 transition";
+          returnBox.className = "md:col-span-2 bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-slate-300 dark:border-slate-800 hover:border-sky-500 transition";
           returnInput.disabled = false;
-          returnInput.classList.remove('cursor-not-allowed', 'text-slate-500');
-          returnInput.classList.add('text-white');
+          returnInput.classList.remove('cursor-not-allowed', 'text-slate-400', 'dark:text-slate-500');
+          returnInput.classList.add('text-slate-900', 'dark:text-white');
           const dept = new Date(document.getElementById('search-date').value || new Date());
           dept.setDate(dept.getDate() + 4);
           returnInput.value = dept.toISOString().split('T')[0];
         } else {
-          returnBox.className = "md:col-span-2 bg-slate-950/40 p-3.5 rounded-xl border border-dashed border-slate-800 opacity-40 transition";
+          returnBox.className = "md:col-span-2 bg-slate-100 dark:bg-slate-950/40 p-3.5 rounded-xl border border-dashed border-slate-300 dark:border-slate-800 opacity-40 transition";
           returnInput.disabled = true;
           returnInput.value = '';
         }
@@ -877,12 +919,12 @@
         document.getElementById('section-booking').classList.remove('hidden');
         document.getElementById('section-analytics').classList.add('hidden');
         document.getElementById('tab-booking').className = "px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg shadow-sky-500/20 border border-sky-400/30 transition";
-        document.getElementById('tab-analytics').className = "px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800 transition";
+        document.getElementById('tab-analytics').className = "px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-slate-200 dark:bg-slate-900/80 hover:bg-slate-300 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-800 transition";
       } else {
         document.getElementById('section-booking').classList.add('hidden');
         document.getElementById('section-analytics').classList.remove('hidden');
         document.getElementById('tab-analytics').className = "px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg shadow-sky-500/20 border border-sky-400/30 transition";
-        document.getElementById('tab-booking').className = "px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800 transition";
+        document.getElementById('tab-booking').className = "px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-slate-200 dark:bg-slate-900/80 hover:bg-slate-300 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-800 transition";
       }
     }
 
@@ -891,7 +933,6 @@
       today.setDate(today.getDate() + 7);
       document.getElementById('search-date').value = today.toISOString().split('T')[0];
 
-      // Init multi city dates
       const m1 = new Date(); m1.setDate(m1.getDate() + 7);
       const m2 = new Date(); m2.setDate(m2.getDate() + 10);
       multiCitySegments[0].date = m1.toISOString().split('T')[0];
@@ -1001,7 +1042,6 @@
         });
         const data = await res.json();
 
-        // AI Timing verdict
         const titleEl = document.getElementById('timing-verdict-title');
         const subEl = document.getElementById('timing-verdict-sub');
         const iconEl = document.getElementById('timing-icon');
@@ -1034,19 +1074,18 @@
         subEl.innerText = subText;
         
         if (color === 'rose') {
-          titleEl.className = "text-xl font-black text-rose-400 mono";
+          titleEl.className = "text-xl font-black text-rose-600 dark:text-rose-400 mono";
           iconEl.innerText = "🚨";
         } else if (color === 'sky') {
-          titleEl.className = "text-xl font-black text-sky-400 mono";
+          titleEl.className = "text-xl font-black text-sky-600 dark:text-sky-400 mono";
           iconEl.innerText = "🎯";
         } else {
-          titleEl.className = "text-xl font-black text-emerald-400 mono";
+          titleEl.className = "text-xl font-black text-emerald-600 dark:text-emerald-400 mono";
           iconEl.innerText = "⏳";
         }
 
         document.getElementById('results-count-badge').innerText = `${data.all_deals.length} Flights Found`;
 
-        // Side-by-Side Comparator Table
         const tbody = document.getElementById('comparator-tbody');
         tbody.innerHTML = '';
         
@@ -1064,26 +1103,26 @@
           
           let surgeBadge = '';
           if (fareDiff > 0) {
-            surgeBadge = `<span class="bg-rose-950/80 text-rose-300 border border-rose-800/80 px-2 py-0.5 rounded text-[10px] font-bold">▲ ₹${fareDiff.toLocaleString()} Over Fair Price (+${pctDiff}%)</span>`;
+            surgeBadge = `<span class="bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800/80 px-2 py-0.5 rounded text-[10px] font-bold">▲ ₹${fareDiff.toLocaleString()} Over Fair Price (+${pctDiff}%)</span>`;
           } else {
-            surgeBadge = `<span class="bg-emerald-950/80 text-emerald-300 border border-emerald-800/80 px-2 py-0.5 rounded text-[10px] font-bold">✔ Fair Base Price</span>`;
+            surgeBadge = `<span class="bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800/80 px-2 py-0.5 rounded text-[10px] font-bold">✔ Fair Base Price</span>`;
           }
 
           const row = document.createElement('tr');
-          row.className = "hover:bg-slate-800/40 transition";
+          row.className = "hover:bg-slate-100 dark:hover:bg-slate-800/40 transition";
           row.innerHTML = `
-            <td class="py-3 px-4 font-bold text-white flex items-center space-x-2">
+            <td class="py-3 px-4 font-bold flex items-center space-x-2">
               <span>✈️</span> <span>${d.airline} (${d.flight_number})</span>
             </td>
-            <td class="py-3 px-4 text-sky-300">${d.departure_time} IST</td>
+            <td class="py-3 px-4 text-sky-600 dark:text-sky-300">${d.departure_time} IST</td>
             <td class="py-3 px-4 font-mono font-bold">₹${d.base_unit_fare.toLocaleString()}</td>
             <td class="py-3 px-4">${surgeBadge}</td>
-            <td class="py-3 px-4 font-bold text-emerald-400">₹${d.total_trip_cost.toLocaleString()}</td>
-            <td class="py-3 px-4 text-slate-300">${sp.baggage}</td>
-            <td class="py-3 px-4 text-slate-300">${sp.pitch}</td>
-            <td class="py-3 px-4 text-emerald-400 font-bold">${sp.otp}</td>
+            <td class="py-3 px-4 font-bold text-emerald-600 dark:text-emerald-400">₹${d.total_trip_cost.toLocaleString()}</td>
+            <td class="py-3 px-4 text-slate-600 dark:text-slate-300">${sp.baggage}</td>
+            <td class="py-3 px-4 text-slate-600 dark:text-slate-300">${sp.pitch}</td>
+            <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400 font-bold">${sp.otp}</td>
             <td class="py-3 px-4">
-              <button onclick='launchPreciseMMT(${JSON.stringify(d)}, "${origin}", "${destination}")' class="bg-red-950 hover:bg-red-900 text-rose-300 border border-red-800 px-3 py-1 rounded-lg text-[11px] font-bold transition">
+              <button onclick='launchPreciseMMT(${JSON.stringify(d)}, "${origin}", "${destination}")' class="bg-red-100 dark:bg-red-950 hover:bg-red-200 dark:hover:bg-red-900 text-rose-700 dark:text-rose-300 border border-red-300 dark:border-red-800 px-3 py-1 rounded-lg text-[11px] font-bold transition">
                 Book Ticket ↗
               </button>
             </td>
@@ -1091,7 +1130,6 @@
           tbody.appendChild(row);
         });
 
-        // Flight Cards
         const grid = document.getElementById('deals-grid');
         grid.innerHTML = '';
 
@@ -1103,14 +1141,14 @@
           let cardSurgeNotice = '';
           if (fareDiff > 0) {
             cardSurgeNotice = `
-              <div class="mt-2 text-[10px] mono text-rose-300 bg-rose-950/60 border border-rose-800/60 px-2 py-1 rounded-lg flex items-center justify-between">
+              <div class="mt-2 text-[10px] mono text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800/60 px-2 py-1 rounded-lg flex items-center justify-between">
                 <span>⚠️ SURGE DETECTED</span>
                 <span class="font-bold">+₹${fareDiff.toLocaleString()} Above Fair Price (${pctDiff}%)</span>
               </div>
             `;
           } else {
             cardSurgeNotice = `
-              <div class="mt-2 text-[10px] mono text-emerald-300 bg-emerald-950/60 border border-emerald-800/60 px-2 py-1 rounded-lg flex items-center justify-between">
+              <div class="mt-2 text-[10px] mono text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 px-2 py-1 rounded-lg flex items-center justify-between">
                 <span>✔ FAIR TICKET PRICE</span>
                 <span class="font-bold">Standard Value</span>
               </div>
@@ -1118,55 +1156,55 @@
           }
 
           const breakdownPills = deal.breakdown.map(b => `
-            <div class="flex justify-between items-center text-[10px] mono py-1 border-b border-slate-800/50">
+            <div class="flex justify-between items-center text-[10px] mono py-1 border-b border-slate-200 dark:border-slate-800/50">
               <div>
-                <span class="text-white font-semibold">${b.passenger}</span>
-                <span class="text-slate-400"> (${b.age}y, ${b.cabin})</span>
-                <span class="text-sky-300 block text-[9px]">${b.offer}</span>
+                <span class="font-semibold">${b.passenger}</span>
+                <span class="text-slate-500 dark:text-slate-400"> (${b.age}y, ${b.cabin})</span>
+                <span class="text-sky-600 dark:text-sky-300 block text-[9px]">${b.offer}</span>
               </div>
-              <span class="text-emerald-400 font-bold">₹${b.seat_fare.toLocaleString()}</span>
+              <span class="text-emerald-600 dark:text-emerald-400 font-bold">₹${b.seat_fare.toLocaleString()}</span>
             </div>
           `).join('');
 
           const card = document.createElement('div');
-          card.className = `p-4 rounded-2xl border bg-slate-900/90 shadow-xl flex flex-col justify-between ${isBest ? 'border-sky-400 ring-2 ring-sky-500/20' : 'border-slate-800'}`;
+          card.className = `p-4 rounded-2xl border bg-white/90 dark:bg-slate-900/90 shadow-xl flex flex-col justify-between ${isBest ? 'border-sky-500 ring-2 ring-sky-500/20' : 'border-slate-200 dark:border-slate-800'}`;
           
           card.innerHTML = `
             <div>
               <div class="flex justify-between items-start">
                 <div>
-                  <span class="mono text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded ${isBest ? 'bg-sky-950 text-sky-300 border border-sky-800' : 'bg-slate-800 text-slate-300'}">
+                  <span class="mono text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded ${isBest ? 'bg-sky-100 dark:bg-sky-950 text-sky-700 dark:text-sky-300 border border-sky-300 dark:border-sky-800' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'}">
                     ${isBest ? '🏆 Best Fair-Price Flight' : deal.airline}
                   </span>
-                  <h4 class="font-black text-white text-base mt-1.5">${deal.airline} <span class="text-[11px] font-semibold text-slate-400 mono">(${deal.flight_number})</span></h4>
+                  <h4 class="font-black text-base mt-1.5">${deal.airline} <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 mono">(${deal.flight_number})</span></h4>
                 </div>
-                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-sky-400 border border-slate-700 mono">${deal.segments}</span>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-sky-600 dark:text-sky-400 border border-slate-200 dark:border-slate-700 mono">${deal.segments}</span>
               </div>
 
-              <div class="mt-3 flex items-center justify-between text-[11px] text-slate-400 bg-slate-950 p-2.5 rounded-xl border border-slate-800/80 mono">
-                <span>DEP: <strong class="text-white">${deal.departure_time} IST</strong></span>
-                <span class="text-emerald-400 font-bold">&#x2714; Confirmed Schedule</span>
+              <div class="mt-3 flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-950 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800/80 mono">
+                <span>DEP: <strong class="text-slate-900 dark:text-white">${deal.departure_time} IST</strong></span>
+                <span class="text-emerald-600 dark:text-emerald-400 font-bold">&#x2714; Confirmed Schedule</span>
               </div>
 
               ${cardSurgeNotice}
 
-              <div class="mt-3 pt-2.5 border-t border-slate-800">
-                <p class="text-[10px] text-slate-400 mb-1 font-bold uppercase mono">Individual Passenger Cost:</p>
-                <div class="bg-slate-950/70 p-2.5 rounded-xl border border-slate-800/80 space-y-1 mb-2">
+              <div class="mt-3 pt-2.5 border-t border-slate-200 dark:border-slate-800">
+                <p class="text-[10px] text-slate-500 dark:text-slate-400 mb-1 font-bold uppercase mono">Individual Passenger Cost:</p>
+                <div class="bg-slate-50 dark:bg-slate-950/70 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800/80 space-y-1 mb-2">
                   ${breakdownPills}
                 </div>
                 <div class="flex items-baseline space-x-1.5">
-                  <h3 class="text-xl font-black text-emerald-400 mono">₹${deal.total_trip_cost.toLocaleString()}</h3>
-                  <span class="text-[10px] text-slate-400">Total for ${data.seats} Traveler${data.seats > 1 ? 's' : ''}</span>
+                  <h3 class="text-xl font-black text-emerald-600 dark:text-emerald-400 mono">₹${deal.total_trip_cost.toLocaleString()}</h3>
+                  <span class="text-[10px] text-slate-500 dark:text-slate-400">Total for ${data.seats} Traveler${data.seats > 1 ? 's' : ''}</span>
                 </div>
               </div>
             </div>
 
-            <div class="mt-4 pt-3 border-t border-slate-800 grid grid-cols-2 gap-2">
-              <button onclick='openBooking(${JSON.stringify(deal)}, "${data.origin_city}", "${data.destination_city}")' class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-black py-2 rounded-xl text-xs transition shadow">
+            <div class="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 grid grid-cols-2 gap-2">
+              <button onclick='openBooking(${JSON.stringify(deal)}, "${data.origin_city}", "${data.destination_city}")' class="bg-sky-500 hover:bg-sky-400 text-white dark:text-slate-950 font-black py-2 rounded-xl text-xs transition shadow">
                 View Receipt
               </button>
-              <button onclick='launchPreciseMMT(${JSON.stringify(deal)}, "${origin}", "${destination}")' class="bg-red-950/80 hover:bg-red-900 text-rose-200 border border-red-800/80 font-bold py-2 rounded-xl text-xs transition flex items-center justify-center space-x-1">
+              <button onclick='launchPreciseMMT(${JSON.stringify(deal)}, "${origin}", "${destination}")' class="bg-red-100 dark:bg-red-950/80 hover:bg-red-200 dark:hover:bg-red-900 text-rose-700 dark:text-rose-200 border border-red-300 dark:border-red-800/80 font-bold py-2 rounded-xl text-xs transition flex items-center justify-center space-x-1">
                 <span>Book Ticket</span>
                 <span>↗</span>
               </button>
@@ -1190,13 +1228,13 @@
 
       const bd = document.getElementById('ticket-breakdown');
       bd.innerHTML = deal.breakdown.map(b => `
-        <div class="flex justify-between items-center border-b border-slate-800 pb-1.5 text-xs mono">
+        <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-1.5 text-xs mono">
           <div>
-            <span class="text-white font-bold">${b.passenger}</span>
-            <span class="text-slate-400"> (${b.age}y &bull; ${b.cabin})</span>
-            <div class="text-sky-400 text-[10px]">${b.offer}</div>
+            <span class="font-bold">${b.passenger}</span>
+            <span class="text-slate-500 dark:text-slate-400"> (${b.age}y &bull; ${b.cabin})</span>
+            <div class="text-sky-600 dark:text-sky-400 text-[10px]">${b.offer}</div>
           </div>
-          <span class="font-bold text-emerald-400">₹${b.seat_fare.toLocaleString()}</span>
+          <span class="font-bold text-emerald-600 dark:text-emerald-400">₹${b.seat_fare.toLocaleString()}</span>
         </div>
       `).join('');
 
@@ -1268,10 +1306,10 @@
           responsive: true, 
           maintainAspectRatio: false,
           scales: {
-            x: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } },
-            y: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } }
+            x: { ticks: { color: '#64748b' }, grid: { color: 'rgba(100, 116, 139, 0.1)' } },
+            y: { ticks: { color: '#64748b' }, grid: { color: 'rgba(100, 116, 139, 0.1)' } }
           },
-          plugins: { legend: { labels: { color: '#e2e8f0' } } }
+          plugins: { legend: { labels: { color: '#64748b' } } }
         }
       });
     }
@@ -1286,17 +1324,17 @@
           datasets: [{
             label: 'Average Flight Price (₹)',
             data: Object.values(airlineData),
-            backgroundColor: '#38bdf8'
+            backgroundColor: '#0ea5e9'
           }]
         },
         options: { 
           responsive: true, 
           maintainAspectRatio: false,
           scales: {
-            x: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } },
-            y: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } }
+            x: { ticks: { color: '#64748b' }, grid: { color: 'rgba(100, 116, 139, 0.1)' } },
+            y: { ticks: { color: '#64748b' }, grid: { color: 'rgba(100, 116, 139, 0.1)' } }
           },
-          plugins: { legend: { labels: { color: '#e2e8f0' } } }
+          plugins: { legend: { labels: { color: '#64748b' } } }
         }
       });
     }
