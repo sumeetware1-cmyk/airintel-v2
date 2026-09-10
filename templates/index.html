@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AirIntel Pro | National Aviation Intelligence & Anti-Gouging Matrix</title>
+  <title>AirIntel Pro | Smart Domestic Flight Price Monitor</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
@@ -30,7 +30,7 @@
     select option {
       background-color: #0f172a !important;
       color: #f8fafc !important;
-      padding: 10px;
+      padding: 8px;
     }
 
     #air-radar-map {
@@ -61,7 +61,7 @@
 </head>
 <body class="radar-grid text-slate-100 min-h-screen pb-24">
 
-  <!-- Top Global Navigation Header -->
+  <!-- Navigation Bar -->
   <nav class="bg-slate-950/80 backdrop-blur-xl border-b border-sky-900/40 px-6 py-4 flex flex-wrap justify-between items-center sticky top-0 z-50 shadow-2xl">
     <div class="flex items-center space-x-3.5">
       <div class="h-11 w-11 rounded-xl bg-gradient-to-br from-sky-400 via-blue-600 to-indigo-700 flex items-center justify-center shadow-lg shadow-sky-500/20 border border-sky-400/30">
@@ -71,163 +71,163 @@
       </div>
       <div>
         <div class="flex items-center space-x-2">
-          <span class="mono text-[10px] font-black tracking-widest text-sky-400 uppercase bg-sky-950/90 px-2 py-0.5 rounded border border-sky-800">DGCA &bull; MoSPI AUDIT GATEWAY</span>
-          <h1 class="font-bold text-base sm:text-lg text-white tracking-wide">National Airfare Surveillance Matrix</h1>
+          <span class="mono text-[10px] font-black tracking-widest text-sky-400 uppercase bg-sky-950/90 px-2 py-0.5 rounded border border-sky-800">SMART FLIGHT MONITOR</span>
+          <h1 class="font-bold text-base sm:text-lg text-white tracking-wide">AirIntel Pro</h1>
         </div>
-        <p class="text-[11px] text-slate-400">Predatory Surge Auditor, Statutory Concession Engine & MoSPI Inflation Tracker</p>
+        <p class="text-[11px] text-slate-400">Domestic Fair-Fare Tracker, Multi-Passenger Deals & Price Surge Detector</p>
       </div>
     </div>
     
     <div class="flex space-x-2.5 mt-3 sm:mt-0">
       <button onclick="switchTab('booking')" id="tab-booking" class="px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg shadow-sky-500/20 border border-sky-400/30 transition">
-        ✈️ Corridor Surveillance
+        ✈️ Search & Price Radar
       </button>
       <button onclick="switchTab('analytics')" id="tab-analytics" class="px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">
-        📊 MoSPI CPI Inflation Analytics
+        📊 Price History Analytics
       </button>
     </div>
   </nav>
 
-  <!-- Live Ingestion Telemetry Console -->
-  <aside aria-label="Ingestion Pipeline Telemetry" class="bg-slate-950 border-b border-slate-800/90 px-6 py-2 shadow-sm">
+  <!-- Live Status Bar -->
+  <aside aria-label="Pipeline Telemetry" class="bg-slate-950 border-b border-slate-800/90 px-6 py-2 shadow-sm">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-[11px] mono">
       <div class="flex items-center space-x-2">
         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span class="text-slate-400">INGESTION ENGINE:</span>
-        <span class="text-sky-300 font-bold">Playwright Chromium (Headless Session Mode)</span>
+        <span class="text-slate-400">DATA FEED:</span>
+        <span class="text-sky-300 font-bold">Active Domestic Ingestion</span>
       </div>
       <div class="flex items-center space-x-4 text-slate-400">
-        <span>Stealth Headers: <strong class="text-emerald-400">Emulated</strong></span>
-        <span>Jitter Delay: <strong class="text-emerald-400">2000ms</strong></span>
-        <span>Baseline Fail-Safe: <strong class="text-sky-400">airfare_domestic.xlsx (Active)</strong></span>
+        <span>Stealth Headers: <strong class="text-emerald-400">Enabled</strong></span>
+        <span>Anti-Gouging Safety Check: <strong class="text-emerald-400">Active</strong></span>
+        <span>Baseline Price Sheet: <strong class="text-sky-400">Connected</strong></span>
       </div>
     </div>
   </aside>
 
   <main class="max-w-7xl mx-auto px-4 mt-8">
 
-    <!-- TAB 1: CORRIDOR SURVEILLANCE & RADAR -->
+    <!-- TAB 1: FLIGHT SEARCH & RADAR -->
     <section id="section-booking" class="space-y-8">
 
-      <!-- KEY AIRSPACE KPI TILES -->
+      <!-- QUICK STAT TILES -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="bg-slate-900/70 backdrop-blur-md p-4 rounded-2xl border border-slate-800/80 shadow-lg">
           <div class="flex items-center justify-between">
-            <span class="text-xs text-slate-400 uppercase font-semibold">Audited Sector</span>
+            <span class="text-xs text-slate-400 uppercase font-semibold">Selected Route</span>
             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
           </div>
           <p class="mono text-lg font-black text-white mt-1" id="kpi-sector">BOM ➔ DEL</p>
-          <span class="text-[11px] text-sky-400 mono">Primary Trunk Route</span>
+          <span class="text-[11px] text-sky-400 mono">Main Trunk Route</span>
         </div>
 
         <div class="bg-slate-900/70 backdrop-blur-md p-4 rounded-2xl border border-slate-800/80 shadow-lg">
-          <span class="text-xs text-slate-400 uppercase font-semibold">MoSPI Baseline (30-45d)</span>
+          <span class="text-xs text-slate-400 uppercase font-semibold">Fair Normal Price</span>
           <p class="mono text-lg font-black text-emerald-400 mt-1" id="kpi-base">₹-</p>
-          <span class="text-[11px] text-slate-400 mono">Statutory Base = 100</span>
+          <span class="text-[11px] text-slate-400 mono">Booked 30+ days early</span>
         </div>
 
         <div class="bg-slate-900/70 backdrop-blur-md p-4 rounded-2xl border border-slate-800/80 shadow-lg">
-          <span class="text-xs text-slate-400 uppercase font-semibold">Spot Market Fare (1d)</span>
+          <span class="text-xs text-slate-400 uppercase font-semibold">Last-Minute Price</span>
           <p class="mono text-lg font-black text-amber-400 mt-1" id="kpi-spot">₹-</p>
-          <span class="text-[11px] text-amber-300 mono" id="kpi-surge">+--% Surge Rate</span>
+          <span class="text-[11px] text-amber-300 mono" id="kpi-surge">+--% Price Surge</span>
         </div>
 
         <div class="bg-slate-900/70 backdrop-blur-md p-4 rounded-2xl border border-slate-800/80 shadow-lg">
-          <span class="text-xs text-slate-400 uppercase font-semibold">Active Manifest</span>
-          <p class="mono text-lg font-black text-sky-400 mt-1" id="kpi-concession">1 Passenger</p>
-          <span class="text-[11px] text-slate-400 mono">Multi-Quota Concession Active</span>
+          <span class="text-xs text-slate-400 uppercase font-semibold">Travelers</span>
+          <p class="mono text-lg font-black text-sky-400 mt-1" id="kpi-concession">1 Traveler</p>
+          <span class="text-[11px] text-slate-400 mono">Independent Offers Active</span>
         </div>
       </div>
 
-      <!-- RADAR MAP & ROUTE FEASIBILITY INSPECTOR -->
+      <!-- RADAR MAP & ROUTE DETAILS -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div class="lg:col-span-8 bg-slate-900/90 rounded-3xl border border-sky-900/40 p-5 shadow-2xl backdrop-blur-xl">
           <div class="flex items-center justify-between mb-3">
             <span class="mono text-xs font-bold text-sky-400 uppercase tracking-widest flex items-center space-x-2">
               <span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span>
-              <span>National Airspace Telemetry & Corridor Radar</span>
+              <span>Interactive Flight Path & Radar</span>
             </span>
             <span class="mono text-[10px] text-emerald-400 bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">
-              ● LIVE RADAR TELEMETRY FEED
+              ● LIVE AIRSPACE TRACKER
             </span>
           </div>
           <div id="air-radar-map" class="border border-slate-800"></div>
           <div class="flex flex-wrap items-center justify-between mt-3 text-xs mono text-slate-400">
             <div class="flex items-center space-x-4">
-              <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span><span>Fair Base Tariff</span></span>
-              <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span><span>Surge Range (15-30%)</span></span>
-              <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span><span>High Gouge Alert (&gt;35%)</span></span>
+              <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span><span>Fair Price</span></span>
+              <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span><span>Normal Surge (15-30%)</span></span>
+              <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span><span>High Surge Alert (&gt;35%)</span></span>
             </div>
-            <span id="map-distance-readout" class="text-sky-300 font-bold">Corridor Distance: ~1,148 km</span>
+            <span id="map-distance-readout" class="text-sky-300 font-bold">Flight Distance: ~1,148 km</span>
           </div>
         </div>
 
         <div class="lg:col-span-4 bg-slate-900/90 rounded-3xl border border-sky-900/40 p-5 shadow-2xl backdrop-blur-xl flex flex-col justify-between">
           <div>
-            <span class="mono text-xs font-bold text-emerald-400 uppercase tracking-widest block mb-1">Route Feasibility Diagnostic</span>
-            <p class="text-xs text-slate-400 mb-4">Direct vs. Hub-and-Spoke viability analysis under DGCA operational rules.</p>
+            <span class="mono text-xs font-bold text-emerald-400 uppercase tracking-widest block mb-1">Flight Route Details</span>
+            <p class="text-xs text-slate-400 mb-4">Daily frequency and connectivity details for this corridor.</p>
 
             <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3 mono text-xs">
               <div class="flex justify-between">
-                <span class="text-slate-400">Sector Status:</span>
-                <span class="text-emerald-400 font-bold" id="feas-status">&#x2714; High-Density Direct</span>
+                <span class="text-slate-400">Route Type:</span>
+                <span class="text-emerald-400 font-bold" id="feas-status">&#x2714; High-Demand Direct</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-slate-400">Daily Flight Frequency:</span>
+                <span class="text-slate-400">Daily Flights:</span>
                 <span class="text-sky-300 font-bold" id="feas-frequency">~65 Flights / Day</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-slate-400">Avg Flight Duration:</span>
+                <span class="text-slate-400">Average Duration:</span>
                 <span class="text-white font-bold" id="feas-time">2h 10m</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-slate-400">UDAN Connectivity:</span>
-                <span class="text-slate-400 font-bold" id="feas-udan">Trunk Route (Non-RCS)</span>
+                <span class="text-slate-400">Pricing Policy:</span>
+                <span class="text-slate-300 font-bold" id="feas-udan">Fair-Fare Monitored</span>
               </div>
             </div>
           </div>
 
           <div class="mt-4 p-3.5 rounded-xl border border-sky-900/50 bg-sky-950/30 text-sky-300 text-xs">
-            <strong>Individual Concession Verification:</strong> Fares calculate dynamically per seat based on the passenger's specific eligibility (Students 15%, Seniors 20%, Armed Forces 25%).
+            <strong>Split Cabin & Offers:</strong> You can book different travelers in different classes (e.g. Business for you, Economy for others) with their individual student/senior discounts intact.
           </div>
         </div>
       </div>
 
-      <!-- PREDICTIVE BUY CLOCK & MONOPOLY AUDITOR -->
+      <!-- AI BUY TIMING & AIRLINE DOMINANCE -->
       <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
         <div class="md:col-span-7 bg-slate-900/90 rounded-3xl border border-sky-900/40 p-6 shadow-2xl backdrop-blur-xl flex items-center justify-between">
           <div class="space-y-1.5">
-            <span class="mono text-[10px] font-black uppercase tracking-widest text-slate-400 block">AI Price Timing Predictive Model</span>
-            <h3 class="text-xl font-black text-sky-400 mono" id="timing-verdict-title">OPTIMAL WINDOW (BUY NOW)</h3>
-            <p class="text-xs text-slate-400 max-w-md" id="timing-verdict-sub">Historical curve evaluating dynamic pricing spikes across departure windows.</p>
+            <span class="mono text-[10px] font-black uppercase tracking-widest text-slate-400 block">AI Price Timing Model (When to Buy)</span>
+            <h3 class="text-xl font-black text-sky-400 mono" id="timing-verdict-title">BEST TIME TO BUY NOW</h3>
+            <p class="text-xs text-slate-400 max-w-md" id="timing-verdict-sub">Calculates historical curves to tell you whether to lock in now or wait.</p>
           </div>
           <div class="text-4xl" id="timing-icon">🎯</div>
         </div>
 
         <div class="md:col-span-5 bg-slate-900/90 rounded-3xl border border-sky-900/40 p-6 shadow-2xl backdrop-blur-xl flex items-center justify-between">
           <div class="space-y-1">
-            <span class="mono text-[10px] font-black uppercase tracking-widest text-slate-400 block">Carrier Monopolization Index</span>
-            <h4 class="text-lg font-black text-amber-400 mono">IndiGo: 58% Capacity</h4>
-            <p class="text-[11px] text-slate-400">High single-carrier dominance can lead to artificial pricing surges.</p>
+            <span class="mono text-[10px] font-black uppercase tracking-widest text-slate-400 block">Airline Market Dominance</span>
+            <h4 class="text-lg font-black text-amber-400 mono">IndiGo: 58% Flight Share</h4>
+            <p class="text-[11px] text-slate-400">High single-airline dominance can cause higher price surges.</p>
           </div>
           <div class="text-3xl">⚖️</div>
         </div>
       </div>
 
-      <!-- FLIGHT DISPATCH CONTROL CONSOLE -->
+      <!-- FLIGHT SEARCH BOX -->
       <div class="bg-slate-900/90 rounded-3xl border border-sky-900/40 p-6 sm:p-8 shadow-2xl backdrop-blur-xl">
         <div class="flex flex-wrap items-center justify-between pb-6 border-b border-slate-800/80 gap-4 mb-6">
           <div class="flex items-center space-x-3 bg-slate-950/80 p-1.5 rounded-2xl border border-slate-800">
             <button type="button" onclick="setTripMode('oneway')" id="btn-mode-oneway" class="px-4 py-2 rounded-xl text-xs font-bold bg-sky-500 text-slate-950 shadow transition">One Way</button>
             <button type="button" onclick="setTripMode('roundtrip')" id="btn-mode-roundtrip" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition">Round Trip</button>
           </div>
-          <span class="text-xs text-sky-400 mono">&#x2714; INDIVIDUAL MULTI-CONCESSION ENGINE ACTIVE</span>
+          <span class="text-xs text-sky-400 mono">&#x2714; MULTI-PASSENGER & INDEPENDENT CABIN ENGINE READY</span>
         </div>
 
-        <!-- Input Parameters Grid -->
+        <!-- Inputs Grid -->
         <div class="grid grid-cols-1 md:grid-cols-12 gap-3.5 bg-slate-950/90 p-4 rounded-2xl border border-slate-800">
           <div class="md:col-span-3 bg-slate-900 p-3.5 rounded-xl border border-slate-800 hover:border-sky-500 transition">
-            <span class="text-[10px] font-black uppercase tracking-wider text-sky-400 block mono">Departure Hub (DEP)</span>
+            <span class="text-[10px] font-black uppercase tracking-wider text-sky-400 block mono">From (Departure City)</span>
             <select id="search-origin" class="w-full font-bold text-base text-white bg-slate-900 outline-none cursor-pointer mt-1"></select>
             <span class="text-[11px] text-slate-400 block truncate" id="origin-subtext">Origin Airport</span>
           </div>
@@ -237,7 +237,7 @@
           </div>
 
           <div class="md:col-span-3 bg-slate-900 p-3.5 rounded-xl border border-slate-800 hover:border-sky-500 transition">
-            <span class="text-[10px] font-black uppercase tracking-wider text-emerald-400 block mono">Arrival Hub (ARR)</span>
+            <span class="text-[10px] font-black uppercase tracking-wider text-emerald-400 block mono">To (Arrival City)</span>
             <select id="search-destination" class="w-full font-bold text-base text-white bg-slate-900 outline-none cursor-pointer mt-1"></select>
             <span class="text-[11px] text-slate-400 block truncate" id="dest-subtext">Destination Airport</span>
           </div>
@@ -253,77 +253,77 @@
           </div>
 
           <div onclick="togglePaxModal()" class="md:col-span-2 bg-sky-950/40 border border-sky-600/50 p-3.5 rounded-xl hover:border-sky-400 transition cursor-pointer flex flex-col justify-center">
-            <span class="text-[10px] font-black uppercase tracking-wider text-sky-400 block mono">Passenger Roster & Offers ⚙️</span>
-            <div class="font-bold text-sm text-white truncate mt-1" id="pax-summary-label">1 Passenger</div>
-            <span class="text-[11px] text-emerald-400 font-semibold truncate" id="cabin-summary-label">Configure Individual Offers</span>
+            <span class="text-[10px] font-black uppercase tracking-wider text-sky-400 block mono">Travelers & Cabins ⚙️</span>
+            <div class="font-bold text-sm text-white truncate mt-1" id="pax-summary-label">1 Traveler</div>
+            <span class="text-[11px] text-emerald-400 font-semibold truncate" id="cabin-summary-label">Click to customize</span>
           </div>
         </div>
 
-        <!-- DGCA Statutory Concession Selector with Hover Tooltips -->
+        <!-- SPECIAL OFFERS WITH HOVER GUIDES -->
         <div class="mt-6">
           <div class="flex items-center justify-between mb-2.5">
-            <span class="mono text-[11px] font-bold uppercase tracking-wider text-slate-400">DGCA Statutory Concession Registry:</span>
-            <span class="text-[11px] text-sky-400 mono">Hover badges for statutory guidelines ℹ️</span>
+            <span class="mono text-[11px] font-bold uppercase tracking-wider text-slate-400">Available Special Flight Offers:</span>
+            <span class="text-[11px] text-sky-400 mono">Hover over any offer for eligibility rules ℹ️</span>
           </div>
           
           <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5" id="special-fares-container">
             
             <!-- Regular Base -->
             <div class="relative group">
-              <button type="button" onclick="selectSpecialFare('regular')" id="fare-regular" class="w-full fare-pill border-2 border-sky-400 bg-sky-950/60 text-sky-200 p-3 rounded-xl text-xs font-bold transition text-left">
-                <span>🏢 Regular Base</span>
-                <span class="block text-[10px] font-normal text-slate-400 mt-0.5">Standard Market Fare</span>
+              <button type="button" onclick="quickApplyOffer('regular')" id="fare-regular" class="w-full fare-pill border-2 border-sky-400 bg-sky-950/60 text-sky-200 p-3 rounded-xl text-xs font-bold transition text-left">
+                <span>🏢 Regular Fare</span>
+                <span class="block text-[10px] font-normal text-slate-400 mt-0.5">Standard Ticket Price</span>
               </button>
               <div class="absolute bottom-full left-0 mb-2 hidden group-hover:block z-30 w-56 p-2.5 bg-slate-950 text-slate-200 text-[11px] rounded-xl border border-sky-500/40 shadow-2xl pointer-events-none">
-                Standard domestic tariffs without statutory quota concessions. Open to all travelers.
+                Standard ticket rate without special category quotas. Anyone can book this.
               </div>
             </div>
 
             <!-- Student -->
             <div class="relative group">
-              <button type="button" onclick="selectSpecialFare('student')" id="fare-student" class="w-full fare-pill border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-300 p-3 rounded-xl text-xs font-bold transition text-left">
+              <button type="button" onclick="quickApplyOffer('student')" id="fare-student" class="w-full fare-pill border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-300 p-3 rounded-xl text-xs font-bold transition text-left">
                 <span>🎓 Student (12y+)</span>
-                <span class="block text-[10px] font-normal text-slate-400 mt-0.5">Extra bags + rebate</span>
+                <span class="block text-[10px] font-normal text-slate-400 mt-0.5">15% Off + Extra Baggage</span>
               </button>
               <div class="absolute bottom-full left-0 mb-2 hidden group-hover:block z-30 w-64 p-3 bg-slate-950 text-slate-200 text-[11px] rounded-xl border border-sky-500/40 shadow-2xl pointer-events-none">
-                <strong class="text-sky-400 block mb-1">DGCA Student Statutory Quota:</strong>
-                Applicable to bonafide students aged 12 to 26 enrolled in recognized institutions. Mandatory valid physical Student ID required at check-in. Grants <strong>+10 kg baggage allowance</strong> on domestic carriers.
+                <strong class="text-sky-400 block mb-1">Student Offer Eligibility:</strong>
+                Valid for students aged 12 to 26 enrolled in recognized schools/colleges. Requires valid physical student ID card at airport check-in. Includes <strong>+10 kg free extra baggage</strong> on most domestic airlines.
               </div>
             </div>
 
             <!-- Senior Citizen -->
             <div class="relative group">
-              <button type="button" onclick="selectSpecialFare('senior')" id="fare-senior" class="w-full fare-pill border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-300 p-3 rounded-xl text-xs font-bold transition text-left">
+              <button type="button" onclick="quickApplyOffer('senior')" id="fare-senior" class="w-full fare-pill border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-300 p-3 rounded-xl text-xs font-bold transition text-left">
                 <span>👴 Senior Citizen</span>
-                <span class="block text-[10px] font-normal text-slate-400 mt-0.5">Up to 20% Base Off</span>
+                <span class="block text-[10px] font-normal text-slate-400 mt-0.5">20% Off Base Fare</span>
               </button>
               <div class="absolute bottom-full left-0 mb-2 hidden group-hover:block z-30 w-64 p-3 bg-slate-950 text-slate-200 text-[11px] rounded-xl border border-sky-500/40 shadow-2xl pointer-events-none">
-                <strong class="text-sky-400 block mb-1">Senior Citizen Concession:</strong>
-                Applicable only to Indian citizens aged 60 years or above on the departure date. Government photo ID with DOB (Aadhaar, Passport, or Voter ID) must be presented at the airline counter.
+                <strong class="text-sky-400 block mb-1">Senior Citizen Offer Eligibility:</strong>
+                Available for Indian citizens aged 60 years and above on the day of travel. Government-issued photo ID showing date of birth (Aadhaar, Passport, Voter ID) required at check-in.
               </div>
             </div>
 
             <!-- Armed Forces -->
             <div class="relative group">
-              <button type="button" onclick="selectSpecialFare('defense')" id="fare-defense" class="w-full fare-pill border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-300 p-3 rounded-xl text-xs font-bold transition text-left">
+              <button type="button" onclick="quickApplyOffer('defense')" id="fare-defense" class="w-full fare-pill border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-300 p-3 rounded-xl text-xs font-bold transition text-left">
                 <span>🎖️ Armed Forces</span>
-                <span class="block text-[10px] font-normal text-slate-400 mt-0.5">Up to 25% Base Rebate</span>
+                <span class="block text-[10px] font-normal text-slate-400 mt-0.5">25% Off Base Fare</span>
               </button>
               <div class="absolute bottom-full left-0 mb-2 hidden group-hover:block z-30 w-64 p-3 bg-slate-950 text-slate-200 text-[11px] rounded-xl border border-sky-500/40 shadow-2xl pointer-events-none">
-                <strong class="text-sky-400 block mb-1">Defense Concession:</strong>
-                Available to serving and retired military personnel of the Indian Armed Forces (Army, Navy, Air Force) and dependent family members. Official Armed Forces Service ID mandatory.
+                <strong class="text-sky-400 block mb-1">Armed Forces Eligibility:</strong>
+                Valid for serving and retired military personnel of the Army, Navy, Air Force, and their dependent family members. Official Armed Forces ID required.
               </div>
             </div>
 
             <!-- Doctors & Nurses -->
             <div class="relative group">
-              <button type="button" onclick="selectSpecialFare('medical')" id="fare-medical" class="w-full fare-pill border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-300 p-3 rounded-xl text-xs font-bold transition text-left">
+              <button type="button" onclick="quickApplyOffer('medical')" id="fare-medical" class="w-full fare-pill border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-300 p-3 rounded-xl text-xs font-bold transition text-left">
                 <span>🩺 Doctors & Nurses</span>
-                <span class="block text-[10px] font-normal text-slate-400 mt-0.5">Special Medical Rebate</span>
+                <span class="block text-[10px] font-normal text-slate-400 mt-0.5">10% Off Base Fare</span>
               </button>
               <div class="absolute bottom-full right-0 mb-2 hidden group-hover:block z-30 w-64 p-3 bg-slate-950 text-slate-200 text-[11px] rounded-xl border border-sky-500/40 shadow-2xl pointer-events-none">
-                <strong class="text-sky-400 block mb-1">Healthcare Concession:</strong>
-                Dedicated statutory discount for registered medical professionals (MBBS/MD) and nursing staff. Medical Council registration number or official hospital ID card required.
+                <strong class="text-sky-400 block mb-1">Doctor & Nurse Eligibility:</strong>
+                Special discount for registered medical doctors and nurses. Medical Council registration number or hospital work ID card required at airport counter.
               </div>
             </div>
 
@@ -332,33 +332,33 @@
 
         <div class="mt-8">
           <button onclick="searchFlights()" class="w-full bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-slate-950 font-black py-4 rounded-2xl text-sm sm:text-base shadow-xl shadow-sky-500/20 transition flex items-center justify-center space-x-3">
-            <span>EXECUTE RADAR SURVEILLANCE & CORRIDOR AUDIT</span>
+            <span>FIND FLIGHTS & AUDIT PRICES</span>
             <span>➔</span>
           </button>
         </div>
       </div>
 
-      <!-- SIDE-BY-SIDE CARRIER BENCHMARK & SURGE COMPARATOR -->
+      <!-- SIDE-BY-SIDE AIRLINE COMPARISON TABLE -->
       <div class="bg-slate-900/90 rounded-3xl border border-sky-900/40 p-6 shadow-2xl backdrop-blur-xl">
         <div class="flex items-center justify-between mb-4">
           <h3 class="text-base font-bold text-white flex items-center space-x-2">
-            <span>📊 Side-by-Side Carrier Benchmark & Concession Matrix</span>
+            <span>📊 Side-by-Side Airline Comparison & Price Surge Analysis</span>
           </h3>
-          <span class="mono text-xs text-sky-400">DGCA Baseline Surge Audit</span>
+          <span class="mono text-xs text-sky-400">Fair-Price Comparison</span>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs mono border-collapse">
             <thead>
               <tr class="border-b border-slate-800 text-slate-400">
-                <th class="py-3 px-4">Carrier & Flight</th>
+                <th class="py-3 px-4">Airline & Flight</th>
                 <th class="py-3 px-4">Departure Time</th>
-                <th class="py-3 px-4">Base Unit Fare</th>
-                <th class="py-3 px-4">Baseline Comparison</th>
-                <th class="py-3 px-4">Total Manifest Cost</th>
-                <th class="py-3 px-4">Checked Baggage</th>
-                <th class="py-3 px-4">Seat Pitch</th>
-                <th class="py-3 px-4">Historical OTP</th>
-                <th class="py-3 px-4">Actions</th>
+                <th class="py-3 px-4">Base Seat Fare</th>
+                <th class="py-3 px-4">Surge Assessment</th>
+                <th class="py-3 px-4">Total Group Price</th>
+                <th class="py-3 px-4">Baggage</th>
+                <th class="py-3 px-4">Legroom</th>
+                <th class="py-3 px-4">On-Time Score</th>
+                <th class="py-3 px-4">Book</th>
               </tr>
             </thead>
             <tbody id="comparator-tbody" class="divide-y divide-slate-800/60 text-slate-200"></tbody>
@@ -366,73 +366,73 @@
         </div>
       </div>
 
-      <!-- Flight Boarding Passes Grid -->
+      <!-- FLIGHT CARDS GRID -->
       <div>
         <div class="flex justify-between items-center mb-4">
           <h3 class="text-lg font-black text-white flex items-center space-x-2">
-            <span>Verified Domestic Flight Inventory</span>
-            <span class="text-xs text-slate-400 font-normal">(Ranked by DGCA FairFare Baseline)</span>
+            <span>Available Flights</span>
+            <span class="text-xs text-slate-400 font-normal">(Ranked by Best Fair-Price Value)</span>
           </h3>
-          <span class="mono text-xs text-sky-400 bg-sky-950/80 border border-sky-800 px-3 py-1 rounded-full font-bold" id="results-count-badge">Loading Flights...</span>
+          <span class="mono text-xs text-sky-400 bg-sky-950/80 border border-sky-800 px-3 py-1 rounded-full font-bold" id="results-count-badge">Searching...</span>
         </div>
         <div id="deals-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"></div>
       </div>
     </section>
 
-    <!-- TAB 2: MOSPI STATISTICAL ANALYTICS -->
+    <!-- TAB 2: PRICE HISTORY & STATS -->
     <section id="section-analytics" class="hidden space-y-6">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800 shadow-xl">
           <p class="text-xs font-semibold text-slate-400">Total Analyzed Records</p>
           <h4 id="stat-records" class="mono text-2xl font-black text-white mt-1">-</h4>
-          <span class="text-xs text-sky-400 bg-sky-950 px-2 py-0.5 rounded font-medium border border-sky-900">Domestic Corridors</span>
+          <span class="text-xs text-sky-400 bg-sky-950 px-2 py-0.5 rounded font-medium border border-sky-900">Domestic Routes</span>
         </div>
         <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800 shadow-xl">
-          <p class="text-xs font-semibold text-slate-400">Baseline Fare (30-45 Days)</p>
+          <p class="text-xs font-semibold text-slate-400">Normal Baseline Price (30+ Days)</p>
           <h4 id="stat-base" class="mono text-2xl font-black text-emerald-400 mt-1">₹-</h4>
-          <span class="text-xs text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded font-medium border border-emerald-900">MoSPI Base = 100</span>
+          <span class="text-xs text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded font-medium border border-emerald-900">Base Fair Index = 100</span>
         </div>
         <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800 shadow-xl">
-          <p class="text-xs font-semibold text-slate-400">Last-Minute Spot Fare (1 Day)</p>
+          <p class="text-xs font-semibold text-slate-400">Last-Minute Spot Price (1 Day)</p>
           <h4 id="stat-spot" class="mono text-2xl font-black text-amber-400 mt-1">₹-</h4>
-          <span class="text-xs text-amber-400 bg-amber-950 px-2 py-0.5 rounded font-medium border border-amber-900">+Dynamic Surge</span>
+          <span class="text-xs text-amber-400 bg-amber-950 px-2 py-0.5 rounded font-medium border border-amber-900">+Surge Rate</span>
         </div>
         <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800 shadow-xl">
-          <p class="text-xs font-semibold text-slate-400">MoSPI CPI Sub-Index</p>
+          <p class="text-xs font-semibold text-slate-400">Price Inflation Index</p>
           <h4 id="stat-cpi" class="mono text-2xl font-black text-blue-400 mt-1">-</h4>
-          <span id="stat-inflation" class="mono text-xs text-red-400 bg-red-950 px-2 py-0.5 rounded font-medium border border-red-900">-% Inflation</span>
+          <span id="stat-inflation" class="mono text-xs text-red-400 bg-red-950 px-2 py-0.5 rounded font-medium border border-red-900">-% Spike</span>
         </div>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="bg-slate-900/80 p-6 rounded-2xl border border-slate-800 shadow-xl">
           <div class="flex justify-between items-center mb-4">
-            <h3 class="font-bold text-white text-sm sm:text-base">Dynamic Pricing Curve by Booking Window</h3>
+            <h3 class="font-bold text-white text-sm sm:text-base">Price Increase as Travel Date Approaches</h3>
             <select id="route-select" onchange="loadTrendChart()" class="text-xs border border-slate-700 rounded-lg p-1.5 bg-slate-800 text-white font-semibold outline-none"></select>
           </div>
           <div class="h-64"><canvas id="trendChart"></canvas></div>
         </div>
 
         <div class="bg-slate-900/80 p-6 rounded-2xl border border-slate-800 shadow-xl">
-          <h3 class="font-bold text-white mb-4 text-sm sm:text-base">Carrier Price Competitiveness Comparison</h3>
+          <h3 class="font-bold text-white mb-4 text-sm sm:text-base">Airline Price Comparison</h3>
           <div class="h-64"><canvas id="airlineChart"></canvas></div>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- POPUP 1: PASSENGER MANIFEST & PER-PASSENGER OFFERS MODAL -->
+  <!-- POPUP 1: PASSENGERS & INDIVIDUAL CABIN/OFFER MANAGER -->
   <div id="pax-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-    <div class="bg-slate-900 rounded-3xl max-w-2xl w-full p-6 shadow-2xl relative border border-slate-800 max-h-[90vh] overflow-y-auto">
+    <div class="bg-slate-900 rounded-3xl max-w-3xl w-full p-6 shadow-2xl relative border border-slate-800 max-h-[90vh] overflow-y-auto">
       <button onclick="togglePaxModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white font-black text-lg">✕</button>
-      <h3 class="text-lg font-black text-white">Passenger Manifest & Individual Statutory Offers</h3>
-      <p class="text-xs text-slate-400 mb-5">Set each passenger's age and concession eligibility (e.g., Student 15%, Senior 20%, Regular)</p>
+      <h3 class="text-lg font-black text-white">Passenger List, Cabins & Individual Offers</h3>
+      <p class="text-xs text-slate-400 mb-5">Configure each passenger's cabin class (Economy, Business, First), age, and special discounts separately.</p>
 
-      <!-- Passenger Count Controls -->
+      <!-- Passenger Count Bar -->
       <div class="flex items-center justify-between bg-slate-950 p-4 rounded-2xl border border-slate-800 mb-5">
         <div>
-          <h4 class="font-bold text-sm text-white">Total Travelers on Manifest</h4>
-          <p class="text-xs text-slate-400">Configure each passenger below</p>
+          <h4 class="font-bold text-sm text-white">Number of Travelers</h4>
+          <p class="text-xs text-slate-400">Add or remove passengers in your group</p>
         </div>
         <div class="flex items-center space-x-3">
           <button onclick="removePassenger()" class="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 font-bold hover:bg-slate-700">-</button>
@@ -441,45 +441,22 @@
         </div>
       </div>
 
-      <!-- Individual Passenger Roster Container -->
+      <!-- Passenger List Roster -->
       <div class="space-y-3" id="passenger-roster-list"></div>
 
-      <!-- Cabin Selection -->
-      <div class="mt-6 pt-4 border-t border-slate-800">
-        <span class="mono text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2 block">Cabin Tier</span>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          <label class="border-2 border-sky-400 bg-sky-950/40 p-2.5 rounded-xl cursor-pointer flex items-center space-x-2">
-            <input type="radio" name="cabinChoice" value="economy" checked class="text-sky-500">
-            <span class="text-xs font-bold text-white">Economy</span>
-          </label>
-          <label class="border border-slate-800 bg-slate-950 p-2.5 rounded-xl cursor-pointer flex items-center space-x-2">
-            <input type="radio" name="cabinChoice" value="premium_economy" class="text-sky-500">
-            <span class="text-xs font-bold text-white">Prem. Econ</span>
-          </label>
-          <label class="border border-slate-800 bg-slate-950 p-2.5 rounded-xl cursor-pointer flex items-center space-x-2">
-            <input type="radio" name="cabinChoice" value="business" class="text-sky-500">
-            <span class="text-xs font-bold text-white">Business</span>
-          </label>
-          <label class="border border-slate-800 bg-slate-950 p-2.5 rounded-xl cursor-pointer flex items-center space-x-2">
-            <input type="radio" name="cabinChoice" value="first" class="text-sky-500">
-            <span class="text-xs font-bold text-white">First Class</span>
-          </label>
-        </div>
-      </div>
-
       <button onclick="applyPaxModal()" class="mt-6 w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-slate-950 font-black py-3 rounded-xl text-xs shadow-lg transition">
-        Confirm Manifest & Apply Individual Concessions
+        Apply Settings & Update Prices
       </button>
     </div>
   </div>
 
-  <!-- POPUP 2: DIGITAL BOARDING MANIFEST MODAL -->
+  <!-- POPUP 2: DIGITAL TICKET & PRICE BREAKDOWN RECEIPT -->
   <div id="booking-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
     <div class="modal-card bg-slate-900 rounded-3xl max-w-md w-full p-6 shadow-2xl relative border border-slate-800 text-slate-100">
       <button onclick="closeModal()" class="no-print absolute top-4 right-4 text-slate-400 hover:text-white font-bold text-lg">✕</button>
       
       <div class="text-center pb-4 border-b border-slate-800">
-        <span class="mono text-[10px] font-black uppercase tracking-widest text-sky-400 bg-sky-950 px-3 py-1 rounded-full border border-sky-800">MoSPI & DGCA Official Flight Manifest</span>
+        <span class="mono text-[10px] font-black uppercase tracking-widest text-sky-400 bg-sky-950 px-3 py-1 rounded-full border border-sky-800">Verified Flight Summary</span>
         <h3 class="text-xl font-black text-white mt-2" id="ticket-airline">-</h3>
         <p class="mono text-xs text-sky-400 font-bold" id="ticket-flight-no">-</p>
       </div>
@@ -487,36 +464,36 @@
       <div class="py-4 space-y-3">
         <div class="flex justify-between items-center bg-slate-950 p-3 rounded-xl text-xs border border-slate-800 mono">
           <div>
-            <p class="text-[9px] text-slate-500 font-bold uppercase">DEP SECTOR</p>
+            <p class="text-[9px] text-slate-500 font-bold uppercase">DEPARTURE</p>
             <p class="font-black text-white text-sm" id="ticket-from">-</p>
           </div>
           <div class="text-sky-400 text-base">✈️</div>
           <div class="text-right">
-            <p class="text-[9px] text-slate-500 font-bold uppercase">ARR SECTOR</p>
+            <p class="text-[9px] text-slate-500 font-bold uppercase">ARRIVAL</p>
             <p class="font-black text-white text-sm" id="ticket-to">-</p>
           </div>
         </div>
 
         <div class="border border-slate-800 rounded-xl p-3 bg-slate-950/50">
-          <p class="text-[11px] font-bold text-slate-300 mb-2">Statutory Demographic Breakdown:</p>
-          <div id="ticket-breakdown" class="text-xs text-slate-400 space-y-1.5 mono"></div>
+          <p class="text-[11px] font-bold text-slate-300 mb-2">Price Breakdown Per Person:</p>
+          <div id="ticket-breakdown" class="text-xs text-slate-400 space-y-2 mono"></div>
         </div>
 
         <div class="flex justify-between items-center text-xs pt-2 bg-slate-950 p-3 rounded-xl border border-slate-800">
-          <span class="font-bold text-slate-300">Audited Manifest Tariff:</span>
+          <span class="font-bold text-slate-300">Total Group Fare:</span>
           <span class="text-xl font-black text-emerald-400 mono" id="ticket-fare">₹-</span>
         </div>
       </div>
 
       <div class="space-y-2 no-print pt-2">
         <button onclick="window.print()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-xs shadow transition flex items-center justify-center space-x-2">
-          <span>🖨️ Print Statutory Boarding Slip</span>
+          <span>🖨️ Print Price Summary Slip</span>
         </button>
         <button id="mmt-redirect-btn" onclick="redirectToMMT()" class="w-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold py-2.5 rounded-xl text-xs shadow transition flex items-center justify-center space-x-2">
-          <span>🔗 Hand-off: Book Real Ticket on MakeMyTrip</span>
+          <span>🔗 Book Real Tickets on MakeMyTrip</span>
         </button>
         <button onclick="closeModal()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white font-medium py-2 rounded-xl text-xs transition">
-          Dismiss Window
+          Close
         </button>
       </div>
     </div>
@@ -533,10 +510,10 @@
     let destMarker = null;
     let currentBaselineFare = 5000;
 
+    // Independent passenger list: name, age, category offer, and cabin class
     let passengerRoster = [
-      { name: 'Traveler 1 (Primary)', age: 26, category: 'regular' }
+      { name: 'Traveler 1', age: 26, category: 'regular', cabin: 'economy' }
     ];
-    let selectedCabin = 'economy';
 
     const AIRPORT_COORDS = {
       'DEL': [28.5562, 77.1000],
@@ -562,27 +539,37 @@
 
       passengerRoster.forEach((p, idx) => {
         const card = document.createElement('div');
-        card.className = "bg-slate-950 p-3.5 rounded-xl border border-slate-800 grid grid-cols-1 sm:grid-cols-12 gap-3 items-center";
+        card.className = "bg-slate-950 p-4 rounded-xl border border-slate-800 grid grid-cols-1 sm:grid-cols-12 gap-3 items-center";
         
         card.innerHTML = `
-          <div class="sm:col-span-4">
+          <div class="sm:col-span-3">
             <span class="text-xs font-bold text-white block">${p.name || `Traveler ${idx+1}`}</span>
             <span class="text-[10px] text-slate-500 mono">Passenger #${idx+1}</span>
           </div>
 
-          <div class="sm:col-span-3">
+          <div class="sm:col-span-2">
             <label class="text-[10px] font-bold text-slate-400 uppercase mono block">Age</label>
             <input type="number" min="0" max="100" value="${p.age}" onchange="updatePaxField(${idx}, 'age', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-white font-bold mono outline-none focus:border-sky-500">
           </div>
 
-          <div class="sm:col-span-5">
-            <label class="text-[10px] font-bold text-slate-400 uppercase mono block">Eligibility Quota</label>
-            <select onchange="updatePaxField(${idx}, 'category', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-sky-400 font-bold outline-none cursor-pointer focus:border-sky-500">
-              <option value="regular" ${p.category === 'regular' ? 'selected' : ''}>🏢 Regular Fare (No Quota)</option>
+          <div class="sm:col-span-3">
+            <label class="text-[10px] font-bold text-slate-400 uppercase mono block">Cabin Class</label>
+            <select onchange="updatePaxField(${idx}, 'cabin', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-emerald-400 font-bold outline-none cursor-pointer focus:border-sky-500">
+              <option value="economy" ${p.cabin === 'economy' ? 'selected' : ''}>Economy</option>
+              <option value="premium_economy" ${p.cabin === 'premium_economy' ? 'selected' : ''}>Prem. Economy</option>
+              <option value="business" ${p.cabin === 'business' ? 'selected' : ''}>Business</option>
+              <option value="first" ${p.cabin === 'first' ? 'selected' : ''}>First Class</option>
+            </select>
+          </div>
+
+          <div class="sm:col-span-4">
+            <label class="text-[10px] font-bold text-slate-400 uppercase mono block">Special Offer / Discount</label>
+            <select onchange="updatePaxField(${idx}, 'category', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-sky-400 font-bold outline-none cursor-pointer focus:border-sky-500">
+              <option value="regular" ${p.category === 'regular' ? 'selected' : ''}>🏢 Regular Fare (No Offer)</option>
               <option value="student" ${p.category === 'student' ? 'selected' : ''}>🎓 Student (15% Off, 12-26y)</option>
               <option value="senior" ${p.category === 'senior' ? 'selected' : ''}>👴 Senior Citizen (20% Off, 60+)</option>
               <option value="defense" ${p.category === 'defense' ? 'selected' : ''}>🎖️ Armed Forces (25% Off)</option>
-              <option value="medical" ${p.category === 'medical' ? 'selected' : ''}>🩺 Healthcare Worker (10% Off)</option>
+              <option value="medical" ${p.category === 'medical' ? 'selected' : ''}>🩺 Doctor / Nurse (10% Off)</option>
             </select>
           </div>
         `;
@@ -595,7 +582,7 @@
     function addPassenger() {
       if (passengerRoster.length >= 9) return;
       const num = passengerRoster.length + 1;
-      passengerRoster.push({ name: `Traveler ${num}`, age: 25, category: 'regular' });
+      passengerRoster.push({ name: `Traveler ${num}`, age: 25, category: 'regular', cabin: 'economy' });
       renderPassengerRoster();
     }
 
@@ -609,11 +596,11 @@
       if (field === 'age') {
         passengerRoster[idx].age = parseInt(value) || 0;
       } else {
-        passengerRoster[idx].category = value;
+        passengerRoster[idx][field] = value;
       }
     }
 
-    function selectSpecialFare(cat) {
+    function quickApplyOffer(cat) {
       document.querySelectorAll('.fare-pill').forEach(p => {
         p.className = "w-full fare-pill border border-slate-800 bg-slate-950 hover:border-slate-700 text-slate-300 p-3 rounded-xl text-xs font-bold transition text-left";
       });
@@ -639,25 +626,24 @@
     }
 
     function applyPaxModal() {
-      selectedCabin = document.querySelector('input[name="cabinChoice"]:checked').value;
       const count = passengerRoster.length;
-      document.getElementById('pax-summary-label').innerText = `${count} Passenger${count > 1 ? 's' : ''}`;
+      document.getElementById('pax-summary-label').innerText = `${count} Traveler${count > 1 ? 's' : ''}`;
       
-      const offersApplied = passengerRoster.map(p => {
+      const cabins = [...new Set(passengerRoster.map(p => p.cabin.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())))];
+      const offers = [...new Set(passengerRoster.map(p => {
         if (p.category === 'student') return 'Student';
         if (p.category === 'senior') return 'Senior';
         if (p.category === 'defense') return 'Defense';
         if (p.category === 'medical') return 'Medical';
-        return 'Regular';
-      }).filter(c => c !== 'Regular');
+        return null;
+      }).filter(Boolean))];
 
-      if (offersApplied.length > 0) {
-        document.getElementById('cabin-summary-label').innerText = `Offers: ${[...new Set(offersApplied)].join(', ')}`;
-        document.getElementById('kpi-concession').innerText = `${count} Pax (${offersApplied.length} Quota)`;
-      } else {
-        document.getElementById('cabin-summary-label').innerText = `${selectedCabin.toUpperCase()} (Standard)`;
-        document.getElementById('kpi-concession').innerText = `${count} Pax (Standard)`;
+      let subtitle = cabins.join(' + ');
+      if (offers.length > 0) {
+        subtitle += ` &bull; ${offers.join(', ')}`;
       }
+      document.getElementById('cabin-summary-label').innerHTML = subtitle;
+      document.getElementById('kpi-concession').innerText = `${count} Traveler${count > 1 ? 's' : ''} (${cabins.join('/')})`;
 
       togglePaxModal();
       searchFlights();
@@ -685,8 +671,8 @@
       if (originMarker) radarMap.removeLayer(originMarker);
       if (destMarker) radarMap.removeLayer(destMarker);
 
-      originMarker = L.circleMarker(originCoord, { radius: 7, color: '#38bdf8', fillColor: '#0284c7', fillOpacity: 0.9 }).addTo(radarMap).bindPopup(`Origin Hub: ${originCode}`);
-      destMarker = L.circleMarker(destCoord, { radius: 7, color: '#10b981', fillColor: '#059669', fillOpacity: 0.9 }).addTo(radarMap).bindPopup(`Destination Hub: ${destCode}`);
+      originMarker = L.circleMarker(originCoord, { radius: 7, color: '#38bdf8', fillColor: '#0284c7', fillOpacity: 0.9 }).addTo(radarMap).bindPopup(`Departure: ${originCode}`);
+      destMarker = L.circleMarker(destCoord, { radius: 7, color: '#10b981', fillColor: '#059669', fillOpacity: 0.9 }).addTo(radarMap).bindPopup(`Arrival: ${destCode}`);
 
       routeLine = L.polyline([originCoord, destCoord], {
         color: '#38bdf8',
@@ -704,7 +690,7 @@
                 Math.sin(dLon/2) * Math.sin(dLon/2);
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
       const km = Math.round(6371 * c);
-      document.getElementById('map-distance-readout').innerText = `Direct Corridor Distance: ~${km.toLocaleString()} km`;
+      document.getElementById('map-distance-readout').innerText = `Flight Distance: ~${km.toLocaleString()} km`;
     }
 
     function setTripMode(mode) {
@@ -834,7 +820,6 @@
         origin, 
         destination, 
         travel_date: travelDate, 
-        cabin_class: selectedCabin, 
         passengers: passengerRoster 
       };
 
@@ -846,7 +831,7 @@
         });
         const data = await res.json();
 
-        // AI Timing Model Verdict
+        // AI Timing verdict
         const titleEl = document.getElementById('timing-verdict-title');
         const subEl = document.getElementById('timing-verdict-sub');
         const iconEl = document.getElementById('timing-icon');
@@ -863,15 +848,15 @@
           if (diffDays >= 21) {
             verdict = "WAIT & MONITOR";
             color = "emerald";
-            subText = `Travel is ${diffDays} days away. Fares remain stable.`;
+            subText = `Travel is ${diffDays} days away. Prices are stable.`;
           } else if (diffDays >= 7) {
-            verdict = "OPTIMAL WINDOW (BUY NOW)";
+            verdict = "BEST TIME TO BUY NOW";
             color = "sky";
-            subText = `Travel is ${diffDays} days away. Sector pricing is within historical efficiency.`;
+            subText = `Travel is ${diffDays} days away. Prices are at their best value.`;
           } else {
-            verdict = "HIGH SPIKE ALERT (LOCK IN)";
+            verdict = "HIGH PRICE SPIKE IMMINENT";
             color = "rose";
-            subText = `Travel is in ${diffDays} days. Spot curves indicate sharp dynamic surge within 72h.`;
+            subText = `Travel is in ${diffDays} days. High surge expected within 72h.`;
           }
         }
 
@@ -889,7 +874,7 @@
           iconEl.innerText = "⏳";
         }
 
-        document.getElementById('results-count-badge').innerText = `${data.all_deals.length} Options Ingested`;
+        document.getElementById('results-count-badge').innerText = `${data.all_deals.length} Flights Found`;
 
         // Side-by-Side Comparator Table
         const tbody = document.getElementById('comparator-tbody');
@@ -904,14 +889,14 @@
 
         data.all_deals.forEach(d => {
           const sp = specs[d.airline] || { baggage: '15 kg', pitch: '30 in', otp: '85%' };
-          const fareDiff = d.base_fare_per_seat - currentBaselineFare;
+          const fareDiff = d.base_unit_fare - currentBaselineFare;
           const pctDiff = Math.round((fareDiff / currentBaselineFare) * 100);
           
           let surgeBadge = '';
           if (fareDiff > 0) {
-            surgeBadge = `<span class="bg-rose-950/80 text-rose-300 border border-rose-800/80 px-2 py-0.5 rounded text-[10px] font-bold">▲ ₹${fareDiff.toLocaleString()} Above Base (+${pctDiff}%)</span>`;
+            surgeBadge = `<span class="bg-rose-950/80 text-rose-300 border border-rose-800/80 px-2 py-0.5 rounded text-[10px] font-bold">▲ ₹${fareDiff.toLocaleString()} Over Fair Price (+${pctDiff}%)</span>`;
           } else {
-            surgeBadge = `<span class="bg-emerald-950/80 text-emerald-300 border border-emerald-800/80 px-2 py-0.5 rounded text-[10px] font-bold">✔ Within Base (Fair Fare)</span>`;
+            surgeBadge = `<span class="bg-emerald-950/80 text-emerald-300 border border-emerald-800/80 px-2 py-0.5 rounded text-[10px] font-bold">✔ Fair Base Price</span>`;
           }
 
           const row = document.createElement('tr');
@@ -921,7 +906,7 @@
               <span>✈️</span> <span>${d.airline} (${d.flight_number})</span>
             </td>
             <td class="py-3 px-4 text-sky-300">${d.departure_time} IST</td>
-            <td class="py-3 px-4 font-mono font-bold">₹${d.base_fare_per_seat.toLocaleString()}</td>
+            <td class="py-3 px-4 font-mono font-bold">₹${d.base_unit_fare.toLocaleString()}</td>
             <td class="py-3 px-4">${surgeBadge}</td>
             <td class="py-3 px-4 font-bold text-emerald-400">₹${d.total_trip_cost.toLocaleString()}</td>
             <td class="py-3 px-4 text-slate-300">${sp.baggage}</td>
@@ -942,7 +927,7 @@
 
         data.all_deals.forEach((deal, idx) => {
           const isBest = idx === 0;
-          const fareDiff = deal.base_fare_per_seat - currentBaselineFare;
+          const fareDiff = deal.base_unit_fare - currentBaselineFare;
           const pctDiff = Math.round((fareDiff / currentBaselineFare) * 100);
 
           let cardSurgeNotice = '';
@@ -950,22 +935,26 @@
             cardSurgeNotice = `
               <div class="mt-2 text-[10px] mono text-rose-300 bg-rose-950/60 border border-rose-800/60 px-2 py-1 rounded-lg flex items-center justify-between">
                 <span>⚠️ SURGE DETECTED</span>
-                <span class="font-bold">+₹${fareDiff.toLocaleString()} Above Baseline (${pctDiff}%)</span>
+                <span class="font-bold">+₹${fareDiff.toLocaleString()} Above Fair Price (${pctDiff}%)</span>
               </div>
             `;
           } else {
             cardSurgeNotice = `
               <div class="mt-2 text-[10px] mono text-emerald-300 bg-emerald-950/60 border border-emerald-800/60 px-2 py-1 rounded-lg flex items-center justify-between">
-                <span>✔ FAIR TARIFF</span>
-                <span class="font-bold">Compliant With Base</span>
+                <span>✔ FAIR TICKET PRICE</span>
+                <span class="font-bold">Standard Value</span>
               </div>
             `;
           }
 
           const breakdownPills = deal.breakdown.map(b => `
-            <div class="flex justify-between items-center text-[10px] mono py-0.5 border-b border-slate-800/50">
-              <span class="text-slate-300">${b.passenger} (${b.age}y):</span>
-              <span class="text-sky-300 font-semibold">${b.concession.split('(')[0]} ➔ ₹${b.seat_fare.toLocaleString()}</span>
+            <div class="flex justify-between items-center text-[10px] mono py-1 border-b border-slate-800/50">
+              <div>
+                <span class="text-white font-semibold">${b.passenger}</span>
+                <span class="text-slate-400"> (${b.age}y, ${b.cabin})</span>
+                <span class="text-sky-300 block text-[9px]">${b.offer}</span>
+              </div>
+              <span class="text-emerald-400 font-bold">₹${b.seat_fare.toLocaleString()}</span>
             </div>
           `).join('');
 
@@ -977,7 +966,7 @@
               <div class="flex justify-between items-start">
                 <div>
                   <span class="mono text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded ${isBest ? 'bg-sky-950 text-sky-300 border border-sky-800' : 'bg-slate-800 text-slate-300'}">
-                    ${isBest ? '🏆 MoSPI FairFare Leader' : deal.airline}
+                    ${isBest ? '🏆 Best Fair-Price Flight' : deal.airline}
                   </span>
                   <h4 class="font-black text-white text-base mt-1.5">${deal.airline} <span class="text-[11px] font-semibold text-slate-400 mono">(${deal.flight_number})</span></h4>
                 </div>
@@ -986,26 +975,26 @@
 
               <div class="mt-3 flex items-center justify-between text-[11px] text-slate-400 bg-slate-950 p-2.5 rounded-xl border border-slate-800/80 mono">
                 <span>DEP: <strong class="text-white">${deal.departure_time} IST</strong></span>
-                <span class="text-emerald-400 font-bold">&#x2714; Verified</span>
+                <span class="text-emerald-400 font-bold">&#x2714; Confirmed Schedule</span>
               </div>
 
               ${cardSurgeNotice}
 
               <div class="mt-3 pt-2.5 border-t border-slate-800">
-                <p class="text-[10px] text-slate-400 mb-1 font-bold uppercase mono">Seat Concession Breakdown:</p>
-                <div class="bg-slate-950/70 p-2 rounded-xl border border-slate-800/80 space-y-1 mb-2">
+                <p class="text-[10px] text-slate-400 mb-1 font-bold uppercase mono">Individual Passenger Cost:</p>
+                <div class="bg-slate-950/70 p-2.5 rounded-xl border border-slate-800/80 space-y-1 mb-2">
                   ${breakdownPills}
                 </div>
                 <div class="flex items-baseline space-x-1.5">
                   <h3 class="text-xl font-black text-emerald-400 mono">₹${deal.total_trip_cost.toLocaleString()}</h3>
-                  <span class="text-[10px] text-slate-400">Total for ${data.seats} Passengers</span>
+                  <span class="text-[10px] text-slate-400">Total for ${data.seats} Traveler${data.seats > 1 ? 's' : ''}</span>
                 </div>
               </div>
             </div>
 
             <div class="mt-4 pt-3 border-t border-slate-800 grid grid-cols-2 gap-2">
               <button onclick='openBooking(${JSON.stringify(deal)}, "${data.origin_city}", "${data.destination_city}")' class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-black py-2 rounded-xl text-xs transition shadow">
-                Manifest Slip
+                View Receipt
               </button>
               <button onclick='launchPreciseMMT(${JSON.stringify(deal)}, "${origin}", "${destination}")' class="bg-red-950/80 hover:bg-red-900 text-rose-200 border border-red-800/80 font-bold py-2 rounded-xl text-xs transition flex items-center justify-center space-x-1">
                 <span>Book Ticket</span>
@@ -1031,9 +1020,13 @@
 
       const bd = document.getElementById('ticket-breakdown');
       bd.innerHTML = deal.breakdown.map(b => `
-        <div class="flex justify-between border-b border-slate-800 pb-1 text-xs mono">
-          <span>${b.passenger} (Age ${b.age}) - ${b.concession}</span>
-          <span class="font-bold text-sky-400">₹${b.seat_fare.toLocaleString()}</span>
+        <div class="flex justify-between items-center border-b border-slate-800 pb-1.5 text-xs mono">
+          <div>
+            <span class="text-white font-bold">${b.passenger}</span>
+            <span class="text-slate-400"> (${b.age}y &bull; ${b.cabin})</span>
+            <div class="text-sky-400 text-[10px]">${b.offer}</div>
+          </div>
+          <span class="font-bold text-emerald-400">₹${b.seat_fare.toLocaleString()}</span>
         </div>
       `).join('');
 
@@ -1052,7 +1045,10 @@
       const carrierIataMap = { 'IndiGo': '6E', 'Air India': 'AI', 'Akasa Air': 'QP', 'Vistara': 'UK' };
       const iata = carrierIataMap[deal.airline] || '';
       
-      let url = `https://www.makemytrip.com/flight/search?itinerary=${originCode}-${destCode}-${formattedDate}&tripType=O&paxType=A-${passengerRoster.length}_C-0_I-0&cabinClass=${selectedCabin === 'business' ? 'B' : 'E'}`;
+      // Determine primary cabin class for MMT handoff
+      const primaryCabin = passengerRoster[0].cabin === 'business' ? 'B' : (passengerRoster[0].cabin === 'first' ? 'F' : 'E');
+      
+      let url = `https://www.makemytrip.com/flight/search?itinerary=${originCode}-${destCode}-${formattedDate}&tripType=O&paxType=A-${passengerRoster.length}_C-0_I-0&cabinClass=${primaryCabin}`;
       if (iata) url += `&airlineFilter=${iata}`;
       
       window.open(url, '_blank');
@@ -1078,7 +1074,7 @@
         data: {
           labels: data.days.map(d => `${d} Days`),
           datasets: [{
-            label: `Dynamic Fare (₹) on ${route}`,
+            label: `Average Price (₹) on ${route}`,
             data: data.fares,
             borderColor: '#38bdf8',
             backgroundColor: 'rgba(56, 189, 248, 0.15)',
@@ -1106,7 +1102,7 @@
         data: {
           labels: Object.keys(airlineData),
           datasets: [{
-            label: 'Average Fare Across Routes (₹)',
+            label: 'Average Flight Price (₹)',
             data: Object.values(airlineData),
             backgroundColor: '#38bdf8'
           }]
