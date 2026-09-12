@@ -172,7 +172,7 @@
         </div>
       </div>
 
-      <!-- SEARCH INPUTS (FIRST, AS REQUESTED) -->
+      <!-- SEARCH INPUTS -->
       <div class="bg-white/90 dark:bg-slate-900/90 rounded-3xl border border-slate-200 dark:border-sky-900/40 p-6 sm:p-8 shadow-2xl backdrop-blur-xl">
         <div class="flex flex-wrap items-center justify-between pb-6 border-b border-slate-200 dark:border-slate-800/80 gap-4 mb-6">
           <div class="flex items-center space-x-2 bg-slate-100 dark:bg-slate-950/80 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800">
@@ -241,7 +241,28 @@
         </div>
       </div>
 
-      <!-- RADAR MAP & ROUTE DETAILS (NOW BELOW THE BOOKING WINDOW, AS REQUESTED) -->
+      <!-- RESTORED: AI PRICE TIMING & MARKET DOMINANCE CARDS -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div class="md:col-span-7 bg-white/90 dark:bg-slate-900/90 rounded-3xl border border-slate-200 dark:border-sky-900/40 p-6 shadow-2xl backdrop-blur-xl flex items-center justify-between">
+          <div class="space-y-1.5">
+            <span class="mono text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block">AI Price Timing Model (When to Buy)</span>
+            <h3 class="text-xl font-black text-sky-600 dark:text-sky-400 mono" id="timing-verdict-title">BEST TIME TO BUY NOW</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md" id="timing-verdict-sub">Calculates historical curves to tell you whether to lock in now or wait.</p>
+          </div>
+          <div class="text-4xl" id="timing-icon">🎯</div>
+        </div>
+
+        <div class="md:col-span-5 bg-white/90 dark:bg-slate-900/90 rounded-3xl border border-slate-200 dark:border-sky-900/40 p-6 shadow-2xl backdrop-blur-xl flex items-center justify-between">
+          <div class="space-y-1">
+            <span class="mono text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block">Market Dominance Indicator</span>
+            <h4 class="text-lg font-black text-amber-600 dark:text-amber-400 mono">IndiGo: 58% Flight Share</h4>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400">IndiGo controls over half of domestic Indian air traffic; this lack of competition on some routes can cause higher price surges.</p>
+          </div>
+          <div class="text-3xl">⚖️</div>
+        </div>
+      </div>
+
+      <!-- RADAR MAP & ROUTE DETAILS -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div class="lg:col-span-8 bg-white/90 dark:bg-slate-900/90 rounded-3xl border border-slate-200 dark:border-sky-900/40 p-5 shadow-2xl backdrop-blur-xl">
           <div class="flex items-center justify-between mb-3">
@@ -295,7 +316,7 @@
         </div>
       </div>
 
-      <!-- COMPARATOR TABLE & CARDS (WITH RESTORED BAGGAGE, LEGROOM & ON-TIME DETAILS) -->
+      <!-- COMPARATOR TABLE & CARDS -->
       <div class="bg-white/90 dark:bg-slate-900/90 rounded-3xl border border-slate-200 dark:border-sky-900/40 p-6 shadow-2xl backdrop-blur-xl">
         <div class="flex items-center justify-between mb-4">
           <h3 class="text-base font-bold flex items-center space-x-2">
@@ -362,7 +383,7 @@
         </div>
       </div>
 
-      <!-- CHARTS (NOW MOVED ABOVE THE INTELLIGENCE & MOMENTUM PANELS, AS REQUESTED) -->
+      <!-- CHARTS -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="bg-white/80 dark:bg-slate-900/80 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl">
           <div class="flex justify-between items-center mb-4">
@@ -381,7 +402,6 @@
       <!-- MACRO INTELLIGENCE ENGINE & DIRECTIONAL MOMENTUM PANELS -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        <!-- WHY DID THE INDEX MOVE? (EXPLANATION PANEL) -->
         <div class="lg:col-span-7 bg-white/80 dark:bg-slate-900/80 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl flex flex-col justify-between">
           <div>
             <div class="flex items-center space-x-2 mb-3">
@@ -413,7 +433,6 @@
           </div>
         </div>
 
-        <!-- RISE VS FALL MOMENTUM PANEL -->
         <div class="lg:col-span-5 bg-white/80 dark:bg-slate-900/80 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl flex flex-col justify-between">
           <div>
             <div class="flex items-center space-x-2 mb-3">
@@ -800,6 +819,31 @@
 
       document.getElementById('kpi-sector').innerText = `${origin} ➔ ${destination}`;
       updateRadarRoute(origin, destination);
+
+      const selectedDate = new Date(travelDate);
+      const todayDate = new Date();
+      const diffDays = Math.max(0, Math.round((selectedDate - todayDate) / (1000 * 60 * 60 * 24)));
+
+      const titleEl = document.getElementById('timing-verdict-title');
+      const subEl = document.getElementById('timing-verdict-sub');
+      const iconEl = document.getElementById('timing-icon');
+
+      if (diffDays >= 21) {
+        titleEl.innerText = "WAIT & MONITOR";
+        titleEl.className = "text-xl font-black text-emerald-600 dark:text-emerald-400 mono";
+        iconEl.innerText = "⏳";
+        subEl.innerText = `Travel is ${diffDays} days away. Prices are stable.`;
+      } else if (diffDays >= 7) {
+        titleEl.innerText = "BEST TIME TO BUY NOW";
+        titleEl.className = "text-xl font-black text-sky-600 dark:text-sky-400 mono";
+        iconEl.innerText = "🎯";
+        subEl.innerText = `Travel is ${diffDays} days away. Prices are at their best value.`;
+      } else {
+        titleEl.innerText = "HIGH PRICE SPIKE IMMINENT";
+        titleEl.className = "text-xl font-black text-rose-600 dark:text-rose-400 mono";
+        iconEl.innerText = "🚨";
+        subEl.innerText = `Travel is in ${diffDays} days. High surge expected within 72h.`;
+      }
 
       try {
         const res = await fetch('/api/recommend', {
