@@ -172,61 +172,7 @@
         </div>
       </div>
 
-      <!-- RADAR MAP & ROUTE DETAILS -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div class="lg:col-span-8 bg-white/90 dark:bg-slate-900/90 rounded-3xl border border-slate-200 dark:border-sky-900/40 p-5 shadow-2xl backdrop-blur-xl">
-          <div class="flex items-center justify-between mb-3">
-            <span class="mono text-xs font-bold text-sky-600 dark:text-sky-400 uppercase tracking-widest flex items-center space-x-2">
-              <span class="w-2 h-2 rounded-full bg-sky-500 animate-ping"></span>
-              <span>Interactive Flight Path & Radar</span>
-            </span>
-            <span class="mono text-[10px] text-emerald-600 dark:text-emerald-400 bg-slate-100 dark:bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-800">
-              ● LIVE AIRSPACE TRACKER
-            </span>
-          </div>
-          <div id="air-radar-map" class="border border-slate-200 dark:border-slate-800"></div>
-          <div class="flex flex-wrap items-center justify-between mt-3 text-xs mono text-slate-500 dark:text-slate-400">
-            <div class="flex items-center space-x-4">
-              <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span><span>Fair Price</span></span>
-              <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span><span>Normal Surge (15-30%)</span></span>
-              <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span><span>High Surge Alert (&gt;35%)</span></span>
-            </div>
-            <span id="map-distance-readout" class="text-sky-600 dark:text-sky-300 font-bold">Flight Distance: ~1,148 km</span>
-          </div>
-        </div>
-
-        <div class="lg:col-span-4 bg-white/90 dark:bg-slate-900/90 rounded-3xl border border-slate-200 dark:border-sky-900/40 p-5 shadow-2xl backdrop-blur-xl flex flex-col justify-between">
-          <div>
-            <span class="mono text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest block mb-1">Flight Route Details</span>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Calculated based on genuine aerial distance and route popularity.</p>
-
-            <div class="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3 mono text-xs">
-              <div class="flex justify-between">
-                <span class="text-slate-500 dark:text-slate-400">Route Type:</span>
-                <span class="text-emerald-600 dark:text-emerald-400 font-bold" id="feas-status">✔ High-Demand Direct</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-slate-500 dark:text-slate-400">Daily Direct Flights:</span>
-                <span class="text-sky-600 dark:text-sky-300 font-bold" id="feas-frequency">~65 Flights / Day</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-slate-500 dark:text-slate-400">Air Time Duration:</span>
-                <span class="font-bold" id="feas-time">2h 10m</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-slate-500 dark:text-slate-400">Pricing Policy:</span>
-                <span class="text-slate-700 dark:text-slate-300 font-bold" id="feas-udan">Fair-Fare Monitored</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="mt-4 p-3.5 rounded-xl border border-sky-200 dark:border-sky-900/50 bg-sky-50 dark:bg-sky-950/30 text-sky-800 dark:text-sky-300 text-xs">
-            <strong>Split Cabin & Offers:</strong> Book different travelers in separate cabins while preserving student/senior concessions per seat.
-          </div>
-        </div>
-      </div>
-
-      <!-- SEARCH INPUTS -->
+      <!-- SEARCH INPUTS (FIRST, AS REQUESTED) -->
       <div class="bg-white/90 dark:bg-slate-900/90 rounded-3xl border border-slate-200 dark:border-sky-900/40 p-6 sm:p-8 shadow-2xl backdrop-blur-xl">
         <div class="flex flex-wrap items-center justify-between pb-6 border-b border-slate-200 dark:border-slate-800/80 gap-4 mb-6">
           <div class="flex items-center space-x-2 bg-slate-100 dark:bg-slate-950/80 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800">
@@ -295,7 +241,61 @@
         </div>
       </div>
 
-      <!-- COMPARATOR TABLE & CARDS -->
+      <!-- RADAR MAP & ROUTE DETAILS (NOW BELOW THE BOOKING WINDOW, AS REQUESTED) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-8 bg-white/90 dark:bg-slate-900/90 rounded-3xl border border-slate-200 dark:border-sky-900/40 p-5 shadow-2xl backdrop-blur-xl">
+          <div class="flex items-center justify-between mb-3">
+            <span class="mono text-xs font-bold text-sky-600 dark:text-sky-400 uppercase tracking-widest flex items-center space-x-2">
+              <span class="w-2 h-2 rounded-full bg-sky-500 animate-ping"></span>
+              <span>Interactive Flight Path & Radar</span>
+            </span>
+            <span class="mono text-[10px] text-emerald-600 dark:text-emerald-400 bg-slate-100 dark:bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-800">
+              ● LIVE AIRSPACE TRACKER
+            </span>
+          </div>
+          <div id="air-radar-map" class="border border-slate-200 dark:border-slate-800"></div>
+          <div class="flex flex-wrap items-center justify-between mt-3 text-xs mono text-slate-500 dark:text-slate-400">
+            <div class="flex items-center space-x-4">
+              <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span><span>Fair Price</span></span>
+              <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span><span>Normal Surge (15-30%)</span></span>
+              <span class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span><span>High Surge Alert (&gt;35%)</span></span>
+            </div>
+            <span id="map-distance-readout" class="text-sky-600 dark:text-sky-300 font-bold">Flight Distance: ~1,148 km</span>
+          </div>
+        </div>
+
+        <div class="lg:col-span-4 bg-white/90 dark:bg-slate-900/90 rounded-3xl border border-slate-200 dark:border-sky-900/40 p-5 shadow-2xl backdrop-blur-xl flex flex-col justify-between">
+          <div>
+            <span class="mono text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest block mb-1">Flight Route Details</span>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Calculated based on genuine aerial distance and route popularity.</p>
+
+            <div class="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3 mono text-xs">
+              <div class="flex justify-between">
+                <span class="text-slate-500 dark:text-slate-400">Route Type:</span>
+                <span class="text-emerald-600 dark:text-emerald-400 font-bold" id="feas-status">✔ High-Demand Direct</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500 dark:text-slate-400">Daily Direct Flights:</span>
+                <span class="text-sky-600 dark:text-sky-300 font-bold" id="feas-frequency">~65 Flights / Day</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500 dark:text-slate-400">Air Time Duration:</span>
+                <span class="font-bold" id="feas-time">2h 10m</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500 dark:text-slate-400">Pricing Policy:</span>
+                <span class="text-slate-700 dark:text-slate-300 font-bold" id="feas-udan">Fair-Fare Monitored</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 p-3.5 rounded-xl border border-sky-200 dark:border-sky-900/50 bg-sky-50 dark:bg-sky-950/30 text-sky-800 dark:text-sky-300 text-xs">
+            <strong>Split Cabin & Offers:</strong> Book different travelers in separate cabins while preserving student/senior concessions per seat.
+          </div>
+        </div>
+      </div>
+
+      <!-- COMPARATOR TABLE & CARDS (WITH RESTORED BAGGAGE, LEGROOM & ON-TIME DETAILS) -->
       <div class="bg-white/90 dark:bg-slate-900/90 rounded-3xl border border-slate-200 dark:border-sky-900/40 p-6 shadow-2xl backdrop-blur-xl">
         <div class="flex items-center justify-between mb-4">
           <h3 class="text-base font-bold flex items-center space-x-2">
@@ -312,6 +312,9 @@
                 <th class="py-3 px-4">Base Seat Fare</th>
                 <th class="py-3 px-4">Surge Assessment</th>
                 <th class="py-3 px-4">Total Group Price</th>
+                <th class="py-3 px-4">Baggage</th>
+                <th class="py-3 px-4">Legroom</th>
+                <th class="py-3 px-4">On-Time Score</th>
                 <th class="py-3 px-4">Book</th>
               </tr>
             </thead>
@@ -359,7 +362,23 @@
         </div>
       </div>
 
-      <!-- NEW EXPANDED PANELS: WHY DID INDEX MOVE & RISE VS FALL -->
+      <!-- CHARTS (NOW MOVED ABOVE THE INTELLIGENCE & MOMENTUM PANELS, AS REQUESTED) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white/80 dark:bg-slate-900/80 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="font-bold text-sm sm:text-base">Price Increase as Travel Date Approaches</h3>
+            <select id="route-select" onchange="loadTrendChart()" class="text-xs border border-slate-300 dark:border-slate-700 rounded-lg p-1.5 bg-slate-100 dark:bg-slate-800 font-semibold outline-none"></select>
+          </div>
+          <div class="h-64"><canvas id="trendChart"></canvas></div>
+        </div>
+
+        <div class="bg-white/80 dark:bg-slate-900/80 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl">
+          <h3 class="font-bold mb-4 text-sm sm:text-base">Airline Price Comparison</h3>
+          <div class="h-64"><canvas id="airlineChart"></canvas></div>
+        </div>
+      </div>
+
+      <!-- MACRO INTELLIGENCE ENGINE & DIRECTIONAL MOMENTUM PANELS -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         <!-- WHY DID THE INDEX MOVE? (EXPLANATION PANEL) -->
@@ -375,14 +394,14 @@
               <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 flex items-start space-x-3">
                 <span class="text-amber-500 text-base font-bold">▲</span>
                 <div>
-                  <strong class="text-slate-800 dark:text-slate-200 block">Trunk Route Demand Surge (+6.4%)</strong>
-                  <span class="text-slate-500 dark:text-slate-400 text-[11px]">High business traveler rotation on BOM-DEL and BLR-HYD corridors increased last-minute load factors.</span>
+                  <strong class="text-slate-800 dark:text-slate-200 block">Trunk Route Business Rotation (+6.4%)</strong>
+                  <span class="text-slate-500 dark:text-slate-400 text-[11px]">High corporate demand on major metropolitan sectors (BOM-DEL, BLR-HYD) compressed available seat inventory.</span>
                 </div>
               </div>
               <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 flex items-start space-x-3">
                 <span class="text-emerald-500 text-base font-bold">▼</span>
                 <div>
-                  <strong class="text-slate-800 dark:text-slate-200 block">Advance Booking Stabilization (-2.1%)</strong>
+                  <strong class="text-slate-800 dark:text-slate-200 block">Advance Booking Window Stability (-2.1%)</strong>
                   <span class="text-slate-500 dark:text-slate-400 text-[11px]">Fares for bookings made 21+ days out remain firmly anchored near the fair-market baseline index.</span>
                 </div>
               </div>
@@ -422,22 +441,6 @@
           </div>
         </div>
 
-      </div>
-
-      <!-- CHARTS & ROUTE-WISE BREAKDOWN -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="bg-white/80 dark:bg-slate-900/80 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl">
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="font-bold text-sm sm:text-base">Price Increase as Travel Date Approaches</h3>
-            <select id="route-select" onchange="loadTrendChart()" class="text-xs border border-slate-300 dark:border-slate-700 rounded-lg p-1.5 bg-slate-100 dark:bg-slate-800 font-semibold outline-none"></select>
-          </div>
-          <div class="h-64"><canvas id="trendChart"></canvas></div>
-        </div>
-
-        <div class="bg-white/80 dark:bg-slate-900/80 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl">
-          <h3 class="font-bold mb-4 text-sm sm:text-base">Airline Price Comparison</h3>
-          <div class="h-64"><canvas id="airlineChart"></canvas></div>
-        </div>
       </div>
 
       <!-- ROUTE-WISE AIRFARE MATRIX TABLE -->
@@ -807,13 +810,21 @@
         const data = await res.json();
         document.getElementById('results-count-badge').innerText = `${data.all_deals.length} Flights Found`;
 
+        const specs = {
+          'IndiGo': { baggage: '15 kg', pitch: '29-30 in', otp: '88.4%' },
+          'Akasa Air': { baggage: '15 kg', pitch: '30 in', otp: '89.1%' },
+          'Air India': { baggage: '20 kg', pitch: '31-32 in', otp: '82.6%' },
+          'Vistara': { baggage: '15 kg (Meal Inc.)', pitch: '30-31 in', otp: '87.2%' }
+        };
+
         const tbody = document.getElementById('comparator-tbody');
         tbody.innerHTML = '';
         data.all_deals.forEach(d => {
+          const sp = specs[d.airline] || { baggage: '15 kg', pitch: '30 in', otp: '85%' };
           const fareDiff = d.base_unit_fare - currentBaselineFare;
           const surgeBadge = fareDiff > 0 ? 
-            `<span class="bg-rose-100 text-rose-700 px-2 py-0.5 rounded text-[10px] font-bold">▲ ₹${fareDiff.toLocaleString()} Surge</span>` : 
-            `<span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-[10px] font-bold">✔ Fair Price</span>`;
+            `<span class="bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 px-2 py-0.5 rounded text-[10px] font-bold">▲ ₹${fareDiff.toLocaleString()} Surge</span>` : 
+            `<span class="bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 rounded text-[10px] font-bold">✔ Fair Price</span>`;
 
           const row = document.createElement('tr');
           row.className = "hover:bg-slate-100 dark:hover:bg-slate-800/40 transition";
@@ -823,6 +834,9 @@
             <td class="py-3 px-4 font-mono font-bold">₹${d.base_unit_fare.toLocaleString()}</td>
             <td class="py-3 px-4">${surgeBadge}</td>
             <td class="py-3 px-4 font-bold text-emerald-600">₹${d.total_trip_cost.toLocaleString()}</td>
+            <td class="py-3 px-4 text-slate-600 dark:text-slate-300">${sp.baggage}</td>
+            <td class="py-3 px-4 text-slate-600 dark:text-slate-300">${sp.pitch}</td>
+            <td class="py-3 px-4 text-emerald-600 dark:text-emerald-400 font-bold">${sp.otp}</td>
             <td class="py-3 px-4"><button onclick='openBooking(${JSON.stringify(d)}, "${origin}", "${destination}")' class="bg-red-100 text-rose-700 px-3 py-1 rounded-lg text-[11px] font-bold">View Receipt</button></td>
           `;
           tbody.appendChild(row);
@@ -832,6 +846,17 @@
         grid.innerHTML = '';
         data.all_deals.forEach((deal, idx) => {
           const isBest = idx === 0;
+          const breakdownPills = deal.breakdown.map(b => `
+            <div class="flex justify-between items-center text-[10px] mono py-1 border-b border-slate-200 dark:border-slate-800/50">
+              <div>
+                <span class="font-semibold">${b.passenger}</span>
+                <span class="text-slate-500"> (${b.age}y, ${b.cabin})</span>
+                <span class="text-sky-600 dark:text-sky-300 block text-[9px]">${b.offer}</span>
+              </div>
+              <span class="text-emerald-600 font-bold">₹${b.seat_fare.toLocaleString()}</span>
+            </div>
+          `).join('');
+
           const card = document.createElement('div');
           card.className = `p-4 rounded-2xl border bg-white/90 dark:bg-slate-900/90 shadow-xl flex flex-col justify-between ${isBest ? 'border-sky-500 ring-2 ring-sky-500/20' : 'border-slate-200 dark:border-slate-800'}`;
           card.innerHTML = `
@@ -840,6 +865,12 @@
               <h4 class="font-black text-base mt-1.5">${deal.airline} <span class="text-[11px] text-slate-500 mono">(${deal.flight_number})</span></h4>
               <div class="mt-3 flex justify-between text-[11px] bg-slate-50 dark:bg-slate-950 p-2.5 rounded-xl mono">
                 <span>DEP: <strong class="text-white">${deal.departure_time} IST</strong></span>
+              </div>
+              <div class="mt-3 pt-2.5 border-t border-slate-800">
+                <p class="text-[10px] text-slate-400 mb-1 font-bold uppercase mono">Individual Passenger Cost:</p>
+                <div class="bg-slate-50 dark:bg-slate-950/70 p-2.5 rounded-xl border border-slate-800 space-y-1 mb-2">
+                  ${breakdownPills}
+                </div>
               </div>
               <h3 class="text-xl font-black text-emerald-500 mono mt-3">₹${deal.total_trip_cost.toLocaleString()}</h3>
             </div>
