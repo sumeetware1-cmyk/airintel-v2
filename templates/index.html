@@ -183,6 +183,7 @@
           <span class="text-xs text-sky-600 dark:text-sky-400 mono">✔ MULTI-PASSENGER & INDEPENDENT CABIN ENGINE READY</span>
         </div>
 
+        <!-- MODE A: ONE WAY & ROUND TRIP BAR -->
         <div id="standard-flight-inputs" class="grid grid-cols-1 md:grid-cols-12 gap-3.5 bg-slate-50 dark:bg-slate-950/90 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
           <div class="md:col-span-3 bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-sky-500 transition">
             <span class="text-[10px] font-black uppercase tracking-wider text-sky-600 dark:text-sky-400 block mono">From (Departure City)</span>
@@ -217,6 +218,7 @@
           </div>
         </div>
 
+        <!-- MODE B: MAKEMYTRIP-STYLE MULTI-CITY ROWS -->
         <div id="multicity-flight-inputs" class="hidden space-y-3">
           <div class="flex justify-between items-center bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
             <span class="text-xs font-bold text-slate-700 dark:text-slate-300">Multi-City Segment Routing</span>
@@ -225,7 +227,9 @@
               <span id="multicity-pax-count-badge" class="bg-sky-500 text-white dark:text-slate-950 px-1.5 py-0.2 rounded font-black text-[10px]">1</span>
             </div>
           </div>
+
           <div id="multicity-rows-container" class="space-y-3"></div>
+
           <div class="pt-2">
             <button type="button" onclick="addMultiCitySegment()" class="px-4 py-2.5 rounded-xl border-2 border-dashed border-sky-400 dark:border-sky-500/60 bg-sky-50 dark:bg-sky-950/30 hover:bg-sky-100 dark:hover:bg-sky-950/70 text-sky-700 dark:text-sky-400 font-bold text-xs flex items-center space-x-2 transition">
               <span>+ ADD ANOTHER CITY</span>
@@ -241,7 +245,7 @@
         </div>
       </div>
 
-      <!-- RESTORED: AI PRICE TIMING & MARKET DOMINANCE CARDS -->
+      <!-- AI PRICE TIMING & MARKET DOMINANCE -->
       <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
         <div class="md:col-span-7 bg-white/90 dark:bg-slate-900/90 rounded-3xl border border-slate-200 dark:border-sky-900/40 p-6 shadow-2xl backdrop-blur-xl flex items-center justify-between">
           <div class="space-y-1.5">
@@ -401,7 +405,6 @@
 
       <!-- MACRO INTELLIGENCE ENGINE & DIRECTIONAL MOMENTUM PANELS -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
         <div class="lg:col-span-7 bg-white/80 dark:bg-slate-900/80 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl flex flex-col justify-between">
           <div>
             <div class="flex items-center space-x-2 mb-3">
@@ -459,7 +462,6 @@
             Based on sample basket of 15 major domestic city pairs
           </div>
         </div>
-
       </div>
 
       <!-- ROUTE-WISE AIRFARE MATRIX TABLE -->
@@ -715,20 +717,116 @@
       searchFlights();
     }
 
+    function renderMultiCityRows() {
+      const container = document.getElementById('multicity-rows-container');
+      container.innerHTML = '';
+
+      multiCitySegments.forEach((seg, idx) => {
+        const row = document.createElement('div');
+        row.className = "grid grid-cols-1 md:grid-cols-12 gap-3 bg-slate-50 dark:bg-slate-950/90 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 items-center relative";
+
+        let originOptions = '';
+        let destOptions = '';
+        Object.entries(globalAirportMap).forEach(([code, name]) => {
+          originOptions += `<option value="${code}" ${seg.origin === code ? 'selected' : ''}>${name} (${code})</option>`;
+          destOptions += `<option value="${code}" ${seg.destination === code ? 'selected' : ''}>${name} (${code})</option>`;
+        });
+
+        row.innerHTML = `
+          <div class="md:col-span-1 flex items-center justify-center">
+            <span class="mono text-[10px] font-black uppercase text-sky-600 dark:text-sky-400 bg-sky-100 dark:bg-sky-950 border border-sky-300 dark:border-sky-800 px-2 py-1 rounded">LEG ${idx+1}</span>
+          </div>
+
+          <div class="md:col-span-4 bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+            <span class="text-[10px] font-black uppercase tracking-wider text-sky-600 dark:text-sky-400 block mono">From</span>
+            <select onchange="updateMultiCitySegment(${idx}, 'origin', this.value)" class="w-full font-bold text-sm bg-white dark:bg-slate-900 outline-none cursor-pointer mt-1">
+              ${originOptions}
+            </select>
+          </div>
+
+          <div class="md:col-span-4 bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+            <span class="text-[10px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block mono">To</span>
+            <select onchange="updateMultiCitySegment(${idx}, 'destination', this.value)" class="w-full font-bold text-sm bg-white dark:bg-slate-900 outline-none cursor-pointer mt-1">
+              ${destOptions}
+            </select>
+          </div>
+
+          <div class="md:col-span-2 bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+            <span class="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 block mono">Date</span>
+            <input type="date" value="${seg.date}" onchange="updateMultiCitySegment(${idx}, 'date', this.value)" class="w-full font-bold text-xs bg-transparent outline-none mt-1 [color-scheme:light] dark:[color-scheme:dark]">
+          </div>
+
+          <div class="md:col-span-1 flex justify-center">
+            ${idx >= 2 ? `
+              <button type="button" onclick="removeMultiCitySegment(${idx})" class="text-rose-500 dark:text-rose-400 hover:text-rose-600 font-bold text-sm p-1">✕</button>
+            ` : `<span class="text-slate-400 text-xs">Required</span>`}
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function addMultiCitySegment() {
+      if (multiCitySegments.length >= 5) return;
+      const lastDest = multiCitySegments[multiCitySegments.length - 1].destination || 'DEL';
+      const nextDate = new Date();
+      nextDate.setDate(nextDate.getDate() + 10 + (multiCitySegments.length * 2));
+      multiCitySegments.push({ origin: lastDest, destination: 'BOM', date: nextDate.toISOString().split('T')[0] });
+      renderMultiCityRows();
+    }
+
+    function removeMultiCitySegment(idx) {
+      if (multiCitySegments.length <= 2) return;
+      multiCitySegments.splice(idx, 1);
+      renderMultiCityRows();
+    }
+
+    function updateMultiCitySegment(idx, field, val) {
+      multiCitySegments[idx][field] = val;
+      if (field === 'destination' && idx + 1 < multiCitySegments.length) {
+        multiCitySegments[idx + 1].origin = val;
+      }
+      renderMultiCityRows();
+      if (idx === 0) updateRadarRoute(multiCitySegments[0].origin, multiCitySegments[0].destination);
+    }
+
     function setTripMode(mode) {
       currentTripMode = mode;
       ['oneway', 'roundtrip', 'multicity'].forEach(m => {
         const btn = document.getElementById(`btn-mode-${m}`);
-        if (btn) btn.className = (m === mode) ? "px-4 py-2 rounded-xl text-xs font-bold bg-sky-500 text-white shadow transition" : "px-4 py-2 rounded-xl text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition";
+        if (btn) {
+          btn.className = (m === mode) ? "px-4 py-2 rounded-xl text-xs font-bold bg-sky-500 text-white shadow transition" : "px-4 py-2 rounded-xl text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition";
+        }
       });
+
       const singleBox = document.getElementById('standard-flight-inputs');
       const multiBox = document.getElementById('multicity-flight-inputs');
+      const returnBox = document.getElementById('return-box');
+      const returnInput = document.getElementById('search-return-date');
+
       if (mode === 'multicity') {
         singleBox.classList.add('hidden');
         multiBox.classList.remove('hidden');
+        renderMultiCityRows();
+        updateRadarRoute(multiCitySegments[0].origin, multiCitySegments[0].destination);
       } else {
         singleBox.classList.remove('hidden');
         multiBox.classList.add('hidden');
+        
+        if (mode === 'roundtrip') {
+          returnBox.className = "md:col-span-2 bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-slate-300 dark:border-slate-800 hover:border-sky-500 transition opacity-100";
+          returnInput.disabled = false;
+          returnInput.classList.remove('cursor-not-allowed', 'text-slate-400', 'dark:text-slate-500');
+          returnInput.classList.add('text-slate-900', 'dark:text-white');
+          const dept = new Date(document.getElementById('search-date').value || new Date());
+          dept.setDate(dept.getDate() + 4);
+          returnInput.value = dept.toISOString().split('T')[0];
+        } else {
+          returnBox.className = "md:col-span-2 bg-slate-100 dark:bg-slate-950/40 p-3.5 rounded-xl border border-dashed border-slate-300 dark:border-slate-800 opacity-40 transition";
+          returnInput.disabled = true;
+          returnInput.value = '';
+        }
+        updateRadarRoute(document.getElementById('search-origin').value || 'BOM', document.getElementById('search-destination').value || 'DEL');
       }
     }
 
