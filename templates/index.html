@@ -18,9 +18,7 @@
     tailwind.config = {
       darkMode: 'class',
       theme: {
-        extend: {
-          colors: { darkbg: '#030712', cardbg: '#0f172a' }
-        }
+        extend: { colors: { darkbg: '#030712', cardbg: '#0f172a' } }
       }
     }
   </script>
@@ -36,7 +34,7 @@
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen pb-20 transition-colors duration-200">
 
   <!-- Top Navigation -->
-  <nav class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 px-6 py-4 flex justify-between items-center sticky top-0 z-50 shadow-sm">
+  <nav class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 px-6 py-4 flex flex-wrap justify-between items-center sticky top-0 z-50 shadow-sm gap-4">
     <div class="flex items-center space-x-3.5">
       <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-sky-400 to-blue-700 flex items-center justify-center shadow-lg shadow-sky-500/20 text-white font-bold">
         🇮🇳
@@ -48,155 +46,206 @@
     </div>
     
     <div class="flex items-center space-x-3">
+      <!-- Page Navigation Tabs -->
+      <div class="bg-slate-100 dark:bg-slate-950 p-1 rounded-xl border border-slate-200 dark:border-slate-800 flex space-x-1">
+        <button onclick="switchPage('monitor')" id="tab-monitor" class="px-4 py-2 rounded-lg text-xs font-bold bg-sky-500 text-white transition">Live Monitor</button>
+        <button onclick="switchPage('analytics')" id="tab-analytics" class="px-4 py-2 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-white transition">Analytics & Tutorial</button>
+      </div>
+
       <!-- Ministerial Export Button -->
-      <button onclick="exportMinisterialReport()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition shadow text-xs font-bold flex items-center space-x-1.5">
+      <button onclick="exportMinisterialReport()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition shadow text-xs font-bold hidden sm:flex items-center space-x-1.5">
         <span>📥</span>
-        <span>Download Official Report</span>
+        <span>Export CSV</span>
       </button>
 
       <!-- Theme Toggle Button -->
       <button onclick="toggleTheme()" class="px-3.5 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:scale-105 transition shadow text-xs font-bold flex items-center space-x-1.5">
         <span id="theme-icon">☀️</span>
-        <span id="theme-text">Light Mode</span>
+        <span id="theme-text" class="hidden sm:inline">Light Mode</span>
       </button>
     </div>
   </nav>
 
   <main class="max-w-7xl mx-auto px-4 mt-8 space-y-8">
 
-    <!-- LIVE INFLATION ANOMALY ALERT BANNER -->
-    <div id="anomaly-alert-banner" class="bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800/80 p-4 rounded-2xl flex items-start space-x-3 shadow-md">
-      <span class="text-amber-600 dark:text-amber-400 text-xl font-bold">⚠️</span>
-      <div>
-        <h4 class="font-bold text-xs uppercase tracking-wide text-amber-800 dark:text-amber-300">MoSPI Automated Price Spike Notice</h4>
-        <p class="text-xs text-amber-700 dark:text-amber-400 mt-0.5">Trunk route airfares are currently experiencing a <strong id="alert-spike-val">+55% surge</strong> compared to the 30-day baseline. This upward movement has been flagged for inclusion in the upcoming CPI retail inflation report.</p>
-      </div>
-    </div>
-
-    <!-- SUMMARY CARDS -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-lg">
-        <span class="text-xs text-slate-500 dark:text-slate-400 uppercase font-semibold">Today's Price Index</span>
-        <p class="mono text-2xl font-black text-sky-600 dark:text-sky-400 mt-1" id="kpi-cpi">-</p>
-        <span class="text-[11px] text-emerald-600 dark:text-emerald-400">Compared to standard baseline</span>
-      </div>
-      <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-lg">
-        <span class="text-xs text-slate-500 dark:text-slate-400 uppercase font-semibold">Average Early-Bird Price</span>
-        <p class="mono text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1" id="kpi-base">₹-</p>
-        <span class="text-[11px] text-slate-500 dark:text-slate-400">Booked 30 days in advance</span>
-      </div>
-      <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-lg">
-        <span class="text-xs text-slate-500 dark:text-slate-400 uppercase font-semibold">Last-Minute Ticket Price</span>
-        <p class="mono text-2xl font-black text-amber-600 dark:text-amber-400 mt-1" id="kpi-spot">₹-</p>
-        <span class="text-[11px] text-amber-600 dark:text-amber-400" id="kpi-inflation">--% Price Jump</span>
-      </div>
-      <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-lg">
-        <span class="text-xs text-slate-500 dark:text-slate-400 uppercase font-semibold">Total Price Records</span>
-        <p class="mono text-2xl font-black text-blue-600 dark:text-blue-400 mt-1" id="kpi-records">-</p>
-        <span class="text-[11px] text-sky-600 dark:text-sky-400">Collected automatically</span>
-      </div>
-    </div>
-
-    <!-- ROUTE SELECTION & RBI POLICY SIMULATOR -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <!-- PAGE 1: LIVE MONITOR -->
+    <section id="page-monitor" class="space-y-8">
       
-      <!-- ROUTE SELECTOR -->
-      <div class="lg:col-span-7 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl flex flex-col justify-between">
+      <!-- LIVE INFLATION ANOMALY ALERT BANNER -->
+      <div class="bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800/80 p-4 rounded-2xl flex items-start space-x-3 shadow-md">
+        <span class="text-amber-600 dark:text-amber-400 text-xl font-bold">⚠️</span>
         <div>
-          <h3 class="text-sm font-bold uppercase tracking-wider text-sky-600 dark:text-sky-400 mb-4">✈️ Select Flight Route to Check Prices</h3>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="text-xs text-slate-500 dark:text-slate-400 block mb-1">From City</label>
-              <select id="audit-origin" class="w-full font-bold text-sm bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-3 rounded-xl outline-none cursor-pointer"></select>
-            </div>
-            <div>
-              <label class="text-xs text-slate-500 dark:text-slate-400 block mb-1">To City</label>
-              <select id="audit-destination" class="w-full font-bold text-sm bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-3 rounded-xl outline-none cursor-pointer"></select>
-            </div>
-          </div>
-        </div>
-        <div class="mt-6">
-          <button onclick="runCorridorAudit()" class="w-full bg-sky-500 hover:bg-sky-400 text-white font-black py-3.5 rounded-xl text-xs shadow-lg transition">
-            CHECK ROUTE PRICES & BREAKDOWN ➔
-          </button>
+          <h4 class="font-bold text-xs uppercase tracking-wide text-amber-800 dark:text-amber-300">MoSPI Automated Price Spike Notice</h4>
+          <p class="text-xs text-amber-700 dark:text-amber-400 mt-0.5">Trunk route airfares are currently experiencing a <strong id="alert-spike-val">+87.94% surge</strong> compared to the 30-day baseline. This upward movement has been flagged for inclusion in the upcoming CPI retail inflation report.</p>
         </div>
       </div>
 
-      <!-- RBI POLICY SIMULATOR -->
-      <div class="lg:col-span-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl flex flex-col justify-between">
-        <div>
-          <div class="flex items-center space-x-2 mb-2">
-            <span class="bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded text-[10px] font-black uppercase">RBI Policy Tool</span>
-            <h3 class="font-bold text-sm">Fuel Price Impact Simulator</h3>
-          </div>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Simulate how fuel surcharge increases affect ticket prices and inflation.</p>
-          
-          <div class="space-y-3">
-            <div>
-              <div class="flex justify-between text-xs font-bold mb-1">
-                <span>Fuel Cost Increase:</span>
-                <span id="fuel-slider-val" class="text-sky-600 dark:text-sky-400">10%</span>
+      <!-- SUMMARY CARDS -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-lg">
+          <span class="text-xs text-slate-500 dark:text-slate-400 uppercase font-semibold">Today's Price Index</span>
+          <p class="mono text-2xl font-black text-sky-600 dark:text-sky-400 mt-1" id="kpi-cpi">-</p>
+          <span class="text-[11px] text-emerald-600 dark:text-emerald-400">Compared to standard baseline</span>
+        </div>
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-lg">
+          <span class="text-xs text-slate-500 dark:text-slate-400 uppercase font-semibold">Average Early-Bird Price</span>
+          <p class="mono text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1" id="kpi-base">₹-</p>
+          <span class="text-[11px] text-slate-500 dark:text-slate-400">Booked 30 days in advance</span>
+        </div>
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-lg">
+          <span class="text-xs text-slate-500 dark:text-slate-400 uppercase font-semibold">Last-Minute Ticket Price</span>
+          <p class="mono text-2xl font-black text-amber-600 dark:text-amber-400 mt-1" id="kpi-spot">₹-</p>
+          <span class="text-[11px] text-amber-600 dark:text-amber-400" id="kpi-inflation">--% Price Jump</span>
+        </div>
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-lg">
+          <span class="text-xs text-slate-500 dark:text-slate-400 uppercase font-semibold">Total Price Records</span>
+          <p class="mono text-2xl font-black text-blue-600 dark:text-blue-400 mt-1" id="kpi-records">-</p>
+          <span class="text-[11px] text-sky-600 dark:text-sky-400">Collected automatically</span>
+        </div>
+      </div>
+
+      <!-- ROUTE SELECTOR & RBI POLICY SIMULATOR -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-7 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl flex flex-col justify-between">
+          <div>
+            <h3 class="text-sm font-bold uppercase tracking-wider text-sky-600 dark:text-sky-400 mb-4">✈️ Select Flight Route to Check Prices</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="text-xs text-slate-500 dark:text-slate-400 block mb-1">From City</label>
+                <select id="audit-origin" class="w-full font-bold text-sm bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-3 rounded-xl outline-none cursor-pointer"></select>
               </div>
-              <input type="range" min="0" max="40" value="10" step="5" oninput="updatePolicySimulator(this.value)" class="w-full accent-sky-500 cursor-pointer">
-            </div>
-            <div class="bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 flex justify-between items-center text-xs mono">
-              <span class="text-slate-500">Estimated Index Impact:</span>
-              <span id="simulated-impact-val" class="font-bold text-emerald-600 dark:text-emerald-400">+3.8% CPI Rise</span>
+              <div>
+                <label class="text-xs text-slate-500 dark:text-slate-400 block mb-1">To City</label>
+                <select id="audit-destination" class="w-full font-bold text-sm bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-3 rounded-xl outline-none cursor-pointer"></select>
+              </div>
             </div>
           </div>
-        </div>
-        <span class="text-[10px] text-slate-400 mt-3 block">Used by monetary policy committee for inflation forecasting.</span>
-      </div>
-
-    </div>
-
-    <!-- MAP & TREND CHART -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      <div class="lg:col-span-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-5 shadow-xl flex flex-col justify-between">
-        <div>
-          <h3 class="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase tracking-widest mb-3">Live Flight Route Map</h3>
-          <div id="air-radar-map" class="border border-slate-200 dark:border-slate-800"></div>
-        </div>
-        <div class="mt-3 flex justify-between text-xs mono text-slate-500 dark:text-slate-400">
-          <span id="audit-corridor-label">Route: BOM ➔ DEL</span>
-          <span id="audit-corridor-index" class="text-emerald-600 dark:text-emerald-400 font-bold">Index: 100.0</span>
-        </div>
-      </div>
-
-      <div class="lg:col-span-7 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl flex flex-col justify-between">
-        <div>
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="font-bold text-sm">How Booking Early Changes the Price</h3>
-            <select id="trend-route-select" onchange="loadTrendChart()" class="hidden"></select>
-            <span class="text-xs text-sky-600 dark:text-sky-400 font-semibold" id="current-chart-route-label">Price Trend Over Days</span>
+          <div class="mt-6">
+            <button onclick="runCorridorAudit()" class="w-full bg-sky-500 hover:bg-sky-400 text-white font-black py-3.5 rounded-xl text-xs shadow-lg transition">
+              CHECK ROUTE PRICES & BREAKDOWN ➔
+            </button>
           </div>
-          <div class="h-56"><canvas id="trendChart"></canvas></div>
+        </div>
+
+        <div class="lg:col-span-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl flex flex-col justify-between">
+          <div>
+            <div class="flex items-center space-x-2 mb-2">
+              <span class="bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded text-[10px] font-black uppercase">RBI Policy Tool</span>
+              <h3 class="font-bold text-sm">Fuel Price Impact Simulator</h3>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Simulate how fuel surcharge increases affect ticket prices and inflation.</p>
+            
+            <div class="space-y-3">
+              <div>
+                <div class="flex justify-between text-xs font-bold mb-1">
+                  <span>Fuel Cost Increase:</span>
+                  <span id="fuel-slider-val" class="text-sky-600 dark:text-sky-400">0%</span>
+                </div>
+                <input type="range" min="0" max="40" value="0" step="5" oninput="updatePolicySimulator(this.value)" class="w-full accent-sky-500 cursor-pointer">
+              </div>
+              <div class="bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 flex justify-between items-center text-xs mono">
+                <span class="text-slate-500">Estimated Index Impact:</span>
+                <span id="simulated-impact-val" class="font-bold text-emerald-600 dark:text-emerald-400">+0.0% CPI Rise</span>
+              </div>
+            </div>
+          </div>
+          <span class="text-[10px] text-slate-400 mt-3 block">Used by monetary policy committee for inflation forecasting.</span>
         </div>
       </div>
-    </div>
 
-    <!-- TICKET PRICE BREAKDOWN TABLE -->
-    <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-base font-bold">📊 Price Breakdown: Base Fare vs. Government Taxes</h3>
-        <span class="text-xs text-slate-500 dark:text-slate-400">Transparent Pricing</span>
+      <!-- MAP & TREND CHART -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-5 shadow-xl flex flex-col justify-between">
+          <div>
+            <h3 class="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase tracking-widest mb-3">Live Flight Route Map</h3>
+            <div id="air-radar-map" class="border border-slate-200 dark:border-slate-800"></div>
+          </div>
+          <div class="mt-3 flex justify-between text-xs mono text-slate-500 dark:text-slate-400">
+            <span id="audit-corridor-label">Route: BOM ➔ DEL</span>
+            <span id="audit-corridor-index" class="text-emerald-600 dark:text-emerald-400 font-bold">Index: 100.0</span>
+          </div>
+        </div>
+
+        <div class="lg:col-span-7 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl flex flex-col justify-between">
+          <div>
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="font-bold text-sm">How Booking Early Changes the Price</h3>
+              <select id="trend-route-select" onchange="loadTrendChart()" class="hidden"></select>
+              <span class="text-xs text-sky-600 dark:text-sky-400 font-semibold" id="current-chart-route-label">Price Trend Over Days</span>
+            </div>
+            <div class="h-56"><canvas id="trendChart"></canvas></div>
+          </div>
+        </div>
       </div>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-xs mono border-collapse">
-          <thead>
-            <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400">
-              <th class="py-3 px-4">Airline & Flight</th>
-              <th class="py-3 px-4">Market Share</th>
-              <th class="py-3 px-4">Base Ticket Price</th>
-              <th class="py-3 px-4">Taxes & Airport Fees</th>
-              <th class="py-3 px-4">Total Price Paid</th>
-              <th class="py-3 px-4">Status</th>
-            </tr>
-          </thead>
-          <tbody id="audit-tbody" class="divide-y divide-slate-200 dark:divide-slate-800 text-slate-800 dark:text-slate-200"></tbody>
-        </table>
+
+      <!-- TICKET PRICE BREAKDOWN TABLE -->
+      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-base font-bold">📊 Price Breakdown: Base Fare vs. Government Taxes</h3>
+          <span class="text-xs text-slate-500 dark:text-slate-400">Transparent Pricing</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs mono border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400">
+                <th class="py-3 px-4">Airline & Flight</th>
+                <th class="py-3 px-4">Market Share</th>
+                <th class="py-3 px-4">Base Ticket Price</th>
+                <th class="py-3 px-4">Taxes & Airport Fees</th>
+                <th class="py-3 px-4">Total Price Paid</th>
+                <th class="py-3 px-4">Status</th>
+              </tr>
+            </thead>
+            <tbody id="audit-tbody" class="divide-y divide-slate-200 dark:divide-slate-800 text-slate-800 dark:text-slate-200"></tbody>
+          </table>
+        </div>
       </div>
-    </div>
+
+    </section>
+
+    <!-- PAGE 2: ADVANCED ANALYTICS & TUTORIAL GUIDE -->
+    <section id="page-analytics" class="hidden space-y-8">
+      
+      <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
+        <h2 class="text-lg font-bold text-sky-600 dark:text-sky-400">📖 Step-by-Step Software Tutorial for Government Analysts</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-slate-600 dark:text-slate-300">
+          <div class="bg-slate-100 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2">
+            <span class="font-black text-sky-500 text-sm">Step 1</span>
+            <h4 class="font-bold">Select a Corridor</h4>
+            <p>Go to the Live Monitor tab, choose your Origin and Destination cities, and click 'Check Route Prices'.</p>
+          </div>
+          <div class="bg-slate-100 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2">
+            <span class="font-black text-sky-500 text-sm">Step 2</span>
+            <h4 class="font-bold">Audit Base vs. Taxes</h4>
+            <p>Review the table breakdown to see how much airlines charge for seats versus statutory government taxes.</p>
+          </div>
+          <div class="bg-slate-100 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2">
+            <span class="font-black text-sky-500 text-sm">Step 3</span>
+            <h4 class="font-bold">Export for MoSPI</h4>
+            <p>Click the 'Export CSV' button in the top navigation bar to download the monthly report for official filing.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
+        <h3 class="text-base font-bold">📊 Advanced Economic Statistics & Base Price Matrix</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400">Detailed methodology explaining how the Consumer Price Index (CPI) transport weight is calculated.</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="p-4 rounded-2xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2 mono text-xs">
+            <h4 class="font-bold text-sky-600 dark:text-sky-400">Index Formula</h4>
+            <p class="text-slate-600 dark:text-slate-400">APIx = (Spot Average Fare / 30-Day Baseline Fare) * 100</p>
+            <p class="text-[11px] text-slate-500">Tracks retail inflation relative to the benchmark month.</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2 mono text-xs">
+            <h4 class="font-bold text-emerald-600 dark:text-emerald-400">Data Integrity Standard</h4>
+            <p class="text-slate-600 dark:text-slate-400">Outlier Filter: Removes quotes > 3 standard deviations from mean.</p>
+            <p class="text-[11px] text-slate-500">Ensures accurate government reporting without pricing glitches.</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
 
   </main>
 
@@ -217,6 +266,20 @@
       'GAU': [26.1061, 91.5859], 'PAT': [25.5913, 85.0880], 'IXC': [30.6735, 76.7885]
     };
 
+    function switchPage(page) {
+      if (page === 'monitor') {
+        document.getElementById('page-monitor').classList.remove('hidden');
+        document.getElementById('page-analytics').classList.add('hidden');
+        document.getElementById('tab-monitor').className = "px-4 py-2 rounded-lg text-xs font-bold bg-sky-500 text-white transition";
+        document.getElementById('tab-analytics').className = "px-4 py-2 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-white transition";
+      } else {
+        document.getElementById('page-monitor').classList.add('hidden');
+        document.getElementById('page-analytics').classList.remove('hidden');
+        document.getElementById('tab-analytics').className = "px-4 py-2 rounded-lg text-xs font-bold bg-sky-500 text-white transition";
+        document.getElementById('tab-monitor').className = "px-4 py-2 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-white transition";
+      }
+    }
+
     function toggleTheme() {
       const html = document.documentElement;
       const textSpan = document.getElementById('theme-text');
@@ -224,19 +287,20 @@
       if (html.classList.contains('dark')) {
         html.classList.remove('dark');
         localStorage.setItem('theme', 'light');
-        textSpan.textContent = 'Dark Mode';
+        if (textSpan) textSpan.textContent = 'Dark Mode';
         iconSpan.textContent = '🌙';
       } else {
         html.classList.add('dark');
         localStorage.setItem('theme', 'dark');
-        textSpan.textContent = 'Light Mode';
+        if (textSpan) textSpan.textContent = 'Light Mode';
         iconSpan.textContent = '☀️';
       }
     }
 
     if (localStorage.getItem('theme') === 'light') {
       document.documentElement.classList.remove('dark');
-      document.getElementById('theme-text').textContent = 'Dark Mode';
+      const textSpan = document.getElementById('theme-text');
+      if (textSpan) textSpan.textContent = 'Dark Mode';
       document.getElementById('theme-icon').textContent = '🌙';
     }
 
