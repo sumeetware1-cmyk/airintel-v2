@@ -45,7 +45,7 @@
     <div class="flex items-center space-x-3">
       <div class="bg-slate-100 dark:bg-slate-950 p-1 rounded-xl border border-slate-200 dark:border-slate-800 flex space-x-1">
         <button onclick="switchPage('monitor')" id="tab-monitor" class="px-4 py-2 rounded-lg text-xs font-bold bg-sky-500 text-white transition">Live Monitor</button>
-        <button onclick="switchPage('analytics')" id="tab-analytics" class="px-4 py-2 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-white transition">Advanced MoSPI & RBI Suite</button>
+        <button onclick="switchPage('analytics')" id="tab-analytics" class="px-4 py-2 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-white transition">Route & Macro Analytics</button>
       </div>
 
       <button onclick="exportMinisterialReport()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition shadow text-xs font-bold hidden sm:flex items-center space-x-1.5">
@@ -167,22 +167,28 @@
 
     </section>
 
-    <!-- PAGE 2: ADVANCED MOSPI & RBI ANALYTICS SUITE -->
+    <!-- PAGE 2: ROUTE-SPECIFIC & MACRO ANALYTICS SUITE -->
     <section id="page-analytics" class="hidden space-y-8">
       
-      <!-- HEADER -->
-      <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-3">
-        <span class="bg-sky-100 dark:bg-sky-950 text-sky-600 dark:text-sky-400 px-3 py-1 rounded-lg text-xs font-black uppercase">Advanced Macroeconomic Suite</span>
-        <h2 class="text-xl font-black">Comprehensive Multi-Variable Inflation Analysis Center</h2>
-        <p class="text-xs text-slate-500 dark:text-slate-400 max-w-4xl">Airfare inflation is driven by complex macro factors: Aviation Turbine Fuel (ATF) pricing, mass migration festivals (Ganpati, Chhath Puja, Diwali, Eid, Christmas, Pongal, Onam), seasonal climate conditions, international forex fluctuations, aircraft lease rates, and airport user development fee (UDF) adjustments.</p>
+      <!-- HEADER SHOWING ACTIVE ROUTE -->
+      <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl flex flex-wrap justify-between items-center gap-4">
+        <div>
+          <span class="bg-sky-100 dark:bg-sky-950 text-sky-600 dark:text-sky-400 px-3 py-1 rounded-lg text-xs font-black uppercase">Active Corridor Analytics</span>
+          <h2 class="text-xl font-black mt-2">Deep Dive Analysis for Route: <span id="active-analytics-route" class="text-sky-500">BOM ➔ DEL</span></h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Inspecting lead-time historical curves, seasonal migration surges, and individual factor contributions for this specific city-pair.</p>
+        </div>
+        <div>
+          <label class="text-xs font-bold text-slate-500 block mb-1">Switch Analytics Corridor</label>
+          <select id="history-route-select" onchange="syncAnalyticsRoute(this.value)" class="text-xs border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 bg-slate-100 dark:bg-slate-950 font-bold outline-none cursor-pointer text-white"></select>
+        </div>
       </div>
 
-      <!-- RBI & MOSPI POLICY SIMULATOR WITH INDIVIDUAL FACTOR BREAKDOWN -->
+      <!-- RBI & MOSPI POLICY SIMULATOR WITH FACTOR BREAKDOWN -->
       <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-6">
         <div class="flex flex-wrap justify-between items-center gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
           <div>
             <span class="bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 px-2.5 py-1 rounded text-[10px] font-black uppercase">RBI & MoSPI Policy Modeling</span>
-            <h3 class="text-base font-bold mt-1">Macroeconomic Scenario & Individual Factor CPI Contribution Simulator</h3>
+            <h3 class="text-base font-bold mt-1">Corridor Macroeconomic Scenario & Individual Factor CPI Simulator</h3>
           </div>
           <span class="text-xs font-mono text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950 px-3 py-1 rounded-lg border border-emerald-300 dark:border-emerald-800">Target Inflation: 4% ± 2%</span>
         </div>
@@ -251,26 +257,23 @@
         </div>
       </div>
 
-      <!-- SPACIOUS, HIGH-QUALITY GRAPHS & CHARTS -->
+      <!-- SPACIOUS GRAPHS & CHARTS -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
-          <div class="flex justify-between items-center">
-            <h3 class="font-bold text-sm">Present vs. Historical Long-Term Price Curve</h3>
-            <select id="history-route-select" onchange="loadHistoryCharts()" class="text-xs border border-slate-300 dark:border-slate-700 rounded-lg p-2 bg-slate-100 dark:bg-slate-950 font-bold outline-none cursor-pointer"></select>
-          </div>
+          <h3 class="font-bold text-sm">Present vs. Historical Long-Term Price Curve for <span class="chart-route-tag text-sky-400">BOM-DEL</span></h3>
           <div class="h-80"><canvas id="historyComparisonChart"></canvas></div>
         </div>
 
         <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
           <h3 class="font-bold text-sm">Multi-Factor Inflation Contribution Weight (%)</h3>
-          <p class="text-xs text-slate-500">Precise quantitative breakdown for MoSPI monthly retail inflation reporting.</p>
+          <p class="text-xs text-slate-500">Quantitative contribution breakdown for MoSPI monthly reporting.</p>
           <div class="h-80"><canvas id="driverWeightChart"></canvas></div>
         </div>
       </div>
 
       <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
         <h3 class="font-bold text-base">Mass Migration & Multi-Faith Festival Surge Analysis (Annual Calendar)</h3>
-        <p class="text-xs text-slate-500">Tracking airfare inflation spikes across Ganpati Festival, Chhath Puja, Diwali, Eid, Christmas, Pongal/Onam, and Summer holidays.</p>
+        <p class="text-xs text-slate-500">Tracking price surges across Ganpati Festival, Chhath Puja, Diwali, Eid, Christmas, Pongal/Onam, and Summer holidays.</p>
         <div class="h-80"><canvas id="festivalCalendarChart"></canvas></div>
       </div>
 
@@ -309,7 +312,20 @@
         document.getElementById('page-analytics').classList.remove('hidden');
         document.getElementById('tab-analytics').className = "px-4 py-2 rounded-lg text-xs font-bold bg-sky-500 text-white transition";
         document.getElementById('tab-monitor').className = "px-4 py-2 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-white transition";
-        loadHistoryCharts();
+        
+        // Sync analytics route with the route selected on Page 1
+        const origin = document.getElementById('audit-origin').value;
+        const destination = document.getElementById('audit-destination').value;
+        const currentKey = `${origin}-${destination}`;
+        const historyRouteSel = document.getElementById('history-route-select');
+        
+        for (let i = 0; i < historyRouteSel.options.length; i++) {
+          if (historyRouteSel.options[i].value === currentKey || historyRouteSel.options[i].value === `${destination}-${origin}`) {
+            historyRouteSel.value = historyRouteSel.options[i].value;
+            break;
+          }
+        }
+        syncAnalyticsRoute(historyRouteSel.value);
       }
     }
 
@@ -498,8 +514,14 @@
       });
     }
 
-    async function loadHistoryCharts() {
-      const route = document.getElementById('history-route-select').value;
+    function syncAnalyticsRoute(routeKey) {
+      document.getElementById('active-analytics-route').innerText = routeKey.replace('-', ' ➔ ');
+      document.querySelectorAll('.chart-route-tag').forEach(el => el.innerText = routeKey);
+      loadHistoryCharts(routeKey);
+    }
+
+    async function loadHistoryCharts(routeKey = null) {
+      const route = routeKey || document.getElementById('history-route-select').value;
       const res = await fetch(`/api/route-history?route=${route}`);
       const data = await res.json();
 
@@ -510,19 +532,19 @@
         data: {
           labels: data.windows,
           datasets: [
-            { label: 'Historical Baseline (Past Years)', data: data.historical, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.3 },
-            { label: 'Present Pricing (Current)', data: data.present, borderColor: '#38bdf8', backgroundColor: 'rgba(56, 189, 248, 0.15)', fill: true, tension: 0.3 }
+            { label: `Historical Baseline (${route})`, data: data.historical, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.3 },
+            { label: `Present Pricing (${route})`, data: data.present, borderColor: '#38bdf8', backgroundColor: 'rgba(56, 189, 248, 0.15)', fill: true, tension: 0.3 }
           ]
         },
         options: { responsive: true, maintainAspectRatio: false }
       });
 
-      // 2. Multi-Factor Inflation Contribution Weight (%)
+      // 2. Multi-Factor Inflation Drivers Bar Chart
       if (driverChart) driverChart.destroy();
       driverChart = new Chart(document.getElementById('driverWeightChart').getContext('2d'), {
         type: 'bar',
         data: {
-          labels: ['Aviation Fuel (ATF)', 'Mass Migration Festivals', 'Consumer Demand', 'Climate & Fog', 'Govt Taxes & UDF'],
+          labels: ['Aviation Fuel (ATF)', 'Mass Migration & Festivals', 'Consumer Demand', 'Climate & Fog', 'Govt Taxes & UDF'],
           datasets: [{ label: 'Inflation Contribution Weight (%)', data: [32, 28, 20, 12, 8], backgroundColor: ['#0ea5e9', '#f59e0b', '#10b981', '#6366f1', '#ec4899'] }]
         },
         options: { responsive: true, maintainAspectRatio: false }
@@ -534,7 +556,7 @@
         type: 'bar',
         data: {
           labels: ['Diwali / Durga Puja', 'Chhath Puja (Bihar/UP)', 'Ganpati Festival (Konkan/MH)', 'Eid & Christmas', 'Pongal / Onam / Bihu', 'Summer Vacation'],
-          datasets: [{ label: 'Average Route Price Surge (%) Over Base', data: [65, 58, 62, 52, 45, 58], backgroundColor: '#f59e0b' }]
+          datasets: [{ label: 'Route Price Surge (%) Over Base', data: [65, 58, 62, 52, 45, 58], backgroundColor: '#f59e0b' }]
         },
         options: { responsive: true, maintainAspectRatio: false }
       });
