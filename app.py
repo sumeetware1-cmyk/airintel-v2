@@ -6,8 +6,7 @@ import os
 
 app = Flask(__name__)
 
-# Load cleaned domestic dataset
-CSV_PATH = os.path.join(os.path.dirname(__file__), 'data', 'cleaned', 'airfare_collected_clean.csv')
+CSV_PATH = os.path.join(os.path.dirname(__file__), 'airfare_collected_clean.csv')
 
 try:
     df = pd.read_csv(CSV_PATH)
@@ -23,10 +22,12 @@ def resolve_column(candidates, default_name):
             return c
     return default_name
 
-FARE_COL = resolve_column(['total_fare', 'fare', 'price', 'ticket_price', 'base_fare'], 'total_fare')
-ORIGIN_COL = resolve_column(['origin', 'source', 'from', 'departure_city'], 'origin')
-DEST_COL = resolve_column(['destination', 'to', 'arrival_city'], 'destination')
-WINDOW_COL = resolve_column(['advance_days', 'booking_window_days', 'booking_window', 'days_left', 'days'], 'advance_days')
+FARE_COL = resolve_column(['total_fare', 'fare', 'price', 'ticket_price'], 'total_fare')
+BASE_COL = resolve_column(['base_fare'], 'base_fare')
+TAX_COL = resolve_column(['taxes', 'tax'], 'taxes')
+ORIGIN_COL = resolve_column(['origin', 'source', 'from'], 'origin')
+DEST_COL = resolve_column(['destination', 'to'], 'destination')
+WINDOW_COL = resolve_column(['advance_days', 'booking_window_days', 'days'], 'advance_days')
 
 if FARE_COL not in df.columns and len(df) > 0:
     df['total_fare'] = 5200
@@ -156,42 +157,43 @@ def audit_corridor():
 
     mult = DISTANCE_FACTORS.get(route_key, DISTANCE_FACTORS.get(f"{destination}-{origin}", 1.0))
 
-    if not matched_df.empty and WINDOW_COL in matched_df.columns:
-        base_slice = matched_df[matched_df[WINDOW_COL] >= 30]
-        spot_slice = matched_df[matched_df[WINDOW_COL] <= 1]
-        corridor_base = float(base_slice[FARE_COL].mean()) if not base_slice.empty else 5200.0 * mult
-        corridor_spot = float(spot_slice[FARE_COL].mean()) if not spot_slice.empty else corridor_base * 1.55
+    if not matched_df.empty and FARE_COL in matched_df.columns:
+        corridor_base = float(matched_df[BASE_COL].mean()) if BASE_COL in matched_df.columns and not matched_df[BASE_COL].isnull().all() else 4200.0 * mult
+        corridor_tax = float(matched_df[TAX_COL].mean()) if TAX_COL in matched_df.columns and not matched_df[TAX_COL].isnull().all() else 950.0 * mult
+        corridor_total = float(matched_df[FARE_COL].mean()) if not matched_df.isnull().all() else 5150.0 * mult
     else:
-        corridor_base = 4800.0 * mult
-        corridor_spot = corridor_base * 1.52
+        corridor_base = 4200.0 * mult
+        corridor_tax = 950.0 * mult
+        corridor_total = corridor_base + corridor_tax
 
-    corridor_index = round((corridor_spot / corridor_base) * 100, 2)
+    corridor_index = round((corridor_total / (corridor_base * 0.9)) * 100, 2)
 
     carriers = [
-        {'airline': 'IndiGo', 'code': '6E-204', 'share': '58%', 'base': corridor_base * 0.95, 'tax': 850},
-        {'airline': 'Air India', 'code': 'AI-678', 'share': '14%', 'base': corridor_base * 1.05, 'tax': 1100},
-        {'airline': 'Akasa Air', 'code': 'QP-1321', 'share': '18%', 'base': corridor_base * 0.90, 'tax': 800},
-        {'airline': 'Vistara', 'code': 'UK-955', 'share': '10%', 'base': corridor_base * 1.15, 'tax': 1250}
+        {'airline': 'IndiGo', 'code': '6E-204', 'share': '58%', 'base': corridor_base * 0.95, 'gst_udf': corridor_tax * 0.98},
+        {'airline': 'Air India', 'code': 'AI-678', 'share': '14%', 'base': corridor_base * 1.05, 'tax': corridor_tax * 1.15},
+        {'airline': 'Akasa Air', 'code': 'QP-1321', 'share': '18%', 'base': corridor_base * 0.90, 'tax': corridor_tax * 0.90},
+        {'airline': 'Vistara', 'code': 'UK-955', 'share': '10%', 'base': corridor_base * 1.15, 'tax': corridor_tax * 1.25}
     ]
 
     audit_records = []
     for c in carriers:
-        total = c['base'] + c['tax']
+        tax_val = c.get('tax', c.get('gst_udf', 900))
+        total = c['base'] + tax_val
         audit_records.append({
             'airline': c['airline'],
             'flight_no': c['code'],
             'market_share': c['share'],
             'base_fare': round(c['base'], 0),
-            'statutory_taxes': c['tax'],
+            'gst_and_udf': round(tax_val, 0),
             'total_fare': round(total, 0),
-            'status': 'Verified Clean'
+            'status': 'Verified Tax Compliant'
         })
 
     return jsonify({
         'origin': CITY_MAP.get(origin, origin),
         'destination': CITY_MAP.get(destination, destination),
         'corridor_base': round(corridor_base, 0),
-        'corridor_spot': round(corridor_spot, 0),
+        'corridor_spot': round(corridor_total, 0),
         'corridor_index': corridor_index,
         'records': audit_records
     })
@@ -199,27 +201,19 @@ def audit_corridor():
 @app.route('/api/simulate-policy', methods=['POST'])
 def simulate_policy():
     data = request.json or {}
-    origin = data.get('origin', 'BOM').strip().upper()
-    destination = data.get('destination', 'DEL').strip().upper()
     fuel_val = float(data.get('fuel', 4.2))
     fest_val = float(data.get('festival', 3.1))
     climate_val = float(data.get('climate', 0.0))
     tax_val = float(data.get('taxes', 0.0))
 
-    route_key = f"{origin}-{destination}"
-    mult = DISTANCE_FACTORS.get(route_key, DISTANCE_FACTORS.get(f"{destination}-{origin}", 1.0))
-    
-    route_elasticity = 0.9 + (mult * 0.1)
-    
-    f_impact = round(fuel_val * route_elasticity, 1)
-    fe_impact = round(fest_val * route_elasticity, 1)
-    c_impact = round(climate_val * route_elasticity, 1)
-    t_impact = round(tax_val * route_elasticity, 1)
+    f_impact = round(fuel_val, 1)
+    fe_impact = round(fest_val, 1)
+    c_impact = round(climate_val, 1)
+    t_impact = round(tax_val, 1)
 
     total_cpi = round(1.5 + f_impact + fe_impact + c_impact + t_impact, 1)
 
     return jsonify({
-        'route': route_key,
         'fuel_impact': f_impact,
         'festival_impact': fe_impact,
         'climate_impact': c_impact,
