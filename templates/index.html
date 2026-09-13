@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>APIx | National Airfare Price Index & CPI Augmentation Portal</title>
+  <title>Airfare Price Index | Government Inflation Portal</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
@@ -28,80 +28,75 @@
   <style>
     body { font-family: 'Space Grotesk', sans-serif; }
     .mono { font-family: 'JetBrains Mono', monospace; }
-    .radar-grid {
-      background-color: #030712;
-      background-image: 
-        linear-gradient(rgba(14, 165, 233, 0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(14, 165, 233, 0.04) 1px, transparent 1px);
-      background-size: 35px 35px;
-    }
     #air-radar-map { height: 320px; border-radius: 1rem; z-index: 10; }
     .dark-radar-tile { filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%) !important; }
     .leaflet-container { background: #0f172a !important; }
   </style>
 </head>
-<body class="radar-grid text-slate-100 min-h-screen pb-20">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen pb-20 transition-colors duration-200">
 
   <!-- Top Navigation -->
-  <nav class="bg-slate-950/90 backdrop-blur-xl border-b border-sky-900/40 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+  <nav class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 px-6 py-4 flex justify-between items-center sticky top-0 z-50 shadow-sm">
     <div class="flex items-center space-x-3.5">
-      <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-sky-400 to-blue-700 flex items-center justify-center shadow-lg shadow-sky-500/20 border border-sky-400/30">
-        🏛️
+      <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-sky-400 to-blue-700 flex items-center justify-center shadow-lg shadow-sky-500/20 text-white font-bold">
+        🇮🇳
       </div>
       <div>
-        <div class="flex items-center space-x-2">
-          <span class="mono text-[10px] font-black tracking-widest text-sky-400 uppercase bg-sky-950 px-2 py-0.5 rounded border border-sky-800">MoSPI & RBI OFFICIAL FEED</span>
-          <h1 class="font-bold text-base tracking-wide">Airfare Price Index (APIx)</h1>
-        </div>
-        <p class="text-[11px] text-slate-400">Automated Consumer Price Index (CPI) Transport Sub-Group Augmentation Engine</p>
+        <h1 class="font-bold text-base sm:text-lg tracking-wide">National Airfare Price Monitor</h1>
+        <p class="text-[11px] text-slate-500 dark:text-slate-400">Official Retail Inflation Tracking for Air Travel</p>
       </div>
     </div>
+    
     <div class="flex items-center space-x-3">
-      <span class="mono text-xs text-emerald-400 bg-emerald-950 px-3 py-1.5 rounded-xl border border-emerald-800">● LIVE PIPELINE ACTIVE</span>
+      <!-- Theme Toggle Button -->
+      <button onclick="toggleTheme()" class="px-3.5 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:scale-105 transition shadow text-xs font-bold flex items-center space-x-1.5">
+        <span id="theme-icon">☀️</span>
+        <span id="theme-text">Light Mode</span>
+      </button>
     </div>
   </nav>
 
   <main class="max-w-7xl mx-auto px-4 mt-8 space-y-8">
 
-    <!-- MACRO KPI CARDS -->
+    <!-- SUMMARY CARDS -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="bg-slate-900/80 backdrop-blur-md p-5 rounded-2xl border border-slate-800 shadow-xl">
-        <span class="text-xs text-slate-400 uppercase font-semibold">National Index (APIx)</span>
-        <p class="mono text-2xl font-black text-sky-400 mt-1" id="kpi-cpi">-</p>
-        <span class="text-[11px] text-emerald-400 mono">Base 100 (30-day window)</span>
+      <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-lg">
+        <span class="text-xs text-slate-500 dark:text-slate-400 uppercase font-semibold">Today's Price Index</span>
+        <p class="mono text-2xl font-black text-sky-600 dark:text-sky-400 mt-1" id="kpi-cpi">-</p>
+        <span class="text-[11px] text-emerald-600 dark:text-emerald-400">Compared to standard baseline</span>
       </div>
-      <div class="bg-slate-900/80 backdrop-blur-md p-5 rounded-2xl border border-slate-800 shadow-xl">
-        <span class="text-xs text-slate-400 uppercase font-semibold">Baseline Average Fare</span>
-        <p class="mono text-2xl font-black text-emerald-400 mt-1" id="kpi-base">₹-</p>
-        <span class="text-[11px] text-slate-400 mono">T+30 Advance Purchase</span>
+      <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-lg">
+        <span class="text-xs text-slate-500 dark:text-slate-400 uppercase font-semibold">Average Early-Bird Price</span>
+        <p class="mono text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1" id="kpi-base">₹-</p>
+        <span class="text-[11px] text-slate-500 dark:text-slate-400">Booked 30 days in advance</span>
       </div>
-      <div class="bg-slate-900/80 backdrop-blur-md p-5 rounded-2xl border border-slate-800 shadow-xl">
-        <span class="text-xs text-slate-400 uppercase font-semibold">Spot Average Fare</span>
-        <p class="mono text-2xl font-black text-amber-400 mt-1" id="kpi-spot">₹-</p>
-        <span class="text-[11px] text-amber-400 mono" id="kpi-inflation">--% Inflation Spike</span>
+      <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-lg">
+        <span class="text-xs text-slate-500 dark:text-slate-400 uppercase font-semibold">Last-Minute Ticket Price</span>
+        <p class="mono text-2xl font-black text-amber-600 dark:text-amber-400 mt-1" id="kpi-spot">₹-</p>
+        <span class="text-[11px] text-amber-600 dark:text-amber-400" id="kpi-inflation">--% Price Jump</span>
       </div>
-      <div class="bg-slate-900/80 backdrop-blur-md p-5 rounded-2xl border border-slate-800 shadow-xl">
-        <span class="text-xs text-slate-400 uppercase font-semibold">Total Scraped Records</span>
-        <p class="mono text-2xl font-black text-blue-400 mt-1" id="kpi-records">-</p>
-        <span class="text-[11px] text-sky-400 mono">Cleaned Daily Ingestion</span>
+      <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-lg">
+        <span class="text-xs text-slate-500 dark:text-slate-400 uppercase font-semibold">Total Price Records</span>
+        <p class="mono text-2xl font-black text-blue-600 dark:text-blue-400 mt-1" id="kpi-records">-</p>
+        <span class="text-[11px] text-sky-600 dark:text-sky-400">Collected automatically</span>
       </div>
     </div>
 
-    <!-- CORRIDOR AUDIT SELECTOR -->
-    <div class="bg-slate-900/90 rounded-3xl border border-sky-900/40 p-6 shadow-2xl backdrop-blur-xl">
-      <h3 class="text-sm font-bold uppercase tracking-wider text-sky-400 mb-4 mono">🔍 Select Representative City-Pair Corridor for Economic Audit</h3>
+    <!-- ROUTE SELECTION -->
+    <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl">
+      <h3 class="text-sm font-bold uppercase tracking-wider text-sky-600 dark:text-sky-400 mb-4">✈️ Select Flight Route to Check Prices</h3>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <label class="text-xs text-slate-400 block mb-1">Origin City</label>
-          <select id="audit-origin" class="w-full font-bold text-sm bg-slate-950 border border-slate-800 p-3 rounded-xl outline-none text-white cursor-pointer"></select>
+          <label class="text-xs text-slate-500 dark:text-slate-400 block mb-1">From City</label>
+          <select id="audit-origin" class="w-full font-bold text-sm bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-3 rounded-xl outline-none cursor-pointer"></select>
         </div>
         <div>
-          <label class="text-xs text-slate-400 block mb-1">Destination City</label>
-          <select id="audit-destination" class="w-full font-bold text-sm bg-slate-950 border border-slate-800 p-3 rounded-xl outline-none text-white cursor-pointer"></select>
+          <label class="text-xs text-slate-500 dark:text-slate-400 block mb-1">To City</label>
+          <select id="audit-destination" class="w-full font-bold text-sm bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-3 rounded-xl outline-none cursor-pointer"></select>
         </div>
         <div class="flex items-end">
-          <button onclick="runCorridorAudit()" class="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 text-slate-950 font-black py-3 rounded-xl text-xs shadow-lg transition">
-            RUN ECONOMIC CORRIDOR AUDIT ➔
+          <button onclick="runCorridorAudit()" class="w-full bg-sky-500 hover:bg-sky-400 text-white font-black py-3 rounded-xl text-xs shadow-lg transition">
+            CHECK ROUTE PRICES ➔
           </button>
         </div>
       </div>
@@ -109,51 +104,48 @@
 
     <!-- MAP & TREND CHART -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      <div class="lg:col-span-5 bg-slate-900/90 rounded-3xl border border-slate-800 p-5 shadow-2xl flex flex-col justify-between">
+      <div class="lg:col-span-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-5 shadow-xl flex flex-col justify-between">
         <div>
-          <h3 class="mono text-xs font-bold text-sky-400 uppercase tracking-widest mb-3">Geodesic Corridor Tracking</h3>
-          <div id="air-radar-map" class="border border-slate-800"></div>
+          <h3 class="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase tracking-widest mb-3">Live Flight Route Map</h3>
+          <div id="air-radar-map" class="border border-slate-200 dark:border-slate-800"></div>
         </div>
-        <div class="mt-3 flex justify-between text-xs mono text-slate-400">
-          <span id="audit-corridor-label">Corridor: BOM ➔ DEL</span>
-          <span id="audit-corridor-index" class="text-emerald-400 font-bold">Index: 100.0</span>
+        <div class="mt-3 flex justify-between text-xs mono text-slate-500 dark:text-slate-400">
+          <span id="audit-corridor-label">Route: BOM ➔ DEL</span>
+          <span id="audit-corridor-index" class="text-emerald-600 dark:text-emerald-400 font-bold">Index: 100.0</span>
         </div>
       </div>
 
-      <div class="lg:col-span-7 bg-slate-900/90 rounded-3xl border border-slate-800 p-6 shadow-2xl flex flex-col justify-between">
+      <div class="lg:col-span-7 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl flex flex-col justify-between">
         <div>
           <div class="flex justify-between items-center mb-4">
-            <h3 class="font-bold text-sm">Lead-Time Price Elasticity Curve</h3>
-            <!-- Hidden dropdown synced automatically by corridor selection -->
-            <select id="trend-route-select" onchange="loadTrendChart()" class="hidden text-xs border border-slate-700 rounded-lg p-1.5 bg-slate-950 font-semibold outline-none"></select>
-            <span class="mono text-xs text-sky-400" id="current-chart-route-label">T+1 to T+45 Window Analysis</span>
+            <h3 class="font-bold text-sm">How Booking Early Changes the Price</h3>
+            <select id="trend-route-select" onchange="loadTrendChart()" class="hidden"></select>
+            <span class="text-xs text-sky-600 dark:text-sky-400 font-semibold" id="current-chart-route-label">Price Trend Over Days</span>
           </div>
           <div class="h-56"><canvas id="trendChart"></canvas></div>
         </div>
       </div>
     </div>
 
-    <!-- NORMALIZED AIRFARE DATABASE AUDIT TABLE -->
-    <div class="bg-slate-900/90 rounded-3xl border border-sky-900/40 p-6 shadow-2xl">
+    <!-- TICKET PRICE BREAKDOWN TABLE -->
+    <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl">
       <div class="flex items-center justify-between mb-4">
-        <h3 class="text-base font-bold flex items-center space-x-2">
-          <span>📊 Normalized Component-Level Airfare Database Audit</span>
-        </h3>
-        <span class="mono text-xs text-sky-400">Separating Base Fares from Statutory Taxes & UDF</span>
+        <h3 class="text-base font-bold">📊 Price Breakdown: Base Fare vs. Government Taxes</h3>
+        <span class="text-xs text-slate-500 dark:text-slate-400">Transparent Pricing</span>
       </div>
       <div class="overflow-x-auto">
         <table class="w-full text-left text-xs mono border-collapse">
           <thead>
-            <tr class="border-b border-slate-800 text-slate-400">
+            <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400">
               <th class="py-3 px-4">Airline & Flight</th>
               <th class="py-3 px-4">Market Share</th>
-              <th class="py-3 px-4">Base Seat Fare (excl. tax)</th>
-              <th class="py-3 px-4">Statutory Taxes & UDF</th>
-              <th class="py-3 px-4">Total Quote</th>
-              <th class="py-3 px-4">Compliance Status</th>
+              <th class="py-3 px-4">Base Ticket Price</th>
+              <th class="py-3 px-4">Taxes & Airport Fees</th>
+              <th class="py-3 px-4">Total Price Paid</th>
+              <th class="py-3 px-4">Status</th>
             </tr>
           </thead>
-          <tbody id="audit-tbody" class="divide-y divide-slate-800/60 text-slate-200"></tbody>
+          <tbody id="audit-tbody" class="divide-y divide-slate-200 dark:divide-slate-800 text-slate-800 dark:text-slate-200"></tbody>
         </table>
       </div>
     </div>
@@ -176,10 +168,33 @@
       'GAU': [26.1061, 91.5859], 'PAT': [25.5913, 85.0880], 'IXC': [30.6735, 76.7885]
     };
 
+    function toggleTheme() {
+      const html = document.documentElement;
+      const textSpan = document.getElementById('theme-text');
+      const iconSpan = document.getElementById('theme-icon');
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+        textSpan.textContent = 'Dark Mode';
+        iconSpan.textContent = '🌙';
+      } else {
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+        textSpan.textContent = 'Light Mode';
+        iconSpan.textContent = '☀️';
+      }
+    }
+
+    if (localStorage.getItem('theme') === 'light') {
+      document.documentElement.classList.remove('dark');
+      document.getElementById('theme-text').textContent = 'Dark Mode';
+      document.getElementById('theme-icon').textContent = '🌙';
+    }
+
     function initRadarMap() {
       radarMap = L.map('air-radar-map', { zoomControl: false }).setView([20.5937, 78.9629], 4.5);
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        className: 'dark-radar-tile', attribution: '&copy; OpenStreetMap contributors', maxZoom: 18
+        attribution: '&copy; OpenStreetMap contributors', maxZoom: 18
       }).addTo(radarMap);
       updateRadarRoute('BOM', 'DEL');
     }
@@ -220,7 +235,7 @@
         document.getElementById('kpi-cpi').innerText = stats.cpi_index;
         document.getElementById('kpi-base').innerText = '₹' + stats.base_fare.toLocaleString();
         document.getElementById('kpi-spot').innerText = '₹' + stats.spot_fare.toLocaleString();
-        document.getElementById('kpi-inflation').innerText = `+${stats.inflation_rate}% Spike`;
+        document.getElementById('kpi-inflation').innerText = `+${stats.inflation_rate}% Price Jump`;
         document.getElementById('kpi-records').innerText = stats.total_records.toLocaleString();
 
         const trendRouteSel = document.getElementById('trend-route-select');
@@ -238,21 +253,19 @@
       const currentRouteKey = `${origin}-${destination}`;
       
       updateRadarRoute(origin, destination);
-      document.getElementById('audit-corridor-label').innerText = `Corridor: ${origin} ➔ ${destination}`;
+      document.getElementById('audit-corridor-label').innerText = `Route: ${origin} ➔ ${destination}`;
 
       const trendSel = document.getElementById('trend-route-select');
       let matchedRoute = `${origin}-${destination}`;
-      let found = false;
       for (let i = 0; i < trendSel.options.length; i++) {
         if (trendSel.options[i].value === currentRouteKey || trendSel.options[i].value === `${destination}-${origin}`) {
           matchedRoute = trendSel.options[i].value;
           trendSel.value = matchedRoute;
-          found = true;
           break;
         }
       }
       
-      document.getElementById('current-chart-route-label').innerText = `Elasticity Curve (${matchedRoute})`;
+      document.getElementById('current-chart-route-label').innerText = `Price Trend (${matchedRoute})`;
       loadTrendChart(matchedRoute);
 
       try {
@@ -262,7 +275,7 @@
           body: JSON.stringify({ origin, destination })
         });
         const data = await res.json();
-        document.getElementById('audit-corridor-index').innerText = `Corridor Index: ${data.corridor_index}`;
+        document.getElementById('audit-corridor-index').innerText = `Index: ${data.corridor_index}`;
         document.getElementById('kpi-cpi').innerText = data.corridor_index;
         document.getElementById('kpi-base').innerText = '₹' + data.corridor_base.toLocaleString();
         document.getElementById('kpi-spot').innerText = '₹' + data.corridor_spot.toLocaleString();
@@ -271,14 +284,14 @@
         tbody.innerHTML = '';
         data.records.forEach(rec => {
           const row = document.createElement('tr');
-          row.className = "hover:bg-slate-800/40 transition";
+          row.className = "hover:bg-slate-100 dark:hover:bg-slate-800 transition";
           row.innerHTML = `
-            <td class="py-3 px-4 font-bold">✈️ ${rec.airline} <span class="text-xs text-slate-400">(${rec.flight_no})</span></td>
-            <td class="py-3 px-4 text-sky-400">${rec.market_share}</td>
-            <td class="py-3 px-4 font-mono font-bold text-emerald-400">₹${rec.base_fare.toLocaleString()}</td>
-            <td class="py-3 px-4 font-mono text-amber-400">₹${rec.statutory_taxes.toLocaleString()}</td>
+            <td class="py-3 px-4 font-bold">✈️ ${rec.airline} <span class="text-xs text-slate-500">(${rec.flight_no})</span></td>
+            <td class="py-3 px-4 text-sky-600 dark:text-sky-400">${rec.market_share}</td>
+            <td class="py-3 px-4 font-mono font-bold text-emerald-600 dark:text-emerald-400">₹${rec.base_fare.toLocaleString()}</td>
+            <td class="py-3 px-4 font-mono text-amber-600 dark:text-amber-400">₹${rec.statutory_taxes.toLocaleString()}</td>
             <td class="py-3 px-4 font-mono font-bold">₹${rec.total_fare.toLocaleString()}</td>
-            <td class="py-3 px-4"><span class="bg-emerald-950 text-emerald-400 px-2.5 py-1 rounded-lg text-[10px] font-bold border border-emerald-800">✔ ${rec.status}</span></td>
+            <td class="py-3 px-4"><span class="bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 px-2.5 py-1 rounded-lg text-[10px] font-bold border border-emerald-300 dark:border-emerald-800">✔ Verified</span></td>
           `;
           tbody.appendChild(row);
         });
@@ -293,8 +306,8 @@
       trendChart = new Chart(document.getElementById('trendChart').getContext('2d'), {
         type: 'line',
         data: {
-          labels: data.days.map(d => `T+${d} Days`),
-          datasets: [{ label: `Average Fare (₹) on ${route}`, data: data.fares, borderColor: '#38bdf8', backgroundColor: 'rgba(56, 189, 248, 0.15)', fill: true, tension: 0.3 }]
+          labels: data.days.map(d => `${d} Days Before`),
+          datasets: [{ label: `Average Price (₹) on ${route}`, data: data.fares, borderColor: '#0ea5e9', backgroundColor: 'rgba(14, 165, 233, 0.15)', fill: true, tension: 0.3 }]
         },
         options: { responsive: true, maintainAspectRatio: false }
       });
