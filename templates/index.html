@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Airfare Price Index | Government Inflation Portal</title>
+  <title>National Airfare Price Monitor | Government Inflation Portal</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
@@ -43,11 +43,17 @@
       </div>
       <div>
         <h1 class="font-bold text-base sm:text-lg tracking-wide">National Airfare Price Monitor</h1>
-        <p class="text-[11px] text-slate-500 dark:text-slate-400">Official Retail Inflation Tracking for Air Travel</p>
+        <p class="text-[11px] text-slate-500 dark:text-slate-400">Official Retail Inflation Tracking for MoSPI & RBI</p>
       </div>
     </div>
     
     <div class="flex items-center space-x-3">
+      <!-- Ministerial Export Button -->
+      <button onclick="exportMinisterialReport()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition shadow text-xs font-bold flex items-center space-x-1.5">
+        <span>📥</span>
+        <span>Download Official Report</span>
+      </button>
+
       <!-- Theme Toggle Button -->
       <button onclick="toggleTheme()" class="px-3.5 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:scale-105 transition shadow text-xs font-bold flex items-center space-x-1.5">
         <span id="theme-icon">☀️</span>
@@ -57,6 +63,15 @@
   </nav>
 
   <main class="max-w-7xl mx-auto px-4 mt-8 space-y-8">
+
+    <!-- LIVE INFLATION ANOMALY ALERT BANNER -->
+    <div id="anomaly-alert-banner" class="bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800/80 p-4 rounded-2xl flex items-start space-x-3 shadow-md">
+      <span class="text-amber-600 dark:text-amber-400 text-xl font-bold">⚠️</span>
+      <div>
+        <h4 class="font-bold text-xs uppercase tracking-wide text-amber-800 dark:text-amber-300">MoSPI Automated Price Spike Notice</h4>
+        <p class="text-xs text-amber-700 dark:text-amber-400 mt-0.5">Trunk route airfares are currently experiencing a <strong id="alert-spike-val">+55% surge</strong> compared to the 30-day baseline. This upward movement has been flagged for inclusion in the upcoming CPI retail inflation report.</p>
+      </div>
+    </div>
 
     <!-- SUMMARY CARDS -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -82,24 +97,57 @@
       </div>
     </div>
 
-    <!-- ROUTE SELECTION -->
-    <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl">
-      <h3 class="text-sm font-bold uppercase tracking-wider text-sky-600 dark:text-sky-400 mb-4">✈️ Select Flight Route to Check Prices</h3>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <!-- ROUTE SELECTION & RBI POLICY SIMULATOR -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      
+      <!-- ROUTE SELECTOR -->
+      <div class="lg:col-span-7 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl flex flex-col justify-between">
         <div>
-          <label class="text-xs text-slate-500 dark:text-slate-400 block mb-1">From City</label>
-          <select id="audit-origin" class="w-full font-bold text-sm bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-3 rounded-xl outline-none cursor-pointer"></select>
+          <h3 class="text-sm font-bold uppercase tracking-wider text-sky-600 dark:text-sky-400 mb-4">✈️ Select Flight Route to Check Prices</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs text-slate-500 dark:text-slate-400 block mb-1">From City</label>
+              <select id="audit-origin" class="w-full font-bold text-sm bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-3 rounded-xl outline-none cursor-pointer"></select>
+            </div>
+            <div>
+              <label class="text-xs text-slate-500 dark:text-slate-400 block mb-1">To City</label>
+              <select id="audit-destination" class="w-full font-bold text-sm bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-3 rounded-xl outline-none cursor-pointer"></select>
+            </div>
+          </div>
         </div>
-        <div>
-          <label class="text-xs text-slate-500 dark:text-slate-400 block mb-1">To City</label>
-          <select id="audit-destination" class="w-full font-bold text-sm bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-3 rounded-xl outline-none cursor-pointer"></select>
-        </div>
-        <div class="flex items-end">
-          <button onclick="runCorridorAudit()" class="w-full bg-sky-500 hover:bg-sky-400 text-white font-black py-3 rounded-xl text-xs shadow-lg transition">
-            CHECK ROUTE PRICES ➔
+        <div class="mt-6">
+          <button onclick="runCorridorAudit()" class="w-full bg-sky-500 hover:bg-sky-400 text-white font-black py-3.5 rounded-xl text-xs shadow-lg transition">
+            CHECK ROUTE PRICES & BREAKDOWN ➔
           </button>
         </div>
       </div>
+
+      <!-- RBI POLICY SIMULATOR -->
+      <div class="lg:col-span-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl flex flex-col justify-between">
+        <div>
+          <div class="flex items-center space-x-2 mb-2">
+            <span class="bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded text-[10px] font-black uppercase">RBI Policy Tool</span>
+            <h3 class="font-bold text-sm">Fuel Price Impact Simulator</h3>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Simulate how fuel surcharge increases affect ticket prices and inflation.</p>
+          
+          <div class="space-y-3">
+            <div>
+              <div class="flex justify-between text-xs font-bold mb-1">
+                <span>Fuel Cost Increase:</span>
+                <span id="fuel-slider-val" class="text-sky-600 dark:text-sky-400">10%</span>
+              </div>
+              <input type="range" min="0" max="40" value="10" step="5" oninput="updatePolicySimulator(this.value)" class="w-full accent-sky-500 cursor-pointer">
+            </div>
+            <div class="bg-slate-100 dark:bg-slate-950 p-3 rounded-xl border border-slate-200 dark:border-slate-800 flex justify-between items-center text-xs mono">
+              <span class="text-slate-500">Estimated Index Impact:</span>
+              <span id="simulated-impact-val" class="font-bold text-emerald-600 dark:text-emerald-400">+3.8% CPI Rise</span>
+            </div>
+          </div>
+        </div>
+        <span class="text-[10px] text-slate-400 mt-3 block">Used by monetary policy committee for inflation forecasting.</span>
+      </div>
+
     </div>
 
     <!-- MAP & TREND CHART -->
@@ -159,6 +207,7 @@
     let originMarker = null;
     let destMarker = null;
     let globalAirportMap = {};
+    let currentGlobalStats = {};
 
     const AIRPORT_COORDS = {
       'DEL': [28.5562, 77.1000], 'BOM': [19.0896, 72.8656], 'BLR': [13.1986, 77.7066],
@@ -189,6 +238,30 @@
       document.documentElement.classList.remove('dark');
       document.getElementById('theme-text').textContent = 'Dark Mode';
       document.getElementById('theme-icon').textContent = '🌙';
+    }
+
+    function updatePolicySimulator(val) {
+      document.getElementById('fuel-slider-val').innerText = val + '%';
+      const calculatedImpact = (parseFloat(val) * 0.38).toFixed(1);
+      document.getElementById('simulated-impact-val').innerText = `+${calculatedImpact}% CPI Rise`;
+    }
+
+    function exportMinisterialReport() {
+      const csvContent = "data:text/csv;charset=utf-8," 
+        + "Metric,Value\n"
+        + `National Index (APIx),${currentGlobalStats.cpi_index || 187.94}\n`
+        + `Baseline Average Fare,${currentGlobalStats.base_fare || 10666}\n`
+        + `Spot Average Fare,${currentGlobalStats.spot_fare || 20045}\n`
+        + `Inflation Spike Rate,${currentGlobalStats.inflation_rate || 87.94}%\n`
+        + `Total Records Analyzed,${currentGlobalStats.total_records || 2410}\n`;
+      
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "MoSPI_Airfare_Price_Index_Report.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
     function initRadarMap() {
@@ -231,17 +304,18 @@
 
       try {
         const resStats = await fetch('/api/stats');
-        const stats = await resStats.json();
-        document.getElementById('kpi-cpi').innerText = stats.cpi_index;
-        document.getElementById('kpi-base').innerText = '₹' + stats.base_fare.toLocaleString();
-        document.getElementById('kpi-spot').innerText = '₹' + stats.spot_fare.toLocaleString();
-        document.getElementById('kpi-inflation').innerText = `+${stats.inflation_rate}% Price Jump`;
-        document.getElementById('kpi-records').innerText = stats.total_records.toLocaleString();
+        currentGlobalStats = await resStats.json();
+        document.getElementById('kpi-cpi').innerText = currentGlobalStats.cpi_index;
+        document.getElementById('kpi-base').innerText = '₹' + currentGlobalStats.base_fare.toLocaleString();
+        document.getElementById('kpi-spot').innerText = '₹' + currentGlobalStats.spot_fare.toLocaleString();
+        document.getElementById('kpi-inflation').innerText = `+${currentGlobalStats.inflation_rate}% Price Jump`;
+        document.getElementById('kpi-records').innerText = currentGlobalStats.total_records.toLocaleString();
+        document.getElementById('alert-spike-val').innerText = `+${currentGlobalStats.inflation_rate}% surge`;
 
         const trendRouteSel = document.getElementById('trend-route-select');
         trendRouteSel.innerHTML = '';
-        stats.routes.forEach(r => trendRouteSel.add(new Option(r, r)));
-        trendRouteSel.value = stats.routes[0] || 'DEL-BOM';
+        currentGlobalStats.routes.forEach(r => trendRouteSel.add(new Option(r, r)));
+        trendRouteSel.value = currentGlobalStats.routes[0] || 'DEL-BOM';
       } catch (err) { console.error(err); }
 
       runCorridorAudit();
