@@ -47,6 +47,17 @@ CITY_MAP = {
     'GAU': 'Guwahati', 'PAT': 'Patna', 'IXC': 'Chandigarh'
 }
 
+DISTANCE_FACTORS = {
+    'DEL-BOM': 1.0, 'BOM-DEL': 1.0,
+    'DEL-BLR': 1.25, 'BLR-DEL': 1.25,
+    'BOM-BLR': 0.85, 'BLR-BOM': 0.85,
+    'DEL-CCU': 1.15, 'CCU-DEL': 1.15,
+    'BLR-HYD': 0.65, 'HYD-BLR': 0.65,
+    'MAA-DEL': 1.30, 'DEL-MAA': 1.30,
+    'PNQ-DEL': 1.05, 'DEL-PNQ': 1.05,
+    'BOM-PNQ': 0.20, 'PNQ-BOM': 0.20
+}
+
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -108,7 +119,7 @@ def get_route_trend():
     route = request.args.get('route', 'DEL-BOM').strip().upper()
     rdf = df[df['route'] == route]
     if rdf.empty:
-        rdf = df
+        rdf = df[df['route'] == f"{route.split('-')[1]}-{route.split('-')[0]}"]
     if rdf.empty or WINDOW_COL not in rdf.columns:
         return jsonify({'days': [45, 30, 15, 7, 1], 'fares': [4900, 5200, 5800, 6700, 8060]})
 
@@ -131,18 +142,19 @@ def audit_corridor():
     if matched_df.empty:
         matched_df = df[df['route'] == f"{destination}-{origin}"]
 
+    mult = DISTANCE_FACTORS.get(route_key, DISTANCE_FACTORS.get(f"{destination}-{origin}", 1.0))
+
     if not matched_df.empty and WINDOW_COL in matched_df.columns:
         base_slice = matched_df[matched_df[WINDOW_COL] >= 30]
         spot_slice = matched_df[matched_df[WINDOW_COL] <= 1]
-        corridor_base = float(base_slice[FARE_COL].mean()) if not base_slice.empty else 5200.0
-        corridor_spot = float(spot_slice[FARE_COL].mean()) if not spot_slice.empty else corridor_base * 1.5
+        corridor_base = float(base_slice[FARE_COL].mean()) if not base_slice.empty else 5200.0 * mult
+        corridor_spot = float(spot_slice[FARE_COL].mean()) if not spot_slice.empty else corridor_base * 1.55
     else:
-        corridor_base = 5200.0
-        corridor_spot = 7900.0
+        corridor_base = 4800.0 * mult
+        corridor_spot = corridor_base * 1.52
 
     corridor_index = round((corridor_spot / corridor_base) * 100, 2)
 
-    # Generate macroeconomic audit records for this corridor
     carriers = [
         {'airline': 'IndiGo', 'code': '6E-204', 'share': '58%', 'base': corridor_base * 0.95, 'tax': 850},
         {'airline': 'Air India', 'code': 'AI-678', 'share': '14%', 'base': corridor_base * 1.05, 'tax': 1100},
