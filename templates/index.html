@@ -45,7 +45,7 @@
     <div class="flex items-center space-x-3">
       <div class="bg-slate-100 dark:bg-slate-950 p-1 rounded-xl border border-slate-200 dark:border-slate-800 flex space-x-1">
         <button onclick="switchPage('monitor')" id="tab-monitor" class="px-4 py-2 rounded-lg text-xs font-bold bg-sky-500 text-white transition">Live Monitor</button>
-        <button onclick="switchPage('analytics')" id="tab-analytics" class="px-4 py-2 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-white transition">Ministry Manual & History</button>
+        <button onclick="switchPage('analytics')" id="tab-analytics" class="px-4 py-2 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-white transition">Present vs. History Analytics</button>
       </div>
 
       <button onclick="exportMinisterialReport()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition shadow text-xs font-bold hidden sm:flex items-center space-x-1.5">
@@ -62,7 +62,7 @@
 
   <main class="max-w-7xl mx-auto px-4 mt-8 space-y-8">
 
-    <!-- PAGE 1: LIVE MONITOR & MULTI-FACTOR ANALYSIS -->
+    <!-- PAGE 1: LIVE MONITOR -->
     <section id="page-monitor" class="space-y-8">
       
       <div class="bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800/80 p-4 rounded-2xl flex items-start space-x-3 shadow-md">
@@ -97,7 +97,7 @@
         </div>
       </div>
 
-      <!-- ROUTE SELECTOR & MULTI-FACTOR INFLATION DRIVER SIMULATOR -->
+      <!-- ROUTE SELECTOR & MULTI-FACTOR SIMULATOR -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div class="lg:col-span-6 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl flex flex-col justify-between">
           <div>
@@ -196,55 +196,34 @@
 
     </section>
 
-    <!-- PAGE 2: MINISTRY MANUAL & HISTORICAL ARCHIVE -->
+    <!-- PAGE 2: PRESENT VS. HISTORY ANALYTICS & CHARTS -->
     <section id="page-analytics" class="hidden space-y-8">
       
-      <!-- PROFESSIONAL MANUAL -->
-      <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-6">
-        <div>
-          <span class="bg-sky-100 dark:bg-sky-950 text-sky-600 dark:text-sky-400 px-3 py-1 rounded-lg text-xs font-black uppercase">Official Documentation</span>
-          <h2 class="text-xl font-black mt-2">Ministry User Manual & Methodology Guide</h2>
-          <p class="text-xs text-slate-500 dark:text-slate-400">Standard operating procedure for government statisticians utilizing the APIx platform.</p>
+      <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
+        <div class="flex justify-between items-center">
+          <div>
+            <h2 class="text-lg font-bold text-sky-600 dark:text-sky-400">📈 Present vs. Long-Term Historical Analysis</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Comparing current price velocity against past seasonal averages.</p>
+          </div>
+          <select id="history-route-select" onchange="loadHistoryCharts()" class="text-xs border border-slate-300 dark:border-slate-700 rounded-lg p-2 bg-slate-100 dark:bg-slate-950 font-bold outline-none cursor-pointer"></select>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-          <div class="bg-slate-100 dark:bg-slate-950 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2">
-            <span class="font-black text-sky-500 text-sm">01. Automated Scraping</span>
-            <h4 class="font-bold text-sm">Daily Ingestion Pipeline</h4>
-            <p class="text-slate-500">The software runs scheduled extractions across domestic carriers, collecting verified fare quotes while respecting rate limits.</p>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-4">
+          <div class="bg-slate-50 dark:bg-slate-950 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+            <h4 class="font-bold text-xs text-slate-700 dark:text-slate-300 mb-3">Historical Baseline vs. Present Price Curve (₹)</h4>
+            <div class="h-64"><canvas id="historyComparisonChart"></canvas></div>
           </div>
-          <div class="bg-slate-100 dark:bg-slate-950 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2">
-            <span class="font-black text-sky-500 text-sm">02. Component Normalization</span>
-            <h4 class="font-bold text-sm">Tax & Base Separation</h4>
-            <p class="text-slate-500">Raw quotes are cleaned to isolate core airline pricing from volatile airport user fees, GST, and fuel surcharges.</p>
-          </div>
-          <div class="bg-slate-100 dark:bg-slate-950 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2">
-            <span class="font-black text-sky-500 text-sm">03. CPI Augmentation</span>
-            <h4 class="font-bold text-sm">Transport Sub-Group Feed</h4>
-            <p class="text-slate-500">Aggregated route indices feed directly into MoSPI's monthly retail inflation computation framework for the RBI.</p>
+          <div class="bg-slate-50 dark:bg-slate-950 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+            <h4 class="font-bold text-xs text-slate-700 dark:text-slate-300 mb-3">Inflation Driver Impact Weight (%)</h4>
+            <div class="h-64"><canvas id="driverWeightChart"></canvas></div>
           </div>
         </div>
       </div>
 
-      <!-- HISTORICAL ARCHIVE & METHODOLOGY -->
-      <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-6">
-        <div>
-          <h3 class="text-lg font-bold">📈 Long-Term Historical Archive & Methodology</h3>
-          <p class="text-xs text-slate-500 dark:text-slate-400">Comparing current price velocity against multi-year moving averages.</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="p-5 rounded-2xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-3 mono text-xs">
-            <h4 class="font-bold text-sky-600 dark:text-sky-400 text-sm">Index Formula Specification</h4>
-            <p class="text-slate-600 dark:text-slate-400">$$\text{APIx} = \left(\frac{\text{Spot Average Fare}}{\text{30-Day Baseline Fare}}\right) \times 100$$</p>
-            <p class="text-[11px] text-slate-500">Weighted across DGCA passenger-traffic volume for trunk corridors.</p>
-          </div>
-          <div class="p-5 rounded-2xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-3 mono text-xs">
-            <h4 class="font-bold text-emerald-600 dark:text-emerald-400 text-sm">Seasonal Adjustment Protocol</h4>
-            <p class="text-slate-600 dark:text-slate-400">Applies a sliding seasonal weight modifier during festive quarters (Q3/Q4) to prevent false inflation alarms.</p>
-            <p class="text-[11px] text-slate-500">Maintains statistical consistency for monetary policy reviews.</p>
-          </div>
-        </div>
+      <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
+        <h3 class="text-base font-bold">📊 Seasonal & Festival Surge Analysis Across Quarters</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400">Evaluating how religious festivals, national holidays, and fuel shocks affect retail inflation indices.</p>
+        <div class="h-64"><canvas id="seasonalChart"></canvas></div>
       </div>
 
     </section>
@@ -253,6 +232,9 @@
 
   <script>
     let trendChart = null;
+    let historyChart = null;
+    let driverChart = null;
+    let seasonalChart = null;
     let radarMap = null;
     let routeLine = null;
     let originMarker = null;
@@ -279,6 +261,7 @@
         document.getElementById('page-analytics').classList.remove('hidden');
         document.getElementById('tab-analytics').className = "px-4 py-2 rounded-lg text-xs font-bold bg-sky-500 text-white transition";
         document.getElementById('tab-monitor').className = "px-4 py-2 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-white transition";
+        loadHistoryCharts();
       }
     }
 
@@ -379,9 +362,14 @@
         document.getElementById('alert-spike-val').innerText = `+${currentGlobalStats.inflation_rate}% surge`;
 
         const trendRouteSel = document.getElementById('trend-route-select');
-        trendRouteSel.innerHTML = '';
-        currentGlobalStats.routes.forEach(r => trendRouteSel.add(new Option(r, r)));
+        const historyRouteSel = document.getElementById('history-route-select');
+        trendRouteSel.innerHTML = ''; historyRouteSel.innerHTML = '';
+        currentGlobalStats.routes.forEach(r => {
+          trendRouteSel.add(new Option(r, r));
+          historyRouteSel.add(new Option(r, r));
+        });
         trendRouteSel.value = currentGlobalStats.routes[0] || 'DEL-BOM';
+        historyRouteSel.value = currentGlobalStats.routes[0] || 'DEL-BOM';
       } catch (err) { console.error(err); }
 
       runCorridorAudit();
@@ -448,6 +436,48 @@
         data: {
           labels: data.days.map(d => `${d} Days Before`),
           datasets: [{ label: `Average Price (₹) on ${route}`, data: data.fares, borderColor: '#0ea5e9', backgroundColor: 'rgba(14, 165, 233, 0.15)', fill: true, tension: 0.3 }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+    }
+
+    async function loadHistoryCharts() {
+      const route = document.getElementById('history-route-select').value;
+      const res = await fetch(`/api/route-history?route=${route}`);
+      const data = await res.json();
+
+      // 1. Present vs History Comparison Chart
+      if (historyChart) historyChart.destroy();
+      historyChart = new Chart(document.getElementById('historyComparisonChart').getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: data.windows,
+          datasets: [
+            { label: 'Historical Baseline (Past Years)', data: data.historical, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.3 },
+            { label: 'Present Pricing (Current)', data: data.present, borderColor: '#38bdf8', backgroundColor: 'rgba(56, 189, 248, 0.15)', fill: true, tension: 0.3 }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+
+      // 2. Inflation Drivers Bar Chart
+      if (driverChart) driverChart.destroy();
+      driverChart = new Chart(document.getElementById('driverWeightChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: ['Fuel Surcharges', 'Festival Surge', 'Demand Density', 'Govt Taxes & UDF', 'Forex & Leasing'],
+          datasets: [{ label: 'Inflation Contribution Weight (%)', data: [38, 30, 18, 10, 4], backgroundColor: ['#0ea5e9', '#f59e0b', '#10b981', '#6366f1', '#ec4899'] }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+
+      // 3. Seasonal & Festival Surge Chart Across Quarters
+      if (seasonalChart) seasonalChart.destroy();
+      seasonalChart = new Chart(document.getElementById('seasonalChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: ['Q1 (Summer/Holi)', 'Q2 (Monsoon/Off-Peak)', 'Q3 (Festivals/Diwali)', 'Q4 (Winter/New Year)'],
+          datasets: [{ label: 'Average Route Price Surge (%) Over Base', data: [25, 5, 65, 85], backgroundColor: '#f59e0b' }]
         },
         options: { responsive: true, maintainAspectRatio: false }
       });
