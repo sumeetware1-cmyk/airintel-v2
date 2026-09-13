@@ -101,9 +101,14 @@ def get_stats():
 @app.route('/api/route-trend')
 def get_route_trend():
     route = request.args.get('route', 'DEL-BOM').strip().upper()
-    rdf = df[df['route'] == route]
+    parts = route.split('-')
+    origin = parts[0] if len(parts) > 0 else 'DEL'
+    dest = parts[1] if len(parts) > 1 else 'BOM'
+    
+    rdf = df[df['route'] == f"{origin}-{dest}"]
     if rdf.empty:
-        rdf = df[df['route'] == f"{route.split('-')[1]}-{route.split('-')[0]}"]
+        rdf = df[df['route'] == f"{dest}-{origin}"]
+        
     if rdf.empty or WINDOW_COL not in rdf.columns:
         return jsonify({'days': [45, 30, 15, 7, 1], 'fares': [4900, 5200, 5800, 6700, 8060]})
 
@@ -118,11 +123,15 @@ def get_route_trend():
 @app.route('/api/route-history')
 def get_route_history():
     route = request.args.get('route', 'DEL-BOM').strip().upper()
-    rdf = df[df['route'] == route]
-    if rdf.empty:
-        rdf = df[df['route'] == f"{route.split('-')[1]}-{route.split('-')[0]}"]
+    parts = route.split('-')
+    origin = parts[0] if len(parts) > 0 else 'DEL'
+    dest = parts[1] if len(parts) > 1 else 'BOM'
     
-    mult = DISTANCE_FACTORS.get(route, DISTANCE_FACTORS.get(f"{route.split('-')[1]}-{route.split('-')[0]}", 1.0))
+    rdf = df[df['route'] == f"{origin}-{dest}"]
+    if rdf.empty:
+        rdf = df[df['route'] == f"{dest}-{origin}"]
+    
+    mult = DISTANCE_FACTORS.get(route, DISTANCE_FACTORS.get(f"{dest}-{origin}", 1.0))
 
     if rdf.empty or WINDOW_COL not in rdf.columns:
         base_val = 5200.0 * mult
