@@ -120,11 +120,14 @@ def get_route_history():
     if rdf.empty:
         rdf = df[df['route'] == f"{route.split('-')[1]}-{route.split('-')[0]}"]
     
+    mult = DISTANCE_FACTORS.get(route, DISTANCE_FACTORS.get(f"{route.split('-')[1]}-{route.split('-')[0]}", 1.0))
+
     if rdf.empty or WINDOW_COL not in rdf.columns:
+        base_val = 5200.0 * mult
         return jsonify({
             'windows': ['T+45 Days', 'T+30 Days', 'T+15 Days', 'T+7 Days', 'T+1 Day'],
-            'historical': [4800, 5100, 5600, 6400, 7500],
-            'present': [5200, 5400, 6100, 7200, 9600]
+            'historical': [round(base_val * 0.9, 0), round(base_val * 0.95, 0), round(base_val * 1.05, 0), round(base_val * 1.15, 0), round(base_val * 1.35, 0)],
+            'present': [round(base_val, 0), round(base_val * 1.02, 0), round(base_val * 1.12, 0), round(base_val * 1.25, 0), round(base_val * 1.55, 0)]
         })
 
     trend = rdf.groupby(WINDOW_COL)[FARE_COL].mean().reset_index()
