@@ -167,19 +167,33 @@
 
     </section>
 
-    <!-- PAGE 2: ROUTE-SPECIFIC & MACRO ANALYTICS SUITE -->
+    <!-- PAGE 2: FLEXIBLE ROUTE & MACRO ANALYTICS SUITE -->
     <section id="page-analytics" class="hidden space-y-8">
       
-      <!-- HEADER SHOWING ACTIVE ROUTE -->
-      <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl flex flex-wrap justify-between items-center gap-4">
-        <div>
-          <span class="bg-sky-100 dark:bg-sky-950 text-sky-600 dark:text-sky-400 px-3 py-1 rounded-lg text-xs font-black uppercase">Active Corridor Analytics</span>
-          <h2 class="text-xl font-black mt-2">Deep Dive Analysis for Route: <span id="active-analytics-route" class="text-sky-500">BOM ➔ DEL</span></h2>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Inspecting lead-time historical curves, seasonal migration surges, and individual factor contributions for this specific city-pair.</p>
+      <!-- FLEXIBLE ORIGIN / DESTINATION SELECTOR FOR ANALYTICS -->
+      <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
+        <div class="flex flex-wrap justify-between items-center gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div>
+            <span class="bg-sky-100 dark:bg-sky-950 text-sky-600 dark:text-sky-400 px-3 py-1 rounded-lg text-xs font-black uppercase">Flexible Corridor Selector</span>
+            <h2 class="text-lg font-black mt-1">Select Any Origin & Destination for Deep Analytics</h2>
+          </div>
+          <span class="text-xs font-mono text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950 px-3 py-1 rounded-lg border border-emerald-300 dark:border-emerald-800">Target Inflation: 4% ± 2%</span>
         </div>
-        <div>
-          <label class="text-xs font-bold text-slate-500 block mb-1">Switch Analytics Corridor</label>
-          <select id="history-route-select" onchange="syncAnalyticsRoute(this.value)" class="text-xs border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 bg-slate-100 dark:bg-slate-950 font-bold outline-none cursor-pointer text-white"></select>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+          <div>
+            <label class="text-xs font-bold text-slate-500 block mb-1">Analytics Origin City</label>
+            <select id="analytics-origin" class="w-full text-xs bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-3 rounded-xl font-bold outline-none cursor-pointer"></select>
+          </div>
+          <div>
+            <label class="text-xs font-bold text-slate-500 block mb-1">Analytics Destination City</label>
+            <select id="analytics-destination" class="w-full text-xs bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-3 rounded-xl font-bold outline-none cursor-pointer"></select>
+          </div>
+          <div>
+            <button onclick="runAnalyticsRoute()" class="w-full bg-sky-500 hover:bg-sky-400 text-white font-black py-3 rounded-xl text-xs shadow transition">
+              LOAD ROUTE ANALYTICS ➔
+            </button>
+          </div>
         </div>
       </div>
 
@@ -188,16 +202,15 @@
         <div class="flex flex-wrap justify-between items-center gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
           <div>
             <span class="bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 px-2.5 py-1 rounded text-[10px] font-black uppercase">RBI & MoSPI Policy Modeling</span>
-            <h3 class="text-base font-bold mt-1">Corridor Macroeconomic Scenario & Individual Factor CPI Simulator</h3>
+            <h3 class="text-base font-bold mt-1">Macroeconomic Scenario & Individual Factor CPI Simulator (<span id="sim-route-tag" class="text-sky-400">BOM-DEL</span>)</h3>
           </div>
-          <span class="text-xs font-mono text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950 px-3 py-1 rounded-lg border border-emerald-300 dark:border-emerald-800">Target Inflation: 4% ± 2%</span>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div class="space-y-4">
             <div>
               <label class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">1. Fuel Surcharge (ATF Shocks)</label>
-              <select id="sim-fuel" class="w-full text-xs bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-3 rounded-xl font-bold outline-none cursor-pointer">
+              <select id="sim-fuel" onchange="runPolicySimulation()" class="w-full text-xs bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-3 rounded-xl font-bold outline-none cursor-pointer">
                 <option value="0">Normal Fuel Rates (0%)</option>
                 <option value="1.8">Moderate Crude Hike (+10%)</option>
                 <option value="4.2" selected>Severe Geopolitical Crude Spike (+25%)</option>
@@ -205,7 +218,7 @@
             </div>
             <div>
               <label class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">2. Mass Migration & Festival Calendar</label>
-              <select id="sim-festival" class="w-full text-xs bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-3 rounded-xl font-bold outline-none cursor-pointer">
+              <select id="sim-festival" onchange="runPolicySimulation()" class="w-full text-xs bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-3 rounded-xl font-bold outline-none cursor-pointer">
                 <option value="0">Standard Non-Festival Period</option>
                 <option value="2.1">Ganpati Festival (Konkan/MH Migration Rush)</option>
                 <option value="2.6">Chhath Puja (Delhi-Bihar/UP Migration)</option>
@@ -219,14 +232,14 @@
           <div class="space-y-4">
             <div>
               <label class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">3. Climate & Monsoon Disruptions</label>
-              <select id="sim-climate" class="w-full text-xs bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-3 rounded-xl font-bold outline-none cursor-pointer">
+              <select id="sim-climate" onchange="runPolicySimulation()" class="w-full text-xs bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-3 rounded-xl font-bold outline-none cursor-pointer">
                 <option value="0" selected>Normal Weather Conditions</option>
                 <option value="1.8">Severe Fog / Monsoon Flight Delays & Cancellation Surge</option>
               </select>
             </div>
             <div>
               <label class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">4. Government Taxes & Airport Fees (UDF)</label>
-              <select id="sim-taxes" class="w-full text-xs bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-3 rounded-xl font-bold outline-none cursor-pointer">
+              <select id="sim-taxes" onchange="runPolicySimulation()" class="w-full text-xs bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-3 rounded-xl font-bold outline-none cursor-pointer">
                 <option value="0" selected>Stable Statutory Rates</option>
                 <option value="1.2">Major Metropolitan Airport UDF & GST Hike</option>
               </select>
@@ -249,9 +262,6 @@
                 <span class="text-xs font-bold">Total Headline CPI:</span>
                 <span class="text-xl font-black text-emerald-600 dark:text-emerald-400 mono" id="sim-result-cpi">+7.3%</span>
               </div>
-              <button onclick="runPolicySimulation()" class="mt-3 w-full bg-sky-500 hover:bg-sky-400 text-white font-black py-2.5 rounded-xl text-xs shadow transition">
-                UPDATE SIMULATION MODEL ➔
-              </button>
             </div>
           </div>
         </div>
@@ -313,19 +323,12 @@
         document.getElementById('tab-analytics').className = "px-4 py-2 rounded-lg text-xs font-bold bg-sky-500 text-white transition";
         document.getElementById('tab-monitor').className = "px-4 py-2 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-white transition";
         
-        // Sync analytics route with the route selected on Page 1
+        // Sync analytics selectors with Page 1 selection
         const origin = document.getElementById('audit-origin').value;
         const destination = document.getElementById('audit-destination').value;
-        const currentKey = `${origin}-${destination}`;
-        const historyRouteSel = document.getElementById('history-route-select');
-        
-        for (let i = 0; i < historyRouteSel.options.length; i++) {
-          if (historyRouteSel.options[i].value === currentKey || historyRouteSel.options[i].value === `${destination}-${origin}`) {
-            historyRouteSel.value = historyRouteSel.options[i].value;
-            break;
-          }
-        }
-        syncAnalyticsRoute(historyRouteSel.value);
+        document.getElementById('analytics-origin').value = origin;
+        document.getElementById('analytics-destination').value = destination;
+        runAnalyticsRoute();
       }
     }
 
@@ -353,19 +356,27 @@
       document.getElementById('theme-icon').textContent = '🌙';
     }
 
-    function runPolicySimulation() {
-      const fuelVal = parseFloat(document.getElementById('sim-fuel').value);
-      const festVal = parseFloat(document.getElementById('sim-festival').value);
-      const climateVal = parseFloat(document.getElementById('sim-climate').value);
-      const taxVal = parseFloat(document.getElementById('sim-taxes').value);
+    async function runPolicySimulation() {
+      const origin = document.getElementById('analytics-origin').value;
+      const destination = document.getElementById('analytics-destination').value;
+      const fuelVal = document.getElementById('sim-fuel').value;
+      const festVal = document.getElementById('sim-festival').value;
+      const climateVal = document.getElementById('sim-climate').value;
+      const taxVal = document.getElementById('sim-taxes').value;
 
-      document.getElementById('factor-fuel').innerText = `+${fuelVal.toFixed(1)}%`;
-      document.getElementById('factor-fest').innerText = `+${festVal.toFixed(1)}%`;
-      document.getElementById('factor-climate').innerText = `+${climateVal.toFixed(1)}%`;
-      document.getElementById('factor-tax').innerText = `+${taxVal.toFixed(1)}%`;
-
-      const total = 2.0 + fuelVal + festVal + climateVal + taxVal;
-      document.getElementById('sim-result-cpi').innerText = `+${total.toFixed(1)}%`;
+      try {
+        const res = await fetch('/api/simulate-policy', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ origin, destination, fuel: fuelVal, festival: festVal, climate: climateVal, taxes: taxVal })
+        });
+        const data = await res.json();
+        document.getElementById('factor-fuel').innerText = `+${data.fuel_impact}%`;
+        document.getElementById('factor-fest').innerText = `+${data.festival_impact}%`;
+        document.getElementById('factor-climate').innerText = `+${data.climate_impact}%`;
+        document.getElementById('factor-tax').innerText = `+${data.tax_impact}%`;
+        document.getElementById('sim-result-cpi').innerText = `+${data.total_cpi}%`;
+      } catch (err) { console.error(err); }
     }
 
     function exportMinisterialReport() {
@@ -414,12 +425,20 @@
         globalAirportMap = await resAirports.json();
         const originSel = document.getElementById('audit-origin');
         const destSel = document.getElementById('audit-destination');
+        const analyticsOrigin = document.getElementById('analytics-origin');
+        const analyticsDest = document.getElementById('analytics-destination');
+        
         originSel.innerHTML = ''; destSel.innerHTML = '';
+        analyticsOrigin.innerHTML = ''; analyticsDest.innerHTML = '';
+
         Object.entries(globalAirportMap).forEach(([code, name]) => {
           originSel.add(new Option(`${name} (${code})`, code));
           destSel.add(new Option(`${name} (${code})`, code));
+          analyticsOrigin.add(new Option(`${name} (${code})`, code));
+          analyticsDest.add(new Option(`${name} (${code})`, code));
         });
         originSel.value = 'BOM'; destSel.value = 'DEL';
+        analyticsOrigin.value = 'BOM'; analyticsDest.value = 'DEL';
       } catch (err) { console.error(err); }
 
       initRadarMap();
@@ -435,14 +454,9 @@
         document.getElementById('alert-spike-val').innerText = `+${currentGlobalStats.inflation_rate}% surge`;
 
         const trendRouteSel = document.getElementById('trend-route-select');
-        const historyRouteSel = document.getElementById('history-route-select');
-        trendRouteSel.innerHTML = ''; historyRouteSel.innerHTML = '';
-        currentGlobalStats.routes.forEach(r => {
-          trendRouteSel.add(new Option(r, r));
-          historyRouteSel.add(new Option(r, r));
-        });
+        trendRouteSel.innerHTML = '';
+        currentGlobalStats.routes.forEach(r => trendRouteSel.add(new Option(r, r)));
         trendRouteSel.value = currentGlobalStats.routes[0] || 'DEL-BOM';
-        historyRouteSel.value = currentGlobalStats.routes[0] || 'DEL-BOM';
       } catch (err) { console.error(err); }
 
       runCorridorAudit();
@@ -514,15 +528,20 @@
       });
     }
 
-    function syncAnalyticsRoute(routeKey) {
-      document.getElementById('active-analytics-route').innerText = routeKey.replace('-', ' ➔ ');
+    async function runAnalyticsRoute() {
+      const origin = document.getElementById('analytics-origin').value;
+      const destination = document.getElementById('analytics-destination').value;
+      const routeKey = `${origin}-${destination}`;
+      
+      document.getElementById('sim-route-tag').innerText = routeKey;
       document.querySelectorAll('.chart-route-tag').forEach(el => el.innerText = routeKey);
+      
+      runPolicySimulation();
       loadHistoryCharts(routeKey);
     }
 
-    async function loadHistoryCharts(routeKey = null) {
-      const route = routeKey || document.getElementById('history-route-select').value;
-      const res = await fetch(`/api/route-history?route=${route}`);
+    async function loadHistoryCharts(routeKey) {
+      const res = await fetch(`/api/route-history?route=${routeKey}`);
       const data = await res.json();
 
       // 1. Present vs History Comparison Chart
@@ -532,8 +551,8 @@
         data: {
           labels: data.windows,
           datasets: [
-            { label: `Historical Baseline (${route})`, data: data.historical, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.3 },
-            { label: `Present Pricing (${route})`, data: data.present, borderColor: '#38bdf8', backgroundColor: 'rgba(56, 189, 248, 0.15)', fill: true, tension: 0.3 }
+            { label: `Historical Baseline (${routeKey})`, data: data.historical, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.3 },
+            { label: `Present Pricing (${routeKey})`, data: data.present, borderColor: '#38bdf8', backgroundColor: 'rgba(56, 189, 248, 0.15)', fill: true, tension: 0.3 }
           ]
         },
         options: { responsive: true, maintainAspectRatio: false }
