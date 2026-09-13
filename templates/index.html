@@ -134,8 +134,7 @@
           <div>
             <div class="flex justify-between items-center mb-4">
               <h3 class="font-bold text-sm">Lead-Time Price Elasticity & Historical Trend</h3>
-              <select id="trend-route-select" onchange="loadTrendChart()" class="hidden"></select>
-              <span class="text-xs text-sky-600 dark:text-sky-400 font-semibold" id="current-chart-route-label">T+1 to T+45 Days Analysis</span>
+              <span class="text-xs text-sky-600 dark:text-sky-400 font-semibold" id="current-chart-route-label">Price Trend (DEL-BOM)</span>
             </div>
             <div class="h-64"><canvas id="trendChart"></canvas></div>
           </div>
@@ -162,6 +161,75 @@
             </thead>
             <tbody id="audit-tbody" class="divide-y divide-slate-200 dark:divide-slate-800 text-slate-800 dark:text-slate-200"></tbody>
           </table>
+        </div>
+      </div>
+
+      <!-- CONSUMER SMART-CALENDAR & BEST TIME TO FLY -->
+      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl space-y-6">
+        <div class="flex flex-wrap justify-between items-center gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div>
+            <span class="bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 px-3 py-1 rounded-lg text-xs font-black uppercase">Consumer Smart-Travel Tool</span>
+            <h3 class="text-base font-bold mt-1">Interactive Price Calendar: Best Days to Fly vs. High-Surge Dates</h3>
+          </div>
+          <span class="text-xs text-slate-500">Advises citizens on low-cost booking windows</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-emerald-50 dark:bg-emerald-950/40 p-5 rounded-2xl border border-emerald-200 dark:border-emerald-800 space-y-2">
+            <div class="flex items-center space-x-2">
+              <span class="h-3 w-3 rounded-full bg-emerald-500"></span>
+              <h4 class="font-bold text-xs text-emerald-800 dark:text-emerald-300 uppercase">Low-Price Windows (Best to Book)</h4>
+            </div>
+            <p class="text-xs text-emerald-700 dark:text-emerald-400">Mid-week departures (Tuesdays & Wednesdays) and 30+ days in advance. Airfares are up to 35% cheaper.</p>
+          </div>
+
+          <div class="bg-amber-50 dark:bg-amber-950/40 p-5 rounded-2xl border border-amber-200 dark:border-amber-800/80 space-y-2">
+            <div class="flex items-center space-x-2">
+              <span class="h-3 w-3 rounded-full bg-amber-500"></span>
+              <h4 class="font-bold text-xs text-amber-800 dark:text-amber-300 uppercase">Moderate Surge (Weekends)</h4>
+            </div>
+            <p class="text-xs text-amber-700 dark:text-amber-400">Friday evenings and Sunday returns. Standard weekend leisure demand adds a 15–25% premium.</p>
+          </div>
+
+          <div class="bg-rose-50 dark:bg-rose-950/40 p-5 rounded-2xl border border-rose-200 dark:border-rose-800/80 space-y-2">
+            <div class="flex items-center space-x-2">
+              <span class="h-3 w-3 rounded-full bg-rose-500"></span>
+              <h4 class="font-bold text-xs text-rose-800 dark:text-rose-300 uppercase">High Surge & Festival Migration</h4>
+            </div>
+            <p class="text-xs text-rose-700 dark:text-rose-400">Ganpati, Diwali, Chhath Puja, and long weekends. Fares surge by 60% to 90% due to heavy traffic.</p>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between items-center mb-3">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500">September 2026 Price Predictor Calendar</h4>
+            <span class="text-xs text-sky-500 font-bold">🟢 Low Fare | 🟡 Moderate | 🔴 High Surge</span>
+          </div>
+          <div class="grid grid-cols-7 gap-2 text-center text-xs mono">
+            <div class="p-2 font-bold text-slate-400">Mon</div>
+            <div class="p-2 font-bold text-slate-400">Tue</div>
+            <div class="p-2 font-bold text-slate-400">Wed</div>
+            <div class="p-2 font-bold text-slate-400">Thu</div>
+            <div class="p-2 font-bold text-slate-400">Fri</div>
+            <div class="p-2 font-bold text-slate-400">Sat</div>
+            <div class="p-2 font-bold text-slate-400">Sun</div>
+
+            <div class="p-3 bg-slate-100 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-400">31</div>
+            <div class="p-3 bg-emerald-100 dark:bg-emerald-950/60 rounded-xl border border-emerald-300 dark:border-emerald-800 font-bold text-emerald-600">1<br><span class="text-[9px]">₹4,850</span></div>
+            <div class="p-3 bg-emerald-100 dark:bg-emerald-950/60 rounded-xl border border-emerald-300 dark:border-emerald-800 font-bold text-emerald-600">2<br><span class="text-[9px]">₹4,720</span></div>
+            <div class="p-3 bg-emerald-100 dark:bg-emerald-950/60 rounded-xl border border-emerald-300 dark:border-emerald-800 font-bold text-emerald-600">3<br><span class="text-[9px]">₹4,900</span></div>
+            <div class="p-3 bg-amber-100 dark:bg-amber-950/60 rounded-xl border border-amber-300 dark:border-amber-800 font-bold text-amber-600">4<br><span class="text-[9px]">₹6,400</span></div>
+            <div class="p-3 bg-rose-100 dark:bg-rose-950/60 rounded-xl border border-rose-300 dark:border-rose-800 font-bold text-rose-600">5<br><span class="text-[9px]">₹8,200</span></div>
+            <div class="p-3 bg-rose-100 dark:bg-rose-950/60 rounded-xl border border-rose-300 dark:border-rose-800 font-bold text-rose-600">6<br><span class="text-[9px]">₹8,500</span></div>
+
+            <div class="p-3 bg-emerald-100 dark:bg-emerald-950/60 rounded-xl border border-emerald-300 dark:border-emerald-800 font-bold text-emerald-600">7<br><span class="text-[9px]">₹4,800</span></div>
+            <div class="p-3 bg-emerald-100 dark:bg-emerald-950/60 rounded-xl border border-emerald-300 dark:border-emerald-800 font-bold text-emerald-600">8<br><span class="text-[9px]">₹4,750</span></div>
+            <div class="p-3 bg-rose-500 text-white rounded-xl font-black shadow-lg">9<br><span class="text-[9px]">Ganpati</span></div>
+            <div class="p-3 bg-rose-100 dark:bg-rose-950/60 rounded-xl border border-rose-300 dark:border-rose-800 font-bold text-rose-600">10<br><span class="text-[9px]">₹8,900</span></div>
+            <div class="p-3 bg-rose-100 dark:bg-rose-950/60 rounded-xl border border-rose-300 dark:border-rose-800 font-bold text-rose-600">11<br><span class="text-[9px]">₹9,100</span></div>
+            <div class="p-3 bg-rose-100 dark:bg-rose-950/60 rounded-xl border border-rose-300 dark:border-rose-800 font-bold text-rose-600">12<br><span class="text-[9px]">₹8,800</span></div>
+            <div class="p-3 bg-amber-100 dark:bg-amber-950/60 rounded-xl border border-amber-300 dark:border-amber-800 font-bold text-amber-600">13<br><span class="text-[9px]">₹6,800</span></div>
+          </div>
         </div>
       </div>
 
