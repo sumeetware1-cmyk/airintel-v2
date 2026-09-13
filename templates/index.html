@@ -449,11 +449,6 @@
         document.getElementById('kpi-inflation').innerText = `+${currentGlobalStats.inflation_rate}% Spike`;
         document.getElementById('kpi-records').innerText = currentGlobalStats.total_records.toLocaleString();
         document.getElementById('alert-spike-val').innerText = `+${currentGlobalStats.inflation_rate}% surge`;
-
-        const trendRouteSel = document.getElementById('trend-route-select');
-        trendRouteSel.innerHTML = '';
-        currentGlobalStats.routes.forEach(r => trendRouteSel.add(new Option(r, r)));
-        trendRouteSel.value = currentGlobalStats.routes[0] || 'DEL-BOM';
       } catch (err) { console.error(err); }
 
       runCorridorAudit();
@@ -466,19 +461,7 @@
       
       updateRadarRoute(origin, destination);
       document.getElementById('audit-corridor-label').innerText = `Route: ${origin} ➔ ${destination}`;
-
-      const trendSel = document.getElementById('trend-route-select');
-      let matchedRoute = `${origin}-${destination}`;
-      for (let i = 0; i < trendSel.options.length; i++) {
-        if (trendSel.options[i].value === currentRouteKey || trendSel.options[i].value === `${destination}-${origin}`) {
-          matchedRoute = trendSel.options[i].value;
-          trendSel.value = matchedRoute;
-          break;
-        }
-      }
-      
-      document.getElementById('current-chart-route-label').innerText = `Price Trend (${matchedRoute})`;
-      loadTrendChart(matchedRoute);
+      loadTrendChart(currentRouteKey);
 
       try {
         const res = await fetch('/api/audit-corridor', {
@@ -510,10 +493,10 @@
       } catch (err) { console.error(err); }
     }
 
-    async function loadTrendChart(routeKey = null) {
-      const route = routeKey || document.getElementById('trend-route-select').value;
+    async function loadTrendChart(route) {
       const res = await fetch(`/api/route-trend?route=${route}`);
       const data = await res.json();
+      document.getElementById('current-chart-route-label').innerText = `Price Trend (${route})`;
       if (trendChart) trendChart.destroy();
       trendChart = new Chart(document.getElementById('trendChart').getContext('2d'), {
         type: 'line',
@@ -541,7 +524,6 @@
       const res = await fetch(`/api/route-history?route=${routeKey}`);
       const data = await res.json();
 
-      // 1. Present vs History Comparison Chart
       if (historyChart) historyChart.destroy();
       historyChart = new Chart(document.getElementById('historyComparisonChart').getContext('2d'), {
         type: 'line',
@@ -555,7 +537,6 @@
         options: { responsive: true, maintainAspectRatio: false }
       });
 
-      // 2. Passenger Demographics Travel Frequency Chart
       if (demographicChart) demographicChart.destroy();
       demographicChart = new Chart(document.getElementById('passengerDemographicsChart').getContext('2d'), {
         type: 'bar',
@@ -566,7 +547,6 @@
         options: { responsive: true, maintainAspectRatio: false }
       });
 
-      // 3. Mass Migration & Festival Calendar Chart
       if (festivalChart) festivalChart.destroy();
       festivalChart = new Chart(document.getElementById('festivalCalendarChart').getContext('2d'), {
         type: 'bar',
