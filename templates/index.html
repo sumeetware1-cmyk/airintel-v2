@@ -142,11 +142,11 @@
         </div>
       </div>
 
-      <!-- COMPONENT AUDIT TABLE -->
+      <!-- COMPONENT AUDIT TABLE (BASE FARE VS GST & UDF) -->
       <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-base font-bold">📊 Component-Level Audit: Base Fares vs. Taxes</h3>
-          <span class="text-xs text-slate-500 dark:text-slate-400">MoSPI Compliance Feed</span>
+          <h3 class="text-base font-bold">📊 Component-Level Audit: Base Seat Fares vs. GST, UDF & Airport Taxes</h3>
+          <span class="text-xs text-slate-500 dark:text-slate-400">MoSPI Tax Compliance Feed</span>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs mono border-collapse">
@@ -155,9 +155,9 @@
                 <th class="py-3 px-4">Airline & Flight</th>
                 <th class="py-3 px-4">Market Share</th>
                 <th class="py-3 px-4">Base Seat Fare</th>
-                <th class="py-3 px-4">Statutory Taxes & UDF</th>
+                <th class="py-3 px-4">GST, UDF & Airport Taxes</th>
                 <th class="py-3 px-4">Total Quote</th>
-                <th class="py-3 px-4">Status</th>
+                <th class="py-3 px-4">Tax Status</th>
               </tr>
             </thead>
             <tbody id="audit-tbody" class="divide-y divide-slate-200 dark:divide-slate-800 text-slate-800 dark:text-slate-200"></tbody>
@@ -167,10 +167,10 @@
 
     </section>
 
-    <!-- PAGE 2: FLEXIBLE ROUTE & MACRO ANALYTICS SUITE -->
+    <!-- PAGE 2: ROUTE-SPECIFIC & MACRO ANALYTICS SUITE -->
     <section id="page-analytics" class="hidden space-y-8">
       
-      <!-- FLEXIBLE ORIGIN / DESTINATION SELECTOR FOR ANALYTICS -->
+      <!-- FLEXIBLE ORIGIN / DESTINATION SELECTOR -->
       <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
         <div class="flex flex-wrap justify-between items-center gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
           <div>
@@ -267,7 +267,7 @@
         </div>
       </div>
 
-      <!-- SPACIOUS GRAPHS & CHARTS -->
+      <!-- SPACIOUS GRAPHS & CHARTS (INCLUDING PASSENGER DEMOGRAPHICS) -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
           <h3 class="font-bold text-sm">Present vs. Historical Long-Term Price Curve for <span class="chart-route-tag text-sky-400">BOM-DEL</span></h3>
@@ -275,9 +275,9 @@
         </div>
 
         <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
-          <h3 class="font-bold text-sm">Multi-Factor Inflation Contribution Weight (%)</h3>
-          <p class="text-xs text-slate-500">Quantitative contribution breakdown for MoSPI monthly reporting.</p>
-          <div class="h-80"><canvas id="driverWeightChart"></canvas></div>
+          <h3 class="font-bold text-sm">Passenger Demographics & Travel Frequency Share (%)</h3>
+          <p class="text-xs text-slate-500">Tracking frequent flyers: Business, Students, Senior Citizens, Armed Forces, Regular.</p>
+          <div class="h-80"><canvas id="passengerDemographicsChart"></canvas></div>
         </div>
       </div>
 
@@ -294,7 +294,7 @@
   <script>
     let trendChart = null;
     let historyChart = null;
-    let driverChart = null;
+    let demographicChart = null;
     let festivalChart = null;
     let radarMap = null;
     let routeLine = null;
@@ -323,7 +323,6 @@
         document.getElementById('tab-analytics').className = "px-4 py-2 rounded-lg text-xs font-bold bg-sky-500 text-white transition";
         document.getElementById('tab-monitor').className = "px-4 py-2 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-white transition";
         
-        // Sync analytics selectors with Page 1 selection
         const origin = document.getElementById('audit-origin').value;
         const destination = document.getElementById('audit-destination').value;
         document.getElementById('analytics-origin').value = origin;
@@ -357,18 +356,16 @@
     }
 
     async function runPolicySimulation() {
-      const origin = document.getElementById('analytics-origin').value;
-      const destination = document.getElementById('analytics-destination').value;
-      const fuelVal = document.getElementById('sim-fuel').value;
-      const festVal = document.getElementById('sim-festival').value;
-      const climateVal = document.getElementById('sim-climate').value;
-      const taxVal = document.getElementById('sim-taxes').value;
+      const fuelVal = parseFloat(document.getElementById('sim-fuel').value);
+      const festVal = parseFloat(document.getElementById('sim-festival').value);
+      const climateVal = parseFloat(document.getElementById('sim-climate').value);
+      const taxVal = parseFloat(document.getElementById('sim-taxes').value);
 
       try {
         const res = await fetch('/api/simulate-policy', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ origin, destination, fuel: fuelVal, festival: festVal, climate: climateVal, taxes: taxVal })
+          body: JSON.stringify({ fuel: fuelVal, festival: festVal, climate: climateVal, taxes: taxVal })
         });
         const data = await res.json();
         document.getElementById('factor-fuel').innerText = `+${data.fuel_impact}%`;
@@ -504,9 +501,9 @@
             <td class="py-3 px-4 font-bold">✈️ ${rec.airline} <span class="text-xs text-slate-500">(${rec.flight_no})</span></td>
             <td class="py-3 px-4 text-sky-600 dark:text-sky-400">${rec.market_share}</td>
             <td class="py-3 px-4 font-mono font-bold text-emerald-600 dark:text-emerald-400">₹${rec.base_fare.toLocaleString()}</td>
-            <td class="py-3 px-4 font-mono text-amber-600 dark:text-amber-400">₹${rec.statutory_taxes.toLocaleString()}</td>
+            <td class="py-3 px-4 font-mono text-amber-600 dark:text-amber-400">₹${rec.gst_and_udf.toLocaleString()}</td>
             <td class="py-3 px-4 font-mono font-bold">₹${rec.total_fare.toLocaleString()}</td>
-            <td class="py-3 px-4"><span class="bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 px-2.5 py-1 rounded-lg text-[10px] font-bold border border-emerald-300 dark:border-emerald-800">✔ Verified</span></td>
+            <td class="py-3 px-4"><span class="bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 px-2.5 py-1 rounded-lg text-[10px] font-bold border border-emerald-300 dark:border-emerald-800">✔ ${rec.status}</span></td>
           `;
           tbody.appendChild(row);
         });
@@ -558,18 +555,18 @@
         options: { responsive: true, maintainAspectRatio: false }
       });
 
-      // 2. Multi-Factor Inflation Drivers Bar Chart
-      if (driverChart) driverChart.destroy();
-      driverChart = new Chart(document.getElementById('driverWeightChart').getContext('2d'), {
+      // 2. Passenger Demographics Travel Frequency Chart
+      if (demographicChart) demographicChart.destroy();
+      demographicChart = new Chart(document.getElementById('passengerDemographicsChart').getContext('2d'), {
         type: 'bar',
         data: {
-          labels: ['Aviation Fuel (ATF)', 'Mass Migration & Festivals', 'Consumer Demand', 'Climate & Fog', 'Govt Taxes & UDF'],
-          datasets: [{ label: 'Inflation Contribution Weight (%)', data: [32, 28, 20, 12, 8], backgroundColor: ['#0ea5e9', '#f59e0b', '#10b981', '#6366f1', '#ec4899'] }]
+          labels: ['Business Executives', 'Regular / Leisure', 'Students (12-26y)', 'Senior Citizens (60+)', 'Armed Forces / Medical'],
+          datasets: [{ label: 'Passenger Travel Frequency Share (%)', data: [42, 28, 16, 9, 5], backgroundColor: ['#0ea5e9', '#38bdf8', '#f59e0b', '#10b981', '#6366f1'] }]
         },
         options: { responsive: true, maintainAspectRatio: false }
       });
 
-      // 3. Mass Migration & Multi-Faith Festival Calendar Chart
+      // 3. Mass Migration & Festival Calendar Chart
       if (festivalChart) festivalChart.destroy();
       festivalChart = new Chart(document.getElementById('festivalCalendarChart').getContext('2d'), {
         type: 'bar',
