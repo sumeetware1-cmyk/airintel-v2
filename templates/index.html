@@ -45,7 +45,7 @@
     <div class="flex items-center space-x-3">
       <div class="bg-slate-100 dark:bg-slate-950 p-1 rounded-xl border border-slate-200 dark:border-slate-800 flex space-x-1">
         <button onclick="switchPage('monitor')" id="tab-monitor" class="px-4 py-2 rounded-lg text-xs font-bold bg-sky-500 text-white transition">Live Monitor</button>
-        <button onclick="switchPage('analytics')" id="tab-analytics" class="px-4 py-2 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-white transition">MoSPI & RBI Deep Analysis</button>
+        <button onclick="switchPage('analytics')" id="tab-analytics" class="px-4 py-2 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-white transition">Comprehensive MoSPI Analytics</button>
       </div>
 
       <button onclick="exportMinisterialReport()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition shadow text-xs font-bold hidden sm:flex items-center space-x-1.5">
@@ -69,7 +69,7 @@
         <span class="text-amber-600 dark:text-amber-400 text-xl font-bold">⚠️</span>
         <div>
           <h4 class="font-bold text-xs uppercase tracking-wide text-amber-800 dark:text-amber-300">MoSPI Automated Inflation Spike Notice</h4>
-          <p class="text-xs text-amber-700 dark:text-amber-400 mt-0.5">Trunk corridor airfares are recording an <strong id="alert-spike-val">+87.94% surge</strong> over historical baselines due to seasonal travel demand and fuel pressure.</p>
+          <p class="text-xs text-amber-700 dark:text-amber-400 mt-0.5">Trunk corridor airfares are recording an <strong id="alert-spike-val">+87.94% surge</strong> over historical baselines due to multi-faith festival demand and fuel pressure.</p>
         </div>
       </div>
 
@@ -167,59 +167,60 @@
 
     </section>
 
-    <!-- PAGE 2: MOSPI & RBI DEEP ANALYSIS (SPACIOUS MULTI-FACTOR & POLICY SUITE) -->
+    <!-- PAGE 2: COMPREHENSIVE MOSPI & RBI ANALYTICS SUITE -->
     <section id="page-analytics" class="hidden space-y-8">
       
-      <!-- HEADER EXPLANATION -->
+      <!-- HEADER -->
       <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-3">
-        <span class="bg-sky-100 dark:bg-sky-950 text-sky-600 dark:text-sky-400 px-3 py-1 rounded-lg text-xs font-black uppercase">Official Government Suite</span>
-        <h2 class="text-xl font-black">MoSPI & RBI Macroeconomic Multi-Factor Analysis Center</h2>
-        <p class="text-xs text-slate-500 dark:text-slate-400 max-w-3xl">This dedicated analytical workspace evaluates how airfares fluctuate due to fuel price shocks, seasonal festival surges, consumer demand density, international forex rates, and government tax adjustments to inform monetary policy.</p>
+        <span class="bg-sky-100 dark:bg-sky-950 text-sky-600 dark:text-sky-400 px-3 py-1 rounded-lg text-xs font-black uppercase">Advanced Macroeconomic Suite</span>
+        <h2 class="text-xl font-black">Comprehensive Multi-Variable Inflation Analysis Center</h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400 max-w-4xl">Airfare inflation is driven by complex macro factors: Aviation Turbine Fuel (ATF) pricing, multi-faith festivals (Diwali, Eid, Christmas, Pongal, Durga Puja), seasonal climate conditions, international forex fluctuations, aircraft lease rates, and airport user development fee (UDF) adjustments.</p>
       </div>
 
-      <!-- RBI MONETARY POLICY & INTEREST RATE SIMULATOR -->
+      <!-- RBI POLICY SIMULATOR SUITE -->
       <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-6">
         <div class="flex flex-wrap justify-between items-center gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
           <div>
-            <span class="bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 px-2.5 py-1 rounded text-[10px] font-black uppercase">Reserve Bank of India (RBI)</span>
-            <h3 class="text-base font-bold mt-1">Monetary Policy & Repo Rate Inflation Impact Simulator</h3>
+            <span class="bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 px-2.5 py-1 rounded text-[10px] font-black uppercase">RBI & MoSPI Policy Modeling</span>
+            <h3 class="text-base font-bold mt-1">Macroeconomic Scenario & Repo Rate Impact Simulator</h3>
           </div>
-          <span class="text-xs font-mono text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950 px-3 py-1 rounded-lg border border-emerald-300 dark:border-emerald-800">Target Inflation Band: 4% ± 2%</span>
+          <span class="text-xs font-mono text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950 px-3 py-1 rounded-lg border border-emerald-300 dark:border-emerald-800">CPI Target: 4% ± 2%</span>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div class="space-y-4">
             <div>
-              <label class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">1. Fuel Surcharge Hike (ATF)</label>
+              <label class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">1. Fuel Surcharge (ATF Shocks)</label>
               <select id="sim-fuel" class="w-full text-xs bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-3 rounded-xl font-bold outline-none cursor-pointer">
-                <option value="0">Normal Fuel Rates (0% change)</option>
-                <option value="10">Moderate Hike (+10%)</option>
-                <option value="25" selected>Severe International Crude Spike (+25%)</option>
+                <option value="0">Normal Fuel Rates (0%)</option>
+                <option value="10">Moderate Crude Hike (+10%)</option>
+                <option value="25" selected>Severe Geopolitical Crude Spike (+25%)</option>
               </select>
             </div>
             <div>
-              <label class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">2. Seasonal & Festival Demand</label>
-              <select id="sim-season" class="w-full text-xs bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-3 rounded-xl font-bold outline-none cursor-pointer">
-                <option value="offpeak">Off-Peak Monsoon Period</option>
-                <option value="normal">Normal Business Quarter</option>
-                <option value="festival" selected>Diwali / Winter Holiday Festival Peak</option>
+              <label class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">2. Festival & Cultural Calendar</label>
+              <select id="sim-festival" class="w-full text-xs bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-3 rounded-xl font-bold outline-none cursor-pointer">
+                <option value="none">Standard Non-Festival Period</option>
+                <option value="diwali">Diwali / Durga Puja Peak</option>
+                <option value="eid_Xmas" selected>Eid, Christmas & New Year Holiday Rush</option>
+                <option value="pongal_onam">Pongal, Onam & Regional Festivals</option>
               </select>
             </div>
           </div>
 
           <div class="space-y-4">
             <div>
-              <label class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">3. Government & Airport Taxes (UDF/GST)</label>
-              <select id="sim-taxes" class="w-full text-xs bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-3 rounded-xl font-bold outline-none cursor-pointer">
-                <option value="stable" selected>Stable Statutory Taxes</option>
-                <option value="hike">Major Airport User Development Fee (UDF) Hike</option>
+              <label class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">3. Climate & Monsoon Disruptions</label>
+              <select id="sim-climate" class="w-full text-xs bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-3 rounded-xl font-bold outline-none cursor-pointer">
+                <option value="normal" selected>Normal Weather Conditions</option>
+                <option value="disruption">Severe Fog / Monsoon Flight Cancellations & Surge</option>
               </select>
             </div>
             <div>
-              <label class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">4. International Affairs & Forex (Lease Rates)</label>
-              <select id="sim-forex" class="w-full text-xs bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-3 rounded-xl font-bold outline-none cursor-pointer">
-                <option value="stable" selected>Stable USD-INR Exchange</option>
-                <option value="depreciation">Rupee Depreciation & Aircraft Lease Pressure</option>
+              <label class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">4. Government Taxes & Airport Fees (UDF)</label>
+              <select id="sim-taxes" class="w-full text-xs bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 p-3 rounded-xl font-bold outline-none cursor-pointer">
+                <option value="stable" selected>Stable Statutory Rates</option>
+                <option value="hike">Major Metropolitan Airport UDF & GST Hike</option>
               </select>
             </div>
           </div>
@@ -227,17 +228,17 @@
           <div class="bg-slate-100 dark:bg-slate-950 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col justify-between">
             <div>
               <span class="text-[10px] font-black text-slate-500 uppercase tracking-wider block">Projected Headline CPI Impact</span>
-              <h4 class="text-3xl font-black text-emerald-600 dark:text-emerald-400 mono mt-2" id="sim-result-cpi">+6.8%</h4>
-              <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">Recommended RBI Action: <strong class="text-amber-500">Hold Repo Rate / Monetary Tightening Watch</strong></p>
+              <h4 class="text-3xl font-black text-emerald-600 dark:text-emerald-400 mono mt-2" id="sim-result-cpi">+7.1%</h4>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">Recommended RBI Action: <strong class="text-amber-500">Monetary Policy Tightening / Rate Watch</strong></p>
             </div>
             <button onclick="runPolicySimulation()" class="mt-4 w-full bg-sky-500 hover:bg-sky-400 text-white font-black py-2.5 rounded-xl text-xs shadow transition">
-              RUN RBI POLICY MODEL ➔
+              CALCULATE MACRO IMPACT ➔
             </button>
           </div>
         </div>
       </div>
 
-      <!-- SPACIOUS MULTI-FACTOR CHARTS & GRAPHS -->
+      <!-- COMPREHENSIVE GRAPHS & CHARTS -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
           <div class="flex justify-between items-center">
@@ -248,16 +249,16 @@
         </div>
 
         <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
-          <h3 class="font-bold text-sm">Multi-Factor Inflation Driver Breakdown (%)</h3>
-          <p class="text-xs text-slate-500">Quantifying the precise contribution of fuel, demand, festivals, and taxes.</p>
+          <h3 class="font-bold text-sm">Multi-Factor Inflation Contribution Weight (%)</h3>
+          <p class="text-xs text-slate-500">Quantifying fuel, festivals, climate, demand, and government taxes.</p>
           <div class="h-72"><canvas id="driverWeightChart"></canvas></div>
         </div>
       </div>
 
       <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
-        <h3 class="font-bold text-sm">Seasonal, Festival & Climate Surge Analysis Across Quarters</h3>
-        <p class="text-xs text-slate-500">MoSPI tracking of weather disruptions, festive rushes, and holiday demand elasticity.</p>
-        <div class="h-72"><canvas id="seasonalChart"></canvas></div>
+        <h3 class="font-bold text-sm">Multi-Faith Festival & Seasonal Surge Analysis (Annual Calendar)</h3>
+        <p class="text-xs text-slate-500">Tracking price surges across Diwali, Eid, Christmas, Pongal, Onam, and summer/winter holiday rushes.</p>
+        <div class="h-72"><canvas id="festivalCalendarChart"></canvas></div>
       </div>
 
     </section>
@@ -268,7 +269,7 @@
     let trendChart = null;
     let historyChart = null;
     let driverChart = null;
-    let seasonalChart = null;
+    let festivalChart = null;
     let radarMap = null;
     let routeLine = null;
     let originMarker = null;
@@ -325,17 +326,18 @@
 
     function runPolicySimulation() {
       const fuel = document.getElementById('sim-fuel').value;
-      const season = document.getElementById('sim-season').value;
+      const festival = document.getElementById('sim-festival').value;
+      const climate = document.getElementById('sim-climate').value;
       const taxes = document.getElementById('sim-taxes').value;
-      const forex = document.getElementById('sim-forex').value;
 
-      let score = 3.2;
-      if (fuel === '10') score += 1.5;
-      if (fuel === '25') score += 3.8;
-      if (season === 'festival') score += 2.4;
-      if (season === 'normal') score += 0.8;
-      if (taxes === 'hike') score += 1.1;
-      if (forex === 'depreciation') score += 1.6;
+      let score = 3.0;
+      if (fuel === '10') score += 1.2;
+      if (fuel === '25') score += 3.5;
+      if (festival === 'diwali') score += 2.8;
+      if (festival === 'eid_Xmas') score += 3.2;
+      if (festival === 'pongal_onam') score += 1.8;
+      if (climate === 'disruption') score += 1.5;
+      if (taxes === 'hike') score += 1.0;
 
       document.getElementById('sim-result-cpi').innerText = `+${score.toFixed(1)}%`;
     }
@@ -510,19 +512,19 @@
       driverChart = new Chart(document.getElementById('driverWeightChart').getContext('2d'), {
         type: 'bar',
         data: {
-          labels: ['Aviation Fuel (ATF)', 'Festivals & Holidays', 'Domestic Demand', 'Govt Taxes & UDF', 'Forex & Lease Rates'],
-          datasets: [{ label: 'Inflation Contribution Weight (%)', data: [34, 28, 22, 10, 6], backgroundColor: ['#0ea5e9', '#f59e0b', '#10b981', '#6366f1', '#ec4899'] }]
+          labels: ['Aviation Fuel (ATF)', 'Multi-Faith Festivals', 'Consumer Demand', 'Climate & Fog', 'Govt Taxes & UDF'],
+          datasets: [{ label: 'Inflation Contribution Weight (%)', data: [32, 26, 22, 12, 8], backgroundColor: ['#0ea5e9', '#f59e0b', '#10b981', '#6366f1', '#ec4899'] }]
         },
         options: { responsive: true, maintainAspectRatio: false }
       });
 
-      // 3. Seasonal & Climate Surge Chart
-      if (seasonalChart) seasonalChart.destroy();
-      seasonalChart = new Chart(document.getElementById('seasonalChart').getContext('2d'), {
+      // 3. Comprehensive Festival Calendar Chart
+      if (festivalChart) festivalChart.destroy();
+      festivalChart = new Chart(document.getElementById('festivalCalendarChart').getContext('2d'), {
         type: 'bar',
         data: {
-          labels: ['Q1 (Summer/Holi)', 'Q2 (Monsoon/Off-Peak)', 'Q3 (Festivals/Diwali)', 'Q4 (Winter/New Year)'],
-          datasets: [{ label: 'Average Route Price Surge (%) Over Base', data: [22, 4, 58, 74], backgroundColor: '#f59e0b' }]
+          labels: ['Diwali / Durga Puja', 'Eid & Ramadan Rush', 'Christmas & New Year', 'Pongal / Onam / Bihu', 'Summer Vacation'],
+          datasets: [{ label: 'Average Route Price Surge (%) Over Base', data: [65, 52, 74, 45, 58], backgroundColor: '#f59e0b' }]
         },
         options: { responsive: true, maintainAspectRatio: false }
       });
