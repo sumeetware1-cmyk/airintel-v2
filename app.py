@@ -6,7 +6,6 @@ import os
 
 app = Flask(__name__)
 
-# Load cleaned domestic dataset
 CSV_PATH = os.path.join(os.path.dirname(__file__), 'data', 'cleaned', 'airfare_collected_clean.csv')
 
 try:
@@ -132,7 +131,7 @@ def get_route_history():
     trend = trend.sort_values(WINDOW_COL, ascending=False)
     
     fares = [round(float(f), 0) for f in trend[FARE_COL].tolist()]
-    historical_baseline = [round(f * 0.88, 0) for f in fares] # 12% lower baseline representing past years
+    historical_baseline = [round(f * 0.88, 0) for f in fares]
 
     return jsonify({
         'windows': [f"T+{int(d)} Days" for d in trend[WINDOW_COL].tolist()],
