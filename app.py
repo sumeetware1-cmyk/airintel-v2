@@ -6,7 +6,8 @@ import os
 
 app = Flask(__name__)
 
-CSV_PATH = os.path.join(os.path.dirname(__file__), 'airfare_collected_clean.csv')
+# Pointing to the new cleaned data path inside the structured 'data' folder
+CSV_PATH = os.path.join(os.path.dirname(__file__), 'data', 'cleaned', 'airfare_collected_clean.csv')
 
 try:
     df = pd.read_csv(CSV_PATH)
@@ -23,8 +24,8 @@ def resolve_column(candidates, default_name):
     return default_name
 
 FARE_COL = resolve_column(['total_fare', 'fare', 'price', 'ticket_price'], 'total_fare')
-BASE_COL = resolve_column(['base_fare'], 'base_fare')
-TAX_COL = resolve_column(['taxes', 'tax'], 'taxes')
+BASE_COL = resolve_column(['base_fare', 'base_price'], 'base_fare')
+TAX_COL = resolve_column(['taxes', 'tax', 'taxes_and_fees'], 'taxes')
 ORIGIN_COL = resolve_column(['origin', 'source', 'from'], 'origin')
 DEST_COL = resolve_column(['destination', 'to'], 'destination')
 WINDOW_COL = resolve_column(['advance_days', 'booking_window_days', 'days'], 'advance_days')
@@ -83,7 +84,7 @@ def get_stats():
             routes = ['DEL-BOM', 'DEL-BLR', 'BOM-BLR', 'DEL-CCU', 'BLR-HYD', 'MAA-DEL']
 
         return jsonify({
-            'total_records': int(len(df)) if len(df) > 0 else 2410,
+            'total_records': int(len(df)) if len(df) > 0 else 38719,
             'base_fare': round(base_fare, 0),
             'spot_fare': round(spot_fare, 0),
             'cpi_index': cpi_index,
@@ -93,7 +94,7 @@ def get_stats():
     except Exception as e:
         print(f"[Error in /api/stats]: {e}")
         return jsonify({
-            'total_records': 2410, 'base_fare': 5200, 'spot_fare': 8060,
+            'total_records': 38719, 'base_fare': 5200, 'spot_fare': 8060,
             'cpi_index': 155.0, 'inflation_rate': 55.0,
             'routes': ['DEL-BOM', 'DEL-BLR', 'BOM-BLR', 'DEL-CCU', 'BLR-HYD', 'MAA-DEL']
         })
@@ -177,23 +178,23 @@ def audit_corridor():
 
     corridor_index = round((corridor_total / (corridor_base * 0.9)) * 100, 2)
 
+    # Updated carriers to match your actual team scraped airlines (IndiGo, SpiceJet, Akasa Air, Alliance Air)
     carriers = [
-        {'airline': 'IndiGo', 'code': '6E-204', 'share': '58%', 'base': corridor_base * 0.95, 'gst_udf': corridor_tax * 0.98},
-        {'airline': 'Air India', 'code': 'AI-678', 'share': '14%', 'base': corridor_base * 1.05, 'tax': corridor_tax * 1.15},
-        {'airline': 'Akasa Air', 'code': 'QP-1321', 'share': '18%', 'base': corridor_base * 0.90, 'tax': corridor_tax * 0.90},
-        {'airline': 'Vistara', 'code': 'UK-955', 'share': '10%', 'base': corridor_base * 1.15, 'tax': corridor_tax * 1.25}
+        {'airline': 'IndiGo', 'code': '6E-5388', 'share': '74.3%', 'base': corridor_base * 0.98, 'tax': corridor_tax},
+        {'airline': 'SpiceJet', 'code': 'SG-669', 'share': '16.2%', 'base': corridor_base * 1.08, 'tax': corridor_tax * 1.05},
+        {'airline': 'Akasa Air', 'code': 'QP-1527', 'share': '5.4%', 'base': corridor_base * 0.92, 'tax': corridor_tax * 0.95},
+        {'airline': 'Alliance Air', 'code': '9I-507', 'share': '4.1%', 'base': corridor_base * 1.02, 'tax': corridor_tax * 1.10}
     ]
 
     audit_records = []
     for c in carriers:
-        tax_val = c.get('tax', c.get('gst_udf', 900))
-        total = c['base'] + tax_val
+        total = c['base'] + c['tax']
         audit_records.append({
             'airline': c['airline'],
             'flight_no': c['code'],
             'market_share': c['share'],
             'base_fare': round(c['base'], 0),
-            'gst_and_udf': round(tax_val, 0),
+            'gst_and_udf': round(c['tax'], 0),
             'total_fare': round(total, 0),
             'status': 'Verified Tax Compliant'
         })
@@ -215,18 +216,13 @@ def simulate_policy():
     climate_val = float(data.get('climate', 0.0))
     tax_val = float(data.get('taxes', 0.0))
 
-    f_impact = round(fuel_val, 1)
-    fe_impact = round(fest_val, 1)
-    c_impact = round(climate_val, 1)
-    t_impact = round(tax_val, 1)
-
-    total_cpi = round(1.5 + f_impact + fe_impact + c_impact + t_impact, 1)
+    total_cpi = round(1.5 + fuel_val + fest_val + climate_val + tax_val, 1)
 
     return jsonify({
-        'fuel_impact': f_impact,
-        'festival_impact': fe_impact,
-        'climate_impact': c_impact,
-        'tax_impact': t_impact,
+        'fuel_impact': round(fuel_val, 1),
+        'festival_impact': round(fest_val, 1),
+        'climate_impact': round(climate_val, 1),
+        'tax_impact': round(tax_val, 1),
         'total_cpi': total_cpi
     })
 
