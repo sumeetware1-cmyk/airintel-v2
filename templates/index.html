@@ -24,7 +24,7 @@
 </head>
 <body class="h-full bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased transition-colors duration-200">
 
-<!-- HEADER -->
+<!-- HEADER WITH 2-PAGE TABS -->
 <header class="bg-white/90 dark:bg-mospi-card border-b border-slate-200 dark:border-mospi-border sticky top-0 z-50 backdrop-blur-xl">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <div class="flex items-center space-x-3">
@@ -39,13 +39,21 @@
                 <p class="text-[11px] text-slate-500 dark:text-slate-400">Official Government Telemetry & RBI Macro Intelligence</p>
             </div>
         </div>
+
+        <!-- 2-Page Navigation Tabs -->
         <div class="flex items-center space-x-3">
-            <button onclick="toggleTheme()" class="px-3.5 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 transition shadow text-xs font-bold flex items-center space-x-1.5 cursor-pointer">
+            <div class="bg-slate-200 dark:bg-slate-900 p-1 rounded-xl border border-slate-300 dark:border-mospi-border flex space-x-1">
+                <button onclick="switchPage(1)" id="tab-1" class="px-4 py-1.5 rounded-lg text-xs font-bold bg-sky-500 text-slate-950 transition cursor-pointer">
+                    <i class="fa-solid fa-chart-pie mr-1"></i> Page 1: Telemetry & Audit
+                </button>
+                <button onclick="switchPage(2)" id="tab-2" class="px-4 py-1.5 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-white transition cursor-pointer">
+                    <i class="fa-solid fa-brain mr-1"></i> Page 2: AI Attribution & Policy Sandbox
+                </button>
+            </div>
+
+            <button onclick="toggleTheme()" class="px-3 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 transition shadow text-xs font-bold flex items-center space-x-1.5 cursor-pointer">
                 <span id="theme-icon">🌙</span>
-                <span id="theme-text" class="hidden sm:inline">Dark Mode</span>
-            </button>
-            <button onclick="window.location.reload()" class="bg-slate-800 text-slate-300 hover:text-white px-3 py-1.5 rounded-xl text-xs font-semibold border border-mospi-border transition flex items-center gap-1.5 shadow-sm cursor-pointer">
-                <i class="fa-solid fa-rotate-right"></i> Refresh
+                <span id="theme-text" class="hidden sm:inline">Dark</span>
             </button>
         </div>
     </div>
@@ -53,264 +61,302 @@
 
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
-    <!-- TOP UNIFIED SECTION: QUERY BAR + CORRIDOR METRICS + CARRIER BREAKDOWN -->
-    <section class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-6 shadow-xl space-y-6">
-        <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-mospi-border">
-            <h2 class="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase tracking-wider">
-                <i class="fa-solid fa-sliders mr-1.5"></i> Live Corridor & Multi-Carrier Telemetry Engine
-            </h2>
-            <span class="text-xs text-slate-500 dark:text-slate-400 font-mono">Connected Master Database Query</span>
-        </div>
-        
-        <!-- Controls -->
-        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end">
-            <div>
-                <label class="text-xs text-slate-600 dark:text-slate-400 block mb-1 font-semibold">Origin Airport</label>
-                <select id="global-origin" class="w-full text-xs font-mono font-bold bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-mospi-border p-3 rounded-xl outline-none cursor-pointer">
-                    <!-- Populated dynamically -->
-                </select>
+    <!-- ================= PAGE 1: TELEMETRY & AUDIT ================= -->
+    <div id="page-1" class="space-y-6">
+        <!-- Master Query Bar -->
+        <section class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-6 shadow-xl space-y-6">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-mospi-border">
+                <h2 class="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase tracking-wider">
+                    <i class="fa-solid fa-sliders mr-1.5"></i> Live Corridor & Multi-Carrier Telemetry Engine
+                </h2>
+                <span class="text-xs text-slate-500 dark:text-slate-400 font-mono">Connected Master Database Query</span>
             </div>
-            <div>
-                <label class="text-xs text-slate-600 dark:text-slate-400 block mb-1 font-semibold">Destination Airport</label>
-                <select id="global-dest" class="w-full text-xs font-mono font-bold bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-mospi-border p-3 rounded-xl outline-none cursor-pointer">
-                    <!-- Populated dynamically -->
-                </select>
-            </div>
-            <div>
-                <label class="text-xs text-slate-600 dark:text-slate-400 block mb-1 font-semibold">Travel Date</label>
-                <input type="date" id="global-date" value="2026-10-15" class="w-full text-xs font-mono bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-mospi-border p-3 rounded-xl text-sky-600 dark:text-sky-300 outline-none">
-            </div>
-            <div>
-                <button onclick="triggerGlobalQuery()" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-black py-3 rounded-xl text-xs transition shadow-lg cursor-pointer">
-                    QUERY TELEMETRY ➔
-                </button>
-            </div>
-        </div>
-
-        <!-- Aggregate Route Results -->
-        <div id="calc-result-box" class="grid grid-cols-1 sm:grid-cols-5 gap-4 pt-2">
-            <div class="bg-slate-100 dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-mospi-border">
-                <div class="text-[10px] text-slate-500 dark:text-slate-400 uppercase">Base Seat Fare</div>
-                <div class="text-lg font-black mono text-emerald-600 dark:text-emerald-400 mt-1" id="res-base">₹--</div>
-            </div>
-            <div class="bg-slate-100 dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-mospi-border">
-                <div class="text-[10px] text-slate-500 dark:text-slate-400 uppercase">Statutory Taxes & UDF</div>
-                <div class="text-lg font-black mono text-amber-600 dark:text-amber-400 mt-1" id="res-tax">₹--</div>
-            </div>
-            <div class="bg-slate-100 dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-mospi-border">
-                <div class="text-[10px] text-slate-500 dark:text-slate-400 uppercase">Total Quote</div>
-                <div class="text-lg font-black mono text-slate-900 dark:text-white mt-1" id="res-total">₹--</div>
-            </div>
-            <div class="bg-slate-100 dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-mospi-border">
-                <div class="text-[10px] text-slate-500 dark:text-slate-400 uppercase">Route Inflation</div>
-                <div class="text-lg font-black mono text-sky-600 dark:text-sky-400 mt-1" id="res-inflation">--%</div>
-            </div>
-            <div class="bg-slate-100 dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-mospi-border">
-                <div class="text-[10px] text-slate-500 dark:text-slate-400 uppercase">Route APIx Index</div>
-                <div class="text-lg font-black mono text-purple-600 dark:text-purple-400 mt-1" id="res-cpi">---</div>
-            </div>
-        </div>
-
-        <!-- Nested Multi-Carrier Price & Tax Breakdown -->
-        <div class="pt-4 border-t border-slate-200 dark:border-mospi-border">
-            <div class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-3">
-                <i class="fa-solid fa-plane text-sky-600 dark:text-sky-400 mr-1.5"></i> Multi-Carrier Price & Tax Breakdown
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-slate-100 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-mospi-border">
-                    <div class="flex justify-between items-center text-xs font-bold text-slate-900 dark:text-white"><span>IndiGo</span> <span class="text-sky-600 dark:text-sky-400 text-[10px]">74.3%</span></div>
-                    <div class="mt-3 text-xl font-black mono text-slate-900 dark:text-white" id="idx-indigo">-- <span class="text-xs font-normal text-slate-400">APIx</span></div>
-                    <div class="mt-2 text-[11px] text-slate-600 dark:text-slate-400 space-y-1 font-mono">
-                        <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-600 dark:text-emerald-400" id="base-indigo">₹--</strong></div>
-                        <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-600 dark:text-amber-400" id="tax-indigo">₹--</strong></div>
-                    </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end">
+                <div>
+                    <label class="text-xs text-slate-600 dark:text-slate-400 block mb-1 font-semibold">Origin Airport</label>
+                    <select id="global-origin" class="w-full text-xs font-mono font-bold bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-mospi-border p-3 rounded-xl outline-none cursor-pointer">
+                    </select>
                 </div>
-                <div class="bg-slate-100 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-mospi-border">
-                    <div class="flex justify-between items-center text-xs font-bold text-slate-900 dark:text-white"><span>SpiceJet</span> <span class="text-amber-600 dark:text-amber-400 text-[10px]">16.2%</span></div>
-                    <div class="mt-3 text-xl font-black mono text-slate-900 dark:text-white" id="idx-spice">-- <span class="text-xs font-normal text-slate-400">APIx</span></div>
-                    <div class="mt-2 text-[11px] text-slate-600 dark:text-slate-400 space-y-1 font-mono">
-                        <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-600 dark:text-emerald-400" id="base-spice">₹--</strong></div>
-                        <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-600 dark:text-amber-400" id="tax-spice">₹--</strong></div>
-                    </div>
+                <div>
+                    <label class="text-xs text-slate-600 dark:text-slate-400 block mb-1 font-semibold">Destination Airport</label>
+                    <select id="global-dest" class="w-full text-xs font-mono font-bold bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-mospi-border p-3 rounded-xl outline-none cursor-pointer">
+                    </select>
                 </div>
-                <div class="bg-slate-100 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-mospi-border">
-                    <div class="flex justify-between items-center text-xs font-bold text-slate-900 dark:text-white"><span>Akasa Air</span> <span class="text-emerald-600 dark:text-emerald-400 text-[10px]">5.4%</span></div>
-                    <div class="mt-3 text-xl font-black mono text-slate-900 dark:text-white" id="idx-akasa">-- <span class="text-xs font-normal text-slate-400">APIx</span></div>
-                    <div class="mt-2 text-[11px] text-slate-600 dark:text-slate-400 space-y-1 font-mono">
-                        <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-600 dark:text-emerald-400" id="base-akasa">₹--</strong></div>
-                        <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-600 dark:text-amber-400" id="tax-akasa">₹--</strong></div>
-                    </div>
+                <div>
+                    <label class="text-xs text-slate-600 dark:text-slate-400 block mb-1 font-semibold">Travel Date</label>
+                    <input type="date" id="global-date" value="2026-10-15" class="w-full text-xs font-mono bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-mospi-border p-3 rounded-xl text-sky-600 dark:text-sky-300 outline-none">
                 </div>
-                <div class="bg-slate-100 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-mospi-border">
-                    <div class="flex justify-between items-center text-xs font-bold text-slate-900 dark:text-white"><span>Alliance Air</span> <span class="text-purple-600 dark:text-purple-400 text-[10px]">4.1%</span></div>
-                    <div class="mt-3 text-xl font-black mono text-slate-900 dark:text-white" id="idx-alliance">-- <span class="text-xs font-normal text-slate-400">APIx</span></div>
-                    <div class="mt-2 text-[11px] text-slate-600 dark:text-slate-400 space-y-1 font-mono">
-                        <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-600 dark:text-emerald-400" id="base-alliance">₹--</strong></div>
-                        <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-600 dark:text-amber-400" id="tax-alliance">₹--</strong></div>
-                    </div>
+                <div>
+                    <button onclick="triggerGlobalQuery()" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-black py-3 rounded-xl text-xs transition shadow-lg cursor-pointer">
+                        QUERY TELEMETRY ➔
+                    </button>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- KPI SUMMARY CARDS -->
-    <section class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-5 shadow-xl">
-            <div class="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase tracking-widest">Composite Price Index</div>
-            <div class="mt-2 flex items-baseline justify-between">
-                <div class="text-3xl font-black mono text-slate-900 dark:text-white" id="kpi-cpi">112.4</div>
-                <span class="inline-flex items-center text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
-                    <i class="fa-solid fa-arrow-trend-up mr-1"></i> +4.2% MoM
-                </span>
+            <div id="calc-result-box" class="grid grid-cols-1 sm:grid-cols-5 gap-4 pt-2">
+                <div class="bg-slate-100 dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-mospi-border">
+                    <div class="text-[10px] text-slate-500 dark:text-slate-400 uppercase">Base Seat Fare</div>
+                    <div class="text-lg font-black mono text-emerald-600 dark:text-emerald-400 mt-1" id="res-base">₹--</div>
+                </div>
+                <div class="bg-slate-100 dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-mospi-border">
+                    <div class="text-[10px] text-slate-500 dark:text-slate-400 uppercase">Statutory Taxes & UDF</div>
+                    <div class="text-lg font-black mono text-amber-600 dark:text-amber-400 mt-1" id="res-tax">₹--</div>
+                </div>
+                <div class="bg-slate-100 dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-mospi-border">
+                    <div class="text-[10px] text-slate-500 dark:text-slate-400 uppercase">Total Quote</div>
+                    <div class="text-lg font-black mono text-slate-900 dark:text-white mt-1" id="res-total">₹--</div>
+                </div>
+                <div class="bg-slate-100 dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-mospi-border">
+                    <div class="text-[10px] text-slate-500 dark:text-slate-400 uppercase">Route Inflation</div>
+                    <div class="text-lg font-black mono text-sky-600 dark:text-sky-400 mt-1" id="res-inflation">--%</div>
+                </div>
+                <div class="bg-slate-100 dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-mospi-border">
+                    <div class="text-[10px] text-slate-500 dark:text-slate-400 uppercase">Route APIx Index</div>
+                    <div class="text-lg font-black mono text-purple-600 dark:text-purple-400 mt-1" id="res-cpi">---</div>
+                </div>
             </div>
-            <div class="mt-2 text-[11px] text-slate-500 dark:text-slate-400 flex justify-between">
-                <span>Weight in Transport CPI</span>
-                <strong class="text-slate-900 dark:text-white">4.8%</strong>
-            </div>
-        </div>
 
-        <div class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-5 shadow-xl">
-            <div class="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase tracking-widest">Baseline vs Spot Price</div>
-            <div class="mt-2 flex items-baseline justify-between">
-                <div class="text-2xl font-black mono text-slate-900 dark:text-white" id="kpi-spot">₹12,450</div>
-                <span class="text-xs font-mono text-emerald-600 dark:text-emerald-400" id="kpi-base">Base: ₹10,200</span>
+            <!-- Multi-Carrier Breakdown -->
+            <div class="pt-4 border-t border-slate-200 dark:border-mospi-border">
+                <div class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-3">
+                    <i class="fa-solid fa-plane text-sky-600 dark:text-sky-400 mr-1.5"></i> Multi-Carrier Price & Tax Breakdown
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-slate-100 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-mospi-border">
+                        <div class="flex justify-between items-center text-xs font-bold text-slate-900 dark:text-white"><span>IndiGo</span> <span class="text-sky-600 dark:text-sky-400 text-[10px]">74.3%</span></div>
+                        <div class="mt-3 text-xl font-black mono text-slate-900 dark:text-white" id="idx-indigo">-- <span class="text-xs font-normal text-slate-400">APIx</span></div>
+                        <div class="mt-2 text-[11px] text-slate-600 dark:text-slate-400 space-y-1 font-mono">
+                            <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-600 dark:text-emerald-400" id="base-indigo">₹--</strong></div>
+                            <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-600 dark:text-amber-400" id="tax-indigo">₹--</strong></div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-100 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-mospi-border">
+                        <div class="flex justify-between items-center text-xs font-bold text-slate-900 dark:text-white"><span>SpiceJet</span> <span class="text-amber-600 dark:text-amber-400 text-[10px]">16.2%</span></div>
+                        <div class="mt-3 text-xl font-black mono text-slate-900 dark:text-white" id="idx-spice">-- <span class="text-xs font-normal text-slate-400">APIx</span></div>
+                        <div class="mt-2 text-[11px] text-slate-600 dark:text-slate-400 space-y-1 font-mono">
+                            <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-600 dark:text-emerald-400" id="base-spice">₹--</strong></div>
+                            <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-600 dark:text-amber-400" id="tax-spice">₹--</strong></div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-100 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-mospi-border">
+                        <div class="flex justify-between items-center text-xs font-bold text-slate-900 dark:text-white"><span>Akasa Air</span> <span class="text-emerald-600 dark:text-emerald-400 text-[10px]">5.4%</span></div>
+                        <div class="mt-3 text-xl font-black mono text-slate-900 dark:text-white" id="idx-akasa">-- <span class="text-xs font-normal text-slate-400">APIx</span></div>
+                        <div class="mt-2 text-[11px] text-slate-600 dark:text-slate-400 space-y-1 font-mono">
+                            <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-600 dark:text-emerald-400" id="base-akasa">₹--</strong></div>
+                            <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-600 dark:text-amber-400" id="tax-akasa">₹--</strong></div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-100 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-mospi-border">
+                        <div class="flex justify-between items-center text-xs font-bold text-slate-900 dark:text-white"><span>Alliance Air</span> <span class="text-purple-600 dark:text-purple-400 text-[10px]">4.1%</span></div>
+                        <div class="mt-3 text-xl font-black mono text-slate-900 dark:text-white" id="idx-alliance">-- <span class="text-xs font-normal text-slate-400">APIx</span></div>
+                        <div class="mt-2 text-[11px] text-slate-600 dark:text-slate-400 space-y-1 font-mono">
+                            <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-600 dark:text-emerald-400" id="base-alliance">₹--</strong></div>
+                            <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-600 dark:text-amber-400" id="tax-alliance">₹--</strong></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="mt-2 text-[11px] text-slate-500 dark:text-slate-400 flex justify-between">
-                <span>Net Price Delta</span>
-                <span class="text-emerald-600 dark:text-emerald-400 font-bold">+₹2,250</span>
-            </div>
-        </div>
+        </section>
 
-        <div class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-5 shadow-xl">
-            <div class="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase tracking-widest">Inflation Status</div>
-            <div class="mt-2 flex items-baseline justify-between">
-                <div class="text-2xl font-black mono text-emerald-600 dark:text-emerald-400" id="kpi-inflation">5.2%</div>
-                <span class="text-xs font-mono bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20">Target Aligned</span>
+        <!-- KPIs -->
+        <section class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-5 shadow-xl">
+                <div class="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Composite Price Index</div>
+                <div class="mt-2 flex items-baseline justify-between">
+                    <div class="text-3xl font-black mono text-slate-900 dark:text-white" id="kpi-cpi">112.4</div>
+                    <span class="inline-flex items-center text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
+                        <i class="fa-solid fa-arrow-trend-up mr-1"></i> +4.2% MoM
+                    </span>
+                </div>
+                <div class="mt-2 text-[11px] text-slate-400 flex justify-between">
+                    <span>Weight in Transport CPI</span>
+                    <strong>4.8%</strong>
+                </div>
             </div>
-            <div class="mt-2 text-[11px] text-slate-500 dark:text-slate-400 flex justify-between">
-                <span>RBI Tolerance Range</span>
-                <span class="text-slate-900 dark:text-white">4% ± 2%</span>
+            <div class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-5 shadow-xl">
+                <div class="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Baseline vs Spot Price</div>
+                <div class="mt-2 flex items-baseline justify-between">
+                    <div class="text-2xl font-black mono text-slate-900 dark:text-white" id="kpi-spot">₹12,450</div>
+                    <span class="text-xs font-mono text-emerald-400" id="kpi-base">Base: ₹10,200</span>
+                </div>
+                <div class="mt-2 text-[11px] text-slate-400 flex justify-between">
+                    <span>Net Price Delta</span>
+                    <span class="text-emerald-400 font-bold">+₹2,250</span>
+                </div>
             </div>
-        </div>
-
-        <div class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-5 shadow-xl">
-            <div class="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase tracking-widest">Sample Telemetry Scale</div>
-            <div class="mt-2 flex items-baseline justify-between">
-                <div class="text-3xl font-black mono text-slate-900 dark:text-white" id="kpi-records">37,550</div>
-                <span class="text-xs font-mono text-sky-600 dark:text-sky-400">4 Carriers</span>
+            <div class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-5 shadow-xl">
+                <div class="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Inflation Status</div>
+                <div class="mt-2 flex items-baseline justify-between">
+                    <div class="text-2xl font-black mono text-emerald-400">5.2%</div>
+                    <span class="text-xs font-mono bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20">Target Aligned</span>
+                </div>
+                <div class="mt-2 text-[11px] text-slate-400 flex justify-between">
+                    <span>RBI Tolerance Range</span>
+                    <strong>4% ± 2%</strong>
+                </div>
             </div>
-            <div class="mt-2 text-[11px] text-slate-500 dark:text-slate-400 flex justify-between">
-                <span>Verified Data Lineage</span>
-                <span class="text-emerald-600 dark:text-emerald-400 font-bold">100% Clean</span>
+            <div class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-5 shadow-xl">
+                <div class="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Sample Telemetry Scale</div>
+                <div class="mt-2 flex items-baseline justify-between">
+                    <div class="text-3xl font-black mono text-slate-900 dark:text-white">37,550</div>
+                    <span class="text-xs font-mono text-sky-400">4 Carriers</span>
+                </div>
+                <div class="mt-2 text-[11px] text-slate-400 flex justify-between">
+                    <span>Verified Data Lineage</span>
+                    <span class="text-emerald-400 font-bold">100% Clean</span>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- BLOCK 1: DAILY APIX TREND GRAPH WITH MANUAL DATE RANGE -->
-    <section class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-6 shadow-xl space-y-4">
-        <div class="flex flex-wrap items-center justify-between pb-3 border-b border-slate-200 dark:border-mospi-border gap-4">
-            <h2 class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
-                <i class="fa-solid fa-chart-line text-sky-600 dark:text-sky-400 mr-1.5"></i> Daily Airfare Price Index (APIx) Trend
-            </h2>
-            <div class="flex items-center gap-2">
-                <span class="text-xs text-slate-500 dark:text-slate-400">Custom Range:</span>
-                <input type="date" id="chart-start-date" value="2026-09-01" onchange="triggerGlobalQuery()" class="bg-slate-100 dark:bg-slate-900 text-xs font-mono text-sky-600 dark:text-sky-300 px-3 py-1.5 rounded-xl border border-slate-300 dark:border-mospi-border outline-none">
-                <span class="text-xs text-slate-500">to</span>
-                <input type="date" id="chart-end-date" value="2026-11-30" onchange="triggerGlobalQuery()" class="bg-slate-100 dark:bg-slate-900 text-xs font-mono text-sky-600 dark:text-sky-300 px-3 py-1.5 rounded-xl border border-slate-300 dark:border-mospi-border outline-none">
+        <!-- Charts -->
+        <section class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-6 shadow-xl space-y-4">
+            <div class="flex flex-wrap items-center justify-between pb-3 border-b border-mospi-border gap-4">
+                <h2 class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                    <i class="fa-solid fa-chart-line text-sky-400 mr-1.5"></i> Daily Airfare Price Index (APIx) Trend
+                </h2>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-slate-400">Custom Range:</span>
+                    <input type="date" id="chart-start-date" value="2026-09-01" onchange="triggerGlobalQuery()" class="bg-slate-100 dark:bg-slate-900 text-xs font-mono text-sky-300 px-3 py-1.5 rounded-xl border border-mospi-border outline-none">
+                    <span class="text-xs text-slate-500">to</span>
+                    <input type="date" id="chart-end-date" value="2026-11-30" onchange="triggerGlobalQuery()" class="bg-slate-100 dark:bg-slate-900 text-xs font-mono text-sky-300 px-3 py-1.5 rounded-xl border border-mospi-border outline-none">
+                </div>
             </div>
-        </div>
-        <div class="h-64 w-full">
-            <canvas id="trendChart"></canvas>
-        </div>
-    </section>
+            <div class="h-64 w-full"><canvas id="trendChart"></canvas></div>
+        </section>
 
-    <!-- BLOCK 2: ROUTE-SPECIFIC LEAD-TIME CURVE -->
-    <section class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-6 shadow-xl space-y-4">
-        <div class="flex flex-wrap items-center justify-between pb-3 border-b border-slate-200 dark:border-mospi-border gap-4">
-            <h2 class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
-                <i class="fa-solid fa-route text-sky-600 dark:text-sky-400 mr-1.5"></i> Route-Specific Lead-Time Curve (T+1 to T+45 Days)
-            </h2>
-            <span class="text-xs text-sky-600 dark:text-sky-400 font-mono font-bold" id="leadtime-label">Synced with Global Origin & Destination</span>
-        </div>
-        <div class="h-64 w-full">
-            <canvas id="leadTimeChart"></canvas>
-        </div>
-    </section>
+        <section class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-6 shadow-xl space-y-4">
+            <div class="flex flex-wrap items-center justify-between pb-3 border-b border-mospi-border gap-4">
+                <h2 class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                    <i class="fa-solid fa-route text-sky-400 mr-1.5"></i> Route-Specific Lead-Time Curve (T+1 to T+45 Days)
+                </h2>
+                <span class="text-xs text-sky-400 font-mono font-bold" id="leadtime-label">Synced with Global Origin & Destination</span>
+            </div>
+            <div class="h-64 w-full"><canvas id="leadTimeChart"></canvas></div>
+        </section>
+    </div>
 
-    <!-- BLOCK 3: AI-POWERED ATTRIBUTION & POLICY SIMULATION SANDBOX -->
-    <section class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-6 shadow-xl space-y-6">
-        <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-mospi-border">
-            <h2 class="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase tracking-wider">
-                <i class="fa-solid fa-brain text-sky-500 mr-1.5"></i> AI Attribution Engine & MoSPI Policy Sandbox
-            </h2>
-            <span class="text-xs text-emerald-600 dark:text-emerald-400 font-mono font-bold">Predictive Regulatory Control</span>
-        </div>
+    <!-- ================= PAGE 2: AI ATTRIBUTION & POLICY SANDBOX ================= -->
+    <div id="page-2" class="hidden space-y-6">
+        <!-- Feature 1 & 4 & 6: AI Attribution & Policy Sandbox -->
+        <section class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-6 shadow-xl space-y-6">
+            <div class="flex items-center justify-between pb-3 border-b border-mospi-border">
+                <h2 class="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase tracking-wider">
+                    <i class="fa-solid fa-brain text-sky-500 mr-1.5"></i> AI Attribution Engine & Policy Simulation Sandbox
+                </h2>
+                <span class="text-xs text-emerald-400 font-mono font-bold">RBI Policy & Repo Decision Support</span>
+            </div>
 
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Price Cap Simulator -->
+                <div class="bg-slate-100 dark:bg-slate-900/60 p-5 rounded-xl border border-mospi-border space-y-4">
+                    <h3 class="text-xs font-bold uppercase tracking-wide text-slate-700 dark:text-slate-300">
+                        <i class="fa-solid fa-gavel text-sky-500 mr-1"></i> 6. Policy Simulation Sandbox (What-If Analysis)
+                    </h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Test intervention scenarios such as capping surge multipliers or subsidizing ATF fuel.</p>
+                    <div>
+                        <div class="flex justify-between text-xs font-mono mb-1">
+                            <span class="text-slate-400">Maximum Allowed Surge Multiplier:</span>
+                            <span class="text-sky-400 font-bold" id="cap-val-label">1.8x Base</span>
+                        </div>
+                        <input type="range" id="price-cap-slider" min="1.2" max="3.0" step="0.1" value="1.8" oninput="simulatePriceCap()" class="w-full accent-sky-500 cursor-pointer">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 pt-2 font-mono text-xs">
+                        <div class="bg-white dark:bg-slate-900 p-3 rounded-lg border border-mospi-border">
+                            <div class="text-[10px] text-slate-500">Consumer Savings</div>
+                            <div class="text-base font-black text-emerald-400 mt-0.5" id="sim-savings">₹4.8 Cr</div>
+                        </div>
+                        <div class="bg-white dark:bg-slate-900 p-3 rounded-lg border border-mospi-border">
+                            <div class="text-[10px] text-slate-500">4. Transport CPI Impact</div>
+                            <div class="text-base font-black text-sky-400 mt-0.5" id="sim-cpi-drop">-1.4% (Prevents RBI Rate Hike)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Attribution & Repo Decision -->
+                <div class="bg-slate-100 dark:bg-slate-900/60 p-5 rounded-xl border border-mospi-border flex flex-col justify-between space-y-3">
+                    <div>
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-xs font-bold uppercase tracking-wide text-slate-700 dark:text-slate-300">
+                                <i class="fa-solid fa-robot text-amber-500 mr-1"></i> 1. AI Attribution & Repo Impact Engine
+                            </h3>
+                            <span class="text-[10px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded font-mono font-bold">ML Model Active</span>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Real-time regression & anomaly detection modeling how airfare surges feed directly into RBI repo decisions.</p>
+                        <div class="mt-3 bg-white dark:bg-slate-950 p-3 rounded-lg border border-mospi-border font-mono text-[11px] text-slate-300 leading-relaxed" id="advisory-text">
+                            [AI ATTRIBUTION]: Corridor <span id="adv-route" class="text-sky-500 font-bold">BOM-DEL</span> adds <strong class="text-emerald-400">+0.3%</strong> to Transport CPI basket. Dominant driver: <strong class="text-amber-400">Festive Demand (45%)</strong> $\rightarrow$ May trigger RBI monetary tightening.
+                        </div>
+                    </div>
+                    <button onclick="copyAdvisory()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer border border-mospi-border">
+                        <i class="fa-regular fa-copy"></i> Copy Official Ministry Notice
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature 2 & 3 & 5: Heatmaps, Predictive Forecasting & External Events -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Left: Price Cap Simulator -->
-            <div class="bg-slate-100 dark:bg-slate-900/60 p-5 rounded-xl border border-slate-200 dark:border-mospi-border space-y-4">
-                <h3 class="text-xs font-bold uppercase tracking-wide text-slate-700 dark:text-slate-300">
-                    <i class="fa-solid fa-gavel text-sky-500 mr-1"></i> Dynamic Surge Price-Cap Impact Model
-                </h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400">
-                    Simulate the economic impact of imposing a statutory ceiling on last-minute fare surges during peak festive periods.
-                </p>
-                <div>
-                    <div class="flex justify-between text-xs font-mono mb-1">
-                        <span class="text-slate-600 dark:text-slate-400">Maximum Allowed Surge Multiplier:</span>
-                        <span class="text-sky-600 dark:text-sky-400 font-bold" id="cap-val-label">1.8x Base</span>
-                    </div>
-                    <input type="range" id="price-cap-slider" min="1.2" max="3.0" step="0.1" value="1.8" oninput="simulatePriceCap()" class="w-full accent-sky-500 cursor-pointer">
+            <section class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-6 shadow-xl space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-mospi-border">
+                    <h2 class="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase tracking-wider">
+                        <i class="fa-solid fa-map-location-dot mr-1.5"></i> 2. Geo-Regional Corridor Heatmap
+                    </h2>
+                    <span class="text-xs text-rose-400 font-mono font-bold animate-pulse">● High Pressure Zone</span>
                 </div>
-                <div class="grid grid-cols-2 gap-3 pt-2 font-mono text-xs">
-                    <div class="bg-white dark:bg-slate-900 p-3 rounded-lg border border-slate-200 dark:border-mospi-border">
-                        <div class="text-[10px] text-slate-500">Consumer Savings</div>
-                        <div class="text-base font-black text-emerald-600 dark:text-emerald-400 mt-0.5" id="sim-savings">₹4.8 Cr</div>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Regional price pressure distribution across high-density domestic hubs.</p>
+                <div class="space-y-2.5 font-mono text-xs">
+                    <div class="flex justify-between items-center p-3 bg-slate-100 dark:bg-slate-900 rounded-xl border border-rose-500/30">
+                        <span>DEL ➔ BOM (Trunk Corridor)</span>
+                        <span class="text-rose-400 font-bold">+34.2% Inflation (Critical)</span>
                     </div>
-                    <div class="bg-white dark:bg-slate-900 p-3 rounded-lg border border-slate-200 dark:border-mospi-border">
-                        <div class="text-[10px] text-slate-500">Transport CPI Impact</div>
-                        <div class="text-base font-black text-sky-600 dark:text-sky-400 mt-0.5" id="sim-cpi-drop">-1.4%</div>
+                    <div class="flex justify-between items-center p-3 bg-slate-100 dark:bg-slate-900 rounded-xl border border-amber-500/30">
+                        <span>DEL ➔ HYD (Business Hub)</span>
+                        <span class="text-amber-400 font-bold">+22.5% Inflation (Elevated)</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-slate-100 dark:bg-slate-900 rounded-xl border border-emerald-500/30">
+                        <span>BOM ➔ BLR (Regional Transit)</span>
+                        <span class="text-emerald-400 font-bold">+8.1% Inflation (Stable)</span>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Right: AI Attribution & Advisory Generator -->
-            <div class="bg-slate-100 dark:bg-slate-900/60 p-5 rounded-xl border border-slate-200 dark:border-mospi-border flex flex-col justify-between space-y-3">
-                <div>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-xs font-bold uppercase tracking-wide text-slate-700 dark:text-slate-300">
-                            <i class="fa-solid fa-robot text-amber-500 mr-1"></i> AI Dominant Driver Analysis
-                        </h3>
-                        <span class="text-[10px] bg-amber-500/10 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded font-mono font-bold">ML Model Active</span>
+            <section class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-6 shadow-xl space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-mospi-border">
+                    <h2 class="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase tracking-wider">
+                        <i class="fa-solid fa-crystal-ball mr-1.5"></i> 3 & 5. Predictive Surge & Event ML Model
+                    </h2>
+                    <span class="text-xs text-amber-400 font-mono font-bold">AI Forecast Active</span>
+                </div>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Machine learning forecast integrating festival calendars, political rallies, and cricket tournaments.</p>
+                <div class="bg-slate-100 dark:bg-slate-900 p-4 rounded-xl border border-mospi-border space-y-2 text-xs font-mono">
+                    <div class="flex justify-between text-slate-300">
+                        <span>Upcoming Event:</span> <strong class="text-amber-400">Diwali & World Cup Match</strong>
                     </div>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                        Real-time regression & anomaly detection indicating the primary price driver for the selected corridor.
-                    </p>
-                    <div class="mt-3 bg-white dark:bg-slate-950 p-3 rounded-lg border border-slate-200 dark:border-mospi-border font-mono text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed" id="advisory-text">
-                        [AI ATTRIBUTION]: Corridor <span id="adv-route" class="text-sky-500 font-bold">BOM-DEL</span> is currently dominated by <strong class="text-amber-400">Festive Demand (45%)</strong> and <strong class="text-sky-400">ATF Fuel Pressures (38%)</strong>. RBI repo-rate tightening recommended.
+                    <div class="flex justify-between text-slate-300">
+                        <span>Impacted Corridor:</span> <strong class="text-sky-400">BOM ➔ DEL</strong>
+                    </div>
+                    <div class="flex justify-between text-slate-300">
+                        <span>Predicted Surge (Next 10d):</span> <strong class="text-rose-400">+42.0% Expected Spike</strong>
                     </div>
                 </div>
-                <button onclick="copyAdvisory()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer border border-mospi-border">
-                    <i class="fa-regular fa-copy"></i> Copy Official Ministry Notice
-                </button>
-            </div>
+            </section>
         </div>
-    </section>
+    </div>
 
-    <!-- BLOCK 6: DATA PIPELINE & CSO COMPLIANCE FOOTER -->
+    <!-- STANDARDS FOOTER -->
     <section class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-6 shadow-xl space-y-3">
         <h2 class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
             <i class="fa-solid fa-shield-halved text-sky-600 dark:text-sky-400 mr-1.5"></i> Data Pipeline & CSO Methodology Standards
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-slate-600 dark:text-slate-300 font-mono">
-            <div class="bg-slate-100 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-200 dark:border-mospi-border">
-                <span class="text-emerald-600 dark:text-emerald-400 font-bold">✔ Base Year 2024 = 100</span> (CSO Retail Basket Compliant)
+            <div class="bg-slate-100 dark:bg-slate-900/50 p-3 rounded-xl border border-mospi-border">
+                <span class="text-emerald-400 font-bold">✔ Base Year 2024 = 100</span> (CSO Retail Basket Compliant)
             </div>
-            <div class="bg-slate-100 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-200 dark:border-mospi-border">
-                <span class="text-emerald-600 dark:text-emerald-400 font-bold">✔ 37,550 Telemetry Records</span> (Multi-Carrier Automated Ingestion)
+            <div class="bg-slate-100 dark:bg-slate-900/50 p-3 rounded-xl border border-mospi-border">
+                <span class="text-emerald-400 font-bold">✔ 37,550 Telemetry Records</span> (Multi-Carrier Automated Ingestion)
             </div>
-            <div class="bg-slate-100 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-200 dark:border-mospi-border">
-                <span class="text-emerald-600 dark:text-emerald-400 font-bold">✔ RBI MPC Integration</span> (Direct Sub-Index Feed)
+            <div class="bg-slate-100 dark:bg-slate-900/50 p-3 rounded-xl border border-mospi-border">
+                <span class="text-emerald-400 font-bold">✔ RBI MPC Integration</span> (Direct Sub-Index Feed)
             </div>
         </div>
     </section>
@@ -325,6 +371,20 @@
     let trendChart = null;
     let leadTimeChart = null;
 
+    function switchPage(pageNum) {
+        if (pageNum === 1) {
+            document.getElementById('page-1').classList.remove('hidden');
+            document.getElementById('page-2').classList.add('hidden');
+            document.getElementById('tab-1').className = "px-4 py-1.5 rounded-lg text-xs font-bold bg-sky-500 text-slate-950 transition cursor-pointer";
+            document.getElementById('tab-2').className = "px-4 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition cursor-pointer";
+        } else {
+            document.getElementById('page-1').classList.add('hidden');
+            document.getElementById('page-2').classList.remove('hidden');
+            document.getElementById('tab-2').className = "px-4 py-1.5 rounded-lg text-xs font-bold bg-sky-500 text-slate-950 transition cursor-pointer";
+            document.getElementById('tab-1').className = "px-4 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition cursor-pointer";
+        }
+    }
+
     function toggleTheme() {
         const html = document.documentElement;
         const textSpan = document.getElementById('theme-text');
@@ -332,19 +392,19 @@
         if (html.classList.contains('dark')) {
             html.classList.remove('dark');
             localStorage.setItem('theme', 'light');
-            textSpan.textContent = 'Light Mode';
+            textSpan.textContent = 'Light';
             iconSpan.textContent = '☀️';
         } else {
             html.classList.add('dark');
             localStorage.setItem('theme', 'dark');
-            textSpan.textContent = 'Dark Mode';
+            textSpan.textContent = 'Dark';
             iconSpan.textContent = '🌙';
         }
     }
 
     if (localStorage.getItem('theme') === 'light') {
         document.documentElement.classList.remove('dark');
-        document.getElementById('theme-text').textContent = 'Light Mode';
+        document.getElementById('theme-text').textContent = 'Light';
         document.getElementById('theme-icon').textContent = '☀️';
     }
 
@@ -388,20 +448,17 @@
             });
             const data = await res.json();
 
-            // Update aggregate summary cards in query bar
             document.getElementById('res-base').innerText = '₹' + data.base_fare.toLocaleString();
             document.getElementById('res-tax').innerText = '₹' + data.taxes.toLocaleString();
             document.getElementById('res-total').innerText = '₹' + data.total_fare.toLocaleString();
             document.getElementById('res-inflation').innerText = `${data.inflation >= 0 ? '+' : ''}${data.inflation}%`;
             document.getElementById('res-cpi').innerText = data.cpi_index;
 
-            // Update KPIs
             document.getElementById('kpi-cpi').innerText = data.cpi_index;
             document.getElementById('kpi-spot').innerText = '₹' + data.total_fare.toLocaleString();
             document.getElementById('kpi-base').innerText = 'Base: ₹' + data.base_fare.toLocaleString();
             document.getElementById('kpi-inflation').innerText = `${data.inflation}% Spike`;
 
-            // Update Multi-Carrier Breakdown Cards
             if (data.carriers) {
                 data.carriers.forEach(c => {
                     const key = c.airline.toLowerCase().includes('indigo') ? 'indigo' :
@@ -414,7 +471,6 @@
                 });
             }
 
-            // Refresh Charts
             refreshTrendChart(routeKey, start, end);
             loadLeadTimeChart(routeKey);
 
@@ -427,7 +483,7 @@
         const savings = (3.2 * (3.0 - slider)).toFixed(1);
         const cpiDrop = (0.8 * (3.0 - slider)).toFixed(1);
         document.getElementById('sim-savings').innerText = `₹${savings} Cr`;
-        document.getElementById('sim-cpi-drop').innerText = `-${cpiDrop}%`;
+        document.getElementById('sim-cpi-drop').innerText = `-${cpiDrop}% (Prevents RBI Rate Hike)`;
     }
 
     function copyAdvisory() {
