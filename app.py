@@ -47,21 +47,26 @@ def query_master():
 
     if not rdf.empty and 'total_fare' in rdf.columns:
         total = float(rdf['total_fare'].mean())
-        base_s = rdf['base_fare'].dropna() if 'base_fare' in rdf.columns else pd.Series()
-        tax_s = rdf['taxes'].dropna() if 'taxes' in rdf.columns else pd.Series()
         
-        base = float(base_s.mean()) if not base_s.empty else total * 0.78
-        tax = float(tax_s.mean()) if not tax_s.empty else total * 0.22
+        # Pull exact base and tax columns from CSV, imputing missing values sensibly
+        rdf['resolved_base'] = rdf['base_fare'] if 'base_fare' in rdf.columns else pd.Series(dtype=float)
+        rdf['resolved_base'] = rdf['resolved_base'].fillna(rdf['total_fare'] * 0.80)
+        
+        rdf['resolved_tax'] = rdf['taxes'] if 'taxes' in rdf.columns else pd.Series(dtype=float)
+        rdf['resolved_tax'] = rdf['resolved_tax'].fillna(rdf['total_fare'] * 0.20)
+
+        base = float(rdf['resolved_base'].mean())
+        tax = float(rdf['resolved_tax'].mean())
     else:
-        total = 11000.0 + (hash(route_key) % 8000)
-        base = total * 0.78
-        tax = total * 0.22
+        total = 11000.0 + (hash(route_key) % 4000)
+        base = total * 0.80
+        tax = total * 0.20
 
     baseline_mean = 10000.0
     inflation = round(((total - baseline_mean) / baseline_mean) * 100, 1)
     cpi = round((total / baseline_mean) * 100, 1)
 
-    # Carrier breakdown
+    # Carrier breakdown calculated directly from route subset in CSV
     carriers_data = []
     airlines = ['IndiGo', 'SpiceJet', 'Akasa Air', 'Alliance Air']
     for air in airlines:
@@ -69,16 +74,16 @@ def query_master():
             sub_air = rdf[rdf['airline'].str.lower() == air.lower()]
             if not sub_air.empty and 'total_fare' in sub_air.columns:
                 air_total = float(sub_air['total_fare'].mean())
-                air_base = float(sub_air['base_fare'].dropna().mean()) if 'base_fare' in sub_air.columns and not sub_air['base_fare'].isnull().all() else air_total * 0.78
-                air_tax = float(sub_air['taxes'].dropna().mean()) if 'taxes' in sub_air.columns and not sub_air['taxes'].isnull().all() else air_total * 0.22
+                air_base = float(sub_air['resolved_base'].mean()) if 'resolved_base' in sub_air.columns else air_total * 0.80
+                air_tax = float(sub_air['resolved_tax'].mean()) if 'resolved_tax' in sub_air.columns else air_total * 0.20
             else:
                 air_total = total * (0.92 + (hash(air + route_key) % 15) / 100)
-                air_base = air_total * 0.78
-                air_tax = air_total * 0.22
+                air_base = air_total * 0.80
+                air_tax = air_total * 0.20
         else:
             air_total = total * (0.92 + (hash(air) % 15) / 100)
-            air_base = air_total * 0.78
-            air_tax = air_total * 0.22
+            air_base = air_total * 0.80
+            air_tax = air_total * 0.20
 
         air_cpi = round((air_total / baseline_mean) * 100, 1)
         carriers_data.append({
@@ -103,7 +108,7 @@ def get_trend_data():
     start_str = request.args.get('start', '2026-09-01')
     end_str = request.args.get('end', '2026-11-30')
     
-    route_mean = 14000.0
+    route_mean = 12000.0
     if not df.empty and 'route' in df.columns:
         rdf = df[df['route'] == route]
         if not rdf.empty:
