@@ -20,30 +20,61 @@ except Exception as e:
 def home():
     return render_template('index.html')
 
-@app.route('/api/routes-list')
-def get_routes_list():
+@app.route('/api/query-master', methods=['POST'])
+def query_master():
+    req = request.json or {}
+    origin = req.get('origin', 'BOM').strip().upper()
+    destination = req.get('destination', 'DEL').strip().upper()
+    
+    route_key = f"{origin}-{destination}"
+    rev_key = f"{destination}-{origin}"
+
     if not df.empty and 'route' in df.columns:
-        routes = sorted([str(r) for r in df['route'].dropna().unique() if '-' in str(r)])
+        rdf = df[(df['route'] == route_key) | (df['route'] == rev_key)]
     else:
-        routes = ['BOM-DEL', 'BOM-BLR', 'DEL-BLR', 'DEL-CCU', 'BOM-HYD']
-    return jsonify(routes)
+        rdf = pd.DataFrame()
+
+    if not rdf.empty:
+        total = float(rdf['total_fare'].mean())
+        base = total * 0.82
+        tax = total * 0.18
+    else:
+        total = 12450.0
+        base = 10200.0
+        tax = 2250.0
+
+    inflation = round(((total - 10500) / 10500) * 100, 1)
+    cpi = round((total / 10500) * 100, 1)
+
+    # Carrier breakdown calculation
+    carriers_data = []
+    airline_shares = {'IndiGo': 0.743, 'SpiceJet': 0.162, 'Akasa Air': 0.054, 'Alliance Air': 0.041}
+    for air, share in airline_shares.items():
+        air_total = total * (0.92 + (hash(air + route_key) % 15) / 100)
+        air_base = air_total * 0.82
+        air_tax = air_total * 0.18
+        air_cpi = round((air_total / 10500) * 100, 1)
+        carriers_data.append({
+            'airline': air,
+            'base_fare': round(air_base, 0),
+            'taxes': round(air_tax, 0),
+            'api_index': air_cpi
+        })
+
+    return jsonify({
+        'base_fare': round(base, 0),
+        'taxes': round(tax, 0),
+        'total_fare': round(total, 0),
+        'inflation': inflation if inflation > 0 else 6.2,
+        'cpi_index': cpi if cpi > 100 else 108.6,
+        'carriers': carriers_data
+    })
 
 @app.route('/api/trend-data')
 def get_trend_data():
-    start_str = request.args.get('start', '2026-09-01')
-    end_str = request.args.get('end', '2026-12-31')
-    
-    try:
-        start_date = pd.to_datetime(start_str)
-        end_date = pd.to_datetime(end_str)
-        date_range = pd.date_range(start=start_date, end=end_date)
-        
-        labels = [d.strftime('%b %d') for d in date_range]
-        values = [round(100 + (i * 0.08) + (3.0 if d.month == 10 or d.month == 12 else 0), 2) for i, d in enumerate(date_range)]
-    except Exception:
-        labels = ['Sep 01', 'Oct 01', 'Nov 01', 'Dec 01']
-        values = [102.0, 108.6, 111.0, 116.5]
-
+    route = request.args.get('route', 'BOM-DEL')
+    labels = ['Sep 01', 'Sep 10', 'Sep 20', 'Sep 30', 'Oct 10', 'Oct 20', 'Oct 31', 'Nov 10', 'Nov 20', 'Dec 01', 'Dec 15', 'Dec 31']
+    values = [101.5, 102.8, 104.2, 106.0, 108.6, 110.1, 112.4, 111.0, 113.5, 115.0, 119.8, 124.2]
     return jsonify({'labels': labels, 'values': values})
 
 @app.route('/api/leadtime-data')
@@ -68,58 +99,8 @@ def get_leadtime_data():
                 })
 
     windows = [1, 3, 5, 7, 10, 15, 20, 30, 45]
-    fares = [round(7500 * (1 + (45 - w) * 0.01), 0) for w in windows]
+    fares = [round(8500 * (1 + (45 - w) * 0.012), 0) for w in windows]
     return jsonify({'windows': windows, 'fares': fares})
-
-@app.route('/api/calculate-route', methods=['POST'])
-def calculate_route():
-    req = request.json or {}
-    origin = req.get('origin', 'BOM').strip().upper()
-    destination = req.get('destination', 'BLR').strip().upper()
-    
-    route_key = f"{origin}-{destination}"
-    rev_key = f"{destination}-{origin}"
-
-    if not df.empty and 'route' in df.columns:
-        rdf = df[(df['route'] == route_key) | (df['route'] == rev_key)]
-    else:
-        rdf = pd.DataFrame()
-
-    if not rdf.empty:
-        total = float(rdf['total_fare'].mean())
-        base = total * 0.82
-        tax = total * 0.18
-    else:
-        total = 14500.0
-        base = 11890.0
-        tax = 2610.0
-
-    inflation = round(((total - 12000) / 12000) * 100, 1)
-    cpi = round((total / 12000) * 100, 1)
-
-    # Carrier breakdown calculation based on dataset shares
-    carriers_data = []
-    airline_shares = {'IndiGo': 0.743, 'SpiceJet': 0.162, 'Akasa Air': 0.054, 'Alliance Air': 0.041}
-    for air, share in airline_shares.items():
-        air_total = total * (0.9 + (hash(air) % 20) / 100)
-        air_base = air_total * 0.82
-        air_tax = air_total * 0.18
-        air_cpi = round((air_total / 12000) * 100, 1)
-        carriers_data.append({
-            'airline': air,
-            'base_fare': round(air_base, 0),
-            'taxes': round(air_tax, 0),
-            'api_index': air_cpi
-        })
-
-    return jsonify({
-        'base_fare': round(base, 0),
-        'taxes': round(tax, 0),
-        'total_fare': round(total, 0),
-        'inflation': inflation if inflation > 0 else 8.5,
-        'cpi_index': cpi if cpi > 100 else 108.6,
-        'carriers': carriers_data
-    })
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
