@@ -58,6 +58,7 @@ def query_master():
         tax = total * 0.22
 
     baseline_mean = 10000.0
+    net_delta = round(total - baseline_mean, 0)
     inflation = round(((total - baseline_mean) / baseline_mean) * 100, 1)
     cpi = round((total / baseline_mean) * 100, 1)
 
@@ -91,6 +92,8 @@ def query_master():
         'base_fare': round(base, 0),
         'taxes': round(tax, 0),
         'total_fare': round(total, 0),
+        'baseline_fare': round(baseline_mean, 0),
+        'net_delta': net_delta,
         'inflation': inflation if inflation > 0 else 5.2,
         'cpi_index': cpi if cpi > 100 else 112.4,
         'carriers': carriers_data
@@ -115,10 +118,8 @@ def get_trend_data():
         labels = [d.strftime('%b %d') for d in date_range]
         
         scale_factor = route_mean / 12000.0
-        # Incorporating explicit month-by-month inflationary jumps for festival tracking
         values = [round((100 + (i * 0.35) + (6.0 if d.month == 10 else (3.0 if d.month == 11 else 0))) * scale_factor, 2) for i, d in enumerate(date_range)]
         
-        # Calculate monthly inflation metrics for display or tooltips
         sep_val = values[0]
         oct_val = next((v for v, d in zip(values, date_range) if d.month == 10), values[len(values)//2])
         nov_val = values[-1]
