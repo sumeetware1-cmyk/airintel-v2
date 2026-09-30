@@ -297,7 +297,7 @@
                         </div>
                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Real-time regression & anomaly detection modeling how airfare surges feed directly into RBI repo decisions.</p>
                         <div class="mt-3 bg-white dark:bg-slate-950 p-3 rounded-lg border border-slate-200 dark:border-mospi-border font-mono text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed" id="advisory-text">
-                            [AI ATTRIBUTION]: Corridor <span id="adv-route" class="text-sky-500 font-bold">BOM-DEL</span> adds <strong class="text-emerald-600 dark:text-emerald-400">+0.3%</strong> to Transport CPI basket. Dominant driver: <strong class="text-amber-400">Festive Demand (45%)</strong> $\rightarrow$ May trigger RBI monetary tightening.
+                            [AI ATTRIBUTION]: Corridor <span id="adv-route" class="text-sky-500 font-bold">BOM-DEL</span> adds <strong class="text-emerald-600 dark:text-emerald-400">+0.3%</strong> to Transport CPI basket. Dominant driver: <strong class="text-amber-400">Festive Demand (45%)</strong> &rarr; May trigger RBI monetary tightening.
                         </div>
                     </div>
                     <button onclick="copyAdvisory()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer border border-mospi-border">
@@ -535,13 +535,23 @@
                         borderWidth: 3,
                         fill: true,
                         tension: 0.35,
-                        pointRadius: 3
+                        pointRadius: 4
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let val = context.parsed.y;
+                                    return ` APIx Index: ${val} (Monthly Festival Surge Active)`;
+                                }
+                            }
+                        }
+                    },
                     scales: {
                         x: { grid: { color: 'rgba(100, 116, 139, 0.2)' }, ticks: { color: '#64748b', font: { family: 'Plus Jakarta Sans', size: 10 } } },
                         y: { min: 95, max: 155, grid: { color: 'rgba(100, 116, 139, 0.2)' }, ticks: { color: '#64748b', font: { family: 'Plus Jakarta Sans', size: 10 } } }
