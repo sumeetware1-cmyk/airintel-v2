@@ -16,9 +16,34 @@ except Exception as e:
     print(f"[!] Error loading CSV: {e}")
     df = pd.DataFrame()
 
+AIRPORT_MAP = {
+    'DEL': 'Delhi (DEL)', 'BOM': 'Mumbai (BOM)', 'BLR': 'Bengaluru (BLR)',
+    'HYD': 'Hyderabad (HYD)', 'CCU': 'Kolkata (CCU)', 'MAA': 'Chennai (MAA)',
+    'GOI': 'Goa (GOI)', 'JAI': 'Jaipur (JAI)', 'COK': 'Kochi (COK)',
+    'DBR': 'Darbhanga (DBR)', 'DXN': 'Daman (DXN)', 'HDO': 'Hindon (HDO)', 'NMI': 'Navi Mumbai (NMI)'
+}
+
 @app.route('/')
 def home():
     return render_template('index.html')
+
+@app.route('/api/airports-list')
+def get_airports_list():
+    airports = []
+    if not df.empty:
+        if 'origin' in df.columns:
+            raw_orig = df['origin'].dropna().astype(str).str.strip().str.upper().unique()
+            for o in raw_orig:
+                if o in AIRPORT_MAP and AIRPORT_MAP[o] not in airports:
+                    airports.append(AIRPORT_MAP[o])
+        if 'destination' in df.columns:
+            raw_dest = df['destination'].dropna().astype(str).str.strip().str.upper().unique()
+            for d in raw_dest:
+                if d in AIRPORT_MAP and AIRPORT_MAP[d] not in airports:
+                    airports.append(AIRPORT_MAP[d])
+    if not airports:
+        airports = list(AIRPORT_MAP.values())
+    return jsonify({'airports': sorted(airports)})
 
 @app.route('/api/query-master', methods=['POST'])
 def query_master():
@@ -34,7 +59,7 @@ def query_master():
     else:
         rdf = pd.DataFrame()
 
-    if not rdf.empty:
+    if not rdf.empty and 'total_fare' in rdf.columns:
         total = float(rdf['total_fare'].mean())
         base = total * 0.82
         tax = total * 0.18
@@ -72,9 +97,20 @@ def query_master():
 
 @app.route('/api/trend-data')
 def get_trend_data():
-    route = request.args.get('route', 'BOM-DEL')
-    labels = ['Sep 01', 'Sep 10', 'Sep 20', 'Sep 30', 'Oct 10', 'Oct 20', 'Oct 31', 'Nov 10', 'Nov 20', 'Dec 01', 'Dec 15', 'Dec 31']
-    values = [101.5, 102.8, 104.2, 106.0, 108.6, 110.1, 112.4, 111.0, 113.5, 115.0, 119.8, 124.2]
+    route = request.args.get('route', 'BOM-DEL').strip().upper()
+    start_str = request.args.get('start', '2026-09-01')
+    end_str = request.args.get('end', '2026-11-30')
+    
+    try:
+        start_date = pd.to_datetime(start_str)
+        end_date = pd.to_datetime(end_str)
+        date_range = pd.date_range(start=start_date, end=end_date, periods=12)
+        labels = [d.strftime('%b %d') for d in date_range]
+        values = [round(100 + (i * 0.25) + (4.0 if d.month == 10 or d.month == 11 else 0), 2) for i in range(len(date_range))]
+    except Exception:
+        labels = ['Sep 01', 'Oct 01', 'Nov 01', 'Nov 30']
+        values = [102.0, 108.6, 111.0, 114.5]
+
     return jsonify({'labels': labels, 'values': values})
 
 @app.route('/api/leadtime-data')
