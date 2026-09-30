@@ -39,19 +39,8 @@
             </div>
         </div>
         <div class="flex items-center space-x-4">
-            <!-- Global Date Filter -->
-            <div class="hidden sm:flex items-center gap-2 bg-slate-900 px-3 py-1.5 rounded-xl border border-mospi-border">
-                <span class="text-[10px] text-slate-400 uppercase font-semibold">Telemetry Period:</span>
-                <select id="global-month-filter" onchange="updateDashboardPeriod()" class="bg-slate-800 text-sky-300 text-xs font-mono font-bold rounded px-2 py-1 outline-none cursor-pointer">
-                    <option value="sep">September 2026</option>
-                    <option value="oct">October 2026 (Festive)</option>
-                    <option value="nov">November 2026</option>
-                    <option value="dec">December 2026 (Peak)</option>
-                    <option value="all" selected>Full Q4 Master (Sep-Dec)</option>
-                </select>
-            </div>
             <button onclick="window.location.reload()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl text-xs font-semibold border border-mospi-border transition flex items-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-rotate-right"></i> Refresh
+                <i class="fa-solid fa-rotate-right"></i> Refresh Telemetry
             </button>
         </div>
     </div>
@@ -59,14 +48,14 @@
 
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
-    <!-- BLOCK 1: REAL-TIME AIRFARE PRICE INDEX -->
+    <!-- KPI SUMMARY CARDS -->
     <section class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="bg-mospi-card border border-mospi-border rounded-2xl p-5 shadow-xl relative overflow-hidden">
+        <div class="bg-mospi-card border border-mospi-border rounded-2xl p-5 shadow-xl">
             <div class="text-[10px] font-mono text-slate-400 uppercase tracking-widest">Composite Price Index</div>
             <div class="mt-2 flex items-baseline justify-between">
                 <div class="text-3xl font-black mono text-white" id="kpi-cpi">108.6</div>
                 <span class="inline-flex items-center text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
-                    <i class="fa-solid fa-arrow-trend-up mr-1"></i> <span id="kpi-mom">+4.2%</span> MoM
+                    <i class="fa-solid fa-arrow-trend-up mr-1"></i> +4.2% MoM
                 </span>
             </div>
             <div class="mt-2 text-[11px] text-slate-400 flex justify-between">
@@ -83,7 +72,7 @@
             </div>
             <div class="mt-2 text-[11px] text-slate-400 flex justify-between">
                 <span>Net Price Delta</span>
-                <span class="text-emerald-400 font-bold" id="kpi-delta">+₹605 (+8.9%)</span>
+                <span class="text-emerald-400 font-bold">+₹605 (+8.9%)</span>
             </div>
         </div>
 
@@ -112,39 +101,34 @@
         </div>
     </section>
 
-    <!-- BLOCK 2: DYNAMIC 30-DAY APIx TREND GRAPH -->
-    <section class="bg-mospi-card border border-mospi-border rounded-2xl p-6 shadow-xl">
+    <!-- BLOCK 1: DAILY APIX TREND & DROPDOWN CALENDAR -->
+    <section class="bg-mospi-card border border-mospi-border rounded-2xl p-6 shadow-xl space-y-4">
         <div class="flex flex-wrap items-center justify-between pb-3 border-b border-mospi-border gap-4">
             <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                <i class="fa-solid fa-chart-line text-sky-400 mr-1.5"></i> Daily Airfare Price Index (APIx) Trend & Date Selector
+                <i class="fa-solid fa-chart-line text-sky-400 mr-1.5"></i> Daily Airfare Price Index (APIx) Trend & Interactive Date Range
             </h2>
-            <div class="flex items-center gap-3">
-                <span class="text-xs text-slate-400">Select Range:</span>
-                <input type="date" id="start-date" value="2026-09-01" class="bg-slate-900 text-xs font-mono text-sky-300 px-2 py-1 rounded border border-mospi-border outline-none">
-                <span class="text-slate-500">to</span>
-                <input type="date" id="end-date" value="2026-09-30" class="bg-slate-900 text-xs font-mono text-sky-300 px-2 py-1 rounded border border-mospi-border outline-none">
-                <button onclick="refreshTrendChart()" class="bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold px-3 py-1 rounded transition">Apply</button>
+            <div class="flex items-center gap-2">
+                <span class="text-xs text-slate-400 font-medium">From:</span>
+                <input type="date" id="start-date" value="2026-09-01" onchange="refreshTrendChart()" class="bg-slate-900 text-xs font-mono text-sky-300 px-3 py-1.5 rounded-xl border border-mospi-border outline-none">
+                <span class="text-xs text-slate-400 font-medium">To:</span>
+                <input type="date" id="end-date" value="2026-10-31" onchange="refreshTrendChart()" class="bg-slate-900 text-xs font-mono text-sky-300 px-3 py-1.5 rounded-xl border border-mospi-border outline-none">
             </div>
         </div>
-        <div class="mt-4 h-64 w-full">
+        <div class="h-64 w-full">
             <canvas id="trendChart"></canvas>
         </div>
     </section>
 
-    <!-- BLOCK 3: ROUTE-SPECIFIC LEAD-TIME PRICING (T+1, T+5, T+10, T+30) WITH ROUTE SWITCHER -->
+    <!-- BLOCK 2: ROUTE-SPECIFIC LEAD-TIME CURVE WITH FULL ROUTE DROPDOWN -->
     <section class="bg-mospi-card border border-mospi-border rounded-2xl p-6 shadow-xl space-y-4">
         <div class="flex flex-wrap items-center justify-between pb-3 border-b border-mospi-border gap-4">
             <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                <i class="fa-solid fa-route text-sky-400 mr-1.5"></i> Route-Specific Lead-Time Curve (T+1, T+5, T+10, T+30...)
+                <i class="fa-solid fa-route text-sky-400 mr-1.5"></i> Route-Specific Lead-Time Curve (T+1 to T+45 Days)
             </h2>
             <div class="flex items-center gap-3">
                 <label class="text-xs text-slate-400 font-medium">Select Corridor:</label>
-                <select id="leadtime-route-select" onchange="loadLeadTimeChart()" class="bg-slate-900 text-sky-300 text-xs font-mono font-bold rounded px-3 py-1.5 border border-mospi-border outline-none cursor-pointer">
-                    <option value="DEL-BOM">DEL ➔ BOM</option>
-                    <option value="BOM-BLR">BOM ➔ BLR</option>
-                    <option value="DEL-BLR">DEL ➔ BLR</option>
-                    <option value="DEL-CCU">DEL ➔ CCU</option>
-                    <option value="BOM-HYD">BOM ➔ HYD</option>
+                <select id="leadtime-route-select" onchange="loadLeadTimeChart()" class="bg-slate-900 text-sky-300 text-xs font-mono font-bold rounded-xl px-3 py-2 border border-mospi-border outline-none cursor-pointer">
+                    <!-- Dynamically populated from backend -->
                 </select>
             </div>
         </div>
@@ -153,13 +137,13 @@
         </div>
     </section>
 
-    <!-- BLOCK 4: ROUTE LOOKUP CALCULATOR (Origin, Destination, Date -> Base Price, Total Price, CPI, Inflation, Taxes) -->
+    <!-- BLOCK 3: MOSPI CORRIDOR & TAX LOOKUP CALCULATOR (Integrated Output) -->
     <section class="bg-mospi-card border border-mospi-border rounded-2xl p-6 shadow-xl space-y-5">
         <div class="flex items-center justify-between pb-3 border-b border-mospi-border">
             <h2 class="text-xs font-bold text-sky-400 uppercase tracking-wider">
                 <i class="fa-solid fa-calculator mr-1.5"></i> MoSPI Corridor & Tax Lookup Calculator
             </h2>
-            <span class="text-xs text-slate-400 font-mono">Real-Time Database Query</span>
+            <span class="text-xs text-slate-400 font-mono">Real-Time Database Query Engine</span>
         </div>
         
         <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end">
@@ -192,32 +176,32 @@
             </div>
         </div>
 
-        <!-- Calculator Result Card -->
-        <div id="calc-result-box" class="grid grid-cols-1 sm:grid-cols-5 gap-4 pt-4 border-t border-mospi-border hidden">
+        <!-- Integrated Dynamic Result Cards -->
+        <div id="calc-result-box" class="grid grid-cols-1 sm:grid-cols-5 gap-4 pt-4 border-t border-mospi-border">
             <div class="bg-slate-900/80 p-4 rounded-xl border border-mospi-border">
                 <div class="text-[10px] text-slate-400 uppercase">Base Seat Fare</div>
-                <div class="text-lg font-black mono text-emerald-400 mt-1" id="res-base">₹-</div>
+                <div class="text-lg font-black mono text-emerald-400 mt-1" id="res-base">₹5,200</div>
             </div>
             <div class="bg-slate-900/80 p-4 rounded-xl border border-mospi-border">
                 <div class="text-[10px] text-slate-400 uppercase">Statutory Taxes & UDF</div>
-                <div class="text-lg font-black mono text-amber-400 mt-1" id="res-tax">₹-</div>
+                <div class="text-lg font-black mono text-amber-400 mt-1" id="res-tax">₹1,150</div>
             </div>
             <div class="bg-slate-900/80 p-4 rounded-xl border border-mospi-border">
                 <div class="text-[10px] text-slate-400 uppercase">Total Quote</div>
-                <div class="text-lg font-black mono text-white mt-1" id="res-total">₹-</div>
+                <div class="text-lg font-black mono text-white mt-1" id="res-total">₹15,589</div>
             </div>
             <div class="bg-slate-900/80 p-4 rounded-xl border border-mospi-border">
                 <div class="text-[10px] text-slate-400 uppercase">Route Inflation</div>
-                <div class="text-lg font-black mono text-sky-400 mt-1" id="res-inflation">-%</div>
+                <div class="text-lg font-black mono text-sky-400 mt-1" id="res-inflation">+199.8%</div>
             </div>
             <div class="bg-slate-900/80 p-4 rounded-xl border border-mospi-border">
                 <div class="text-[10px] text-slate-400 uppercase">Route APIx Index</div>
-                <div class="text-lg font-black mono text-purple-400 mt-1" id="res-cpi">-</div>
+                <div class="text-lg font-black mono text-purple-400 mt-1" id="res-cpi">299.8</div>
             </div>
         </div>
     </section>
 
-    <!-- BLOCK 5: AIRLINE PRICE MOVEMENT & TAX BREAKDOWN -->
+    <!-- BLOCK 4: MULTI-CARRIER PRICE & TAX BREAKDOWN -->
     <section class="bg-mospi-card border border-mospi-border rounded-2xl p-6 shadow-xl">
         <div class="flex items-center justify-between pb-3 border-b border-mospi-border">
             <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">
@@ -261,7 +245,7 @@
         </div>
     </section>
 
-    <!-- BLOCK 6: WHY DID AIRFARES CHANGE? (ENHANCED FOR MOSPI) -->
+    <!-- BLOCK 5: WHY DID AIRFARES CHANGE? -->
     <section class="bg-mospi-card border border-mospi-border rounded-2xl p-6 shadow-xl space-y-4">
         <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">
             <i class="fa-solid fa-magnifying-glass-chart text-sky-400 mr-1.5"></i> Why Did Airfares Change? (Economic Attribution Engine for RBI & MoSPI)
@@ -286,7 +270,7 @@
         </div>
     </section>
 
-    <!-- BLOCK 7: DATA & METHODOLOGY (MOSPI COMPLIANCE) -->
+    <!-- BLOCK 6: DATA & METHODOLOGY -->
     <section class="bg-mospi-card border border-mospi-border rounded-2xl p-6 shadow-xl space-y-4">
         <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">
             <i class="fa-solid fa-file-shield text-sky-400 mr-1.5"></i> Data Pipeline & CSO Methodology Standards
@@ -318,17 +302,33 @@
     let leadTimeChart = null;
 
     async function initDashboard() {
+        await loadRoutesDropdown();
         refreshTrendChart();
         loadLeadTimeChart();
+        runRouteCalculator();
+    }
+
+    async function loadRoutesDropdown() {
+        try {
+            const res = await fetch('/api/routes-list');
+            const routes = await res.json();
+            const select = document.getElementById('leadtime-route-select');
+            select.innerHTML = '';
+            routes.forEach(r => {
+                const opt = document.createElement('option');
+                opt.value = r;
+                opt.innerText = r.replace('-', ' ➔ ');
+                select.appendChild(opt);
+            });
+        } catch (err) { console.error(err); }
     }
 
     async function refreshTrendChart() {
         const start = document.getElementById('start-date').value;
         const end = document.getElementById('end-date').value;
-        const period = document.getElementById('global-month-filter').value;
 
         try {
-            const res = await fetch(`/api/trend-data?period=${period}&start=${start}&end=${end}`);
+            const res = await fetch(`/api/trend-data?start=${start}&end=${end}`);
             const data = await res.json();
 
             if (trendChart) trendChart.destroy();
@@ -354,7 +354,7 @@
                     plugins: { legend: { display: false } },
                     scales: {
                         x: { grid: { color: 'rgba(30, 41, 59, 0.5)' }, ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 10 } } },
-                        y: { min: 95, max: 125, grid: { color: 'rgba(30, 41, 59, 0.5)' }, ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 10 } } }
+                        y: { min: 95, max: 130, grid: { color: 'rgba(30, 41, 59, 0.5)' }, ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 10 } } }
                     }
                 }
             });
@@ -406,17 +406,12 @@
             });
             const data = await res.json();
 
-            document.getElementById('calc-result-box').classList.remove('hidden');
             document.getElementById('res-base').innerText = '₹' + data.base_fare.toLocaleString();
             document.getElementById('res-tax').innerText = '₹' + data.taxes.toLocaleString();
             document.getElementById('res-total').innerText = '₹' + data.total_fare.toLocaleString();
-            document.getElementById('res-inflation').innerText = `+${data.inflation}%`;
+            document.getElementById('res-inflation').innerText = `${data.inflation >= 0 ? '+' : ''}${data.inflation}%`;
             document.getElementById('res-cpi').innerText = data.cpi_index;
         } catch (err) { console.error(err); }
-    }
-
-    function updateDashboardPeriod() {
-        refreshTrendChart();
     }
 
     window.onload = initDashboard;
