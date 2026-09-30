@@ -40,7 +40,7 @@
             </div>
         </div>
 
-        <!-- 2-Page Navigation Tabs -->
+        <!-- Navigation Tabs -->
         <div class="flex items-center space-x-3">
             <div class="bg-slate-200 dark:bg-slate-900 p-1 rounded-xl border border-slate-300 dark:border-mospi-border flex space-x-1">
                 <button onclick="switchPage(1)" id="tab-1" class="px-4 py-1.5 rounded-lg text-xs font-bold bg-sky-500 text-slate-950 transition cursor-pointer">
@@ -209,7 +209,7 @@
             </div>
         </section>
 
-        <!-- Charts -->
+        <!-- Charts (Explicit height container to prevent collapse) -->
         <section class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-6 shadow-xl space-y-4">
             <div class="flex flex-wrap items-center justify-between pb-3 border-b border-mospi-border gap-4">
                 <h2 class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
@@ -222,7 +222,9 @@
                     <input type="date" id="chart-end-date" value="2026-11-30" onchange="triggerGlobalQuery()" class="bg-slate-100 dark:bg-slate-900 text-xs font-mono text-sky-300 px-3 py-1.5 rounded-xl border border-mospi-border outline-none">
                 </div>
             </div>
-            <div class="h-64 w-full"><canvas id="trendChart"></canvas></div>
+            <div style="height: 280px; position: relative; width: 100%;">
+                <canvas id="trendChart"></canvas>
+            </div>
         </section>
 
         <section class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-6 shadow-xl space-y-4">
@@ -232,13 +234,14 @@
                 </h2>
                 <span class="text-xs text-sky-400 font-mono font-bold" id="leadtime-label">Synced with Global Origin & Destination</span>
             </div>
-            <div class="h-64 w-full"><canvas id="leadTimeChart"></canvas></div>
+            <div style="height: 280px; position: relative; width: 100%;">
+                <canvas id="leadTimeChart"></canvas>
+            </div>
         </section>
     </div>
 
     <!-- ================= PAGE 2: AI ATTRIBUTION & POLICY SANDBOX ================= -->
     <div id="page-2" class="hidden space-y-6">
-        <!-- Feature 1 & 4 & 6: AI Attribution & Policy Sandbox -->
         <section class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-6 shadow-xl space-y-6">
             <div class="flex items-center justify-between pb-3 border-b border-mospi-border">
                 <h2 class="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase tracking-wider">
@@ -294,7 +297,7 @@
             </div>
         </section>
 
-        <!-- Feature 2 & 3 & 5: Heatmaps, Predictive Forecasting & External Events -->
+        <!-- Heatmaps & Predictive Models -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <section class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-6 shadow-xl space-y-4">
                 <div class="flex items-center justify-between pb-3 border-b border-mospi-border">
@@ -343,7 +346,7 @@
         </div>
     </div>
 
-    <!-- STANDARDS FOOTER -->
+    <!-- STANDARDS -->
     <section class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-6 shadow-xl space-y-3">
         <h2 class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
             <i class="fa-solid fa-shield-halved text-sky-600 dark:text-sky-400 mr-1.5"></i> Data Pipeline & CSO Methodology Standards
@@ -377,6 +380,12 @@
             document.getElementById('page-2').classList.add('hidden');
             document.getElementById('tab-1').className = "px-4 py-1.5 rounded-lg text-xs font-bold bg-sky-500 text-slate-950 transition cursor-pointer";
             document.getElementById('tab-2').className = "px-4 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition cursor-pointer";
+            
+            // Force charts to re-render when switching back to page 1
+            setTimeout(() => {
+                if (trendChart) trendChart.resize();
+                if (leadTimeChart) leadTimeChart.resize();
+            }, 50);
         } else {
             document.getElementById('page-1').classList.add('hidden');
             document.getElementById('page-2').classList.remove('hidden');
