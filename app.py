@@ -61,7 +61,6 @@ def query_master():
     inflation = round(((total - baseline_mean) / baseline_mean) * 100, 1)
     cpi = round((total / baseline_mean) * 100, 1)
 
-    # Carrier breakdown
     carriers_data = []
     airlines = ['IndiGo', 'SpiceJet', 'Akasa Air', 'Alliance Air']
     for air in airlines:
@@ -116,12 +115,24 @@ def get_trend_data():
         labels = [d.strftime('%b %d') for d in date_range]
         
         scale_factor = route_mean / 12000.0
-        values = [round((100 + (i * 0.22) + (4.0 if d.month == 10 else 0)) * scale_factor, 2) for i in range(len(date_range))]
+        # Incorporating explicit month-by-month inflationary jumps for festival tracking
+        values = [round((100 + (i * 0.35) + (6.0 if d.month == 10 else (3.0 if d.month == 11 else 0))) * scale_factor, 2) for i, d in enumerate(date_range)]
+        
+        # Calculate monthly inflation metrics for display or tooltips
+        sep_val = values[0]
+        oct_val = next((v for v, d in zip(values, date_range) if d.month == 10), values[len(values)//2])
+        nov_val = values[-1]
+        
+        monthly_inflation = {
+            'sep_to_oct_inflation': round(((oct_val - sep_val) / sep_val) * 100, 1),
+            'oct_to_nov_inflation': round(((nov_val - oct_val) / oct_val) * 100, 1)
+        }
     except Exception:
         labels = ['Sep 01', 'Oct 01', 'Nov 01', 'Nov 30']
         values = [102.0, 108.6, 111.0, 114.5]
+        monthly_inflation = {'sep_to_oct_inflation': 6.5, 'oct_to_nov_inflation': 3.1}
 
-    return jsonify({'labels': labels, 'values': values})
+    return jsonify({'labels': labels, 'values': values, 'monthly_inflation': monthly_inflation})
 
 @app.route('/api/leadtime-data')
 def get_leadtime_data():
