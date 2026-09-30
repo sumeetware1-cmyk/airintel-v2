@@ -78,8 +78,8 @@ def query_master():
     avg_tax = sum(collected_taxes) / len(collected_taxes)
     total = sum(collected_totals) / len(collected_totals)
 
-    # Historical baseline reference (e.g. 2024 standard base, derived proportionally or set as stable baseline)
-    baseline_mean = round(avg_base * 0.82, 0)
+    # Make baseline_mean strictly equal to avg_base so top card and summary card match perfectly
+    baseline_mean = round(avg_base, 0)
     net_delta = round(total - baseline_mean, 0)
     inflation = round(((total - baseline_mean) / baseline_mean) * 100, 1)
     cpi = round((total / baseline_mean) * 100, 1)
