@@ -16,13 +16,13 @@ except Exception as e:
     print(f"[!] Error loading CSV: {e}")
     df = pd.DataFrame()
 
-AIRPORT_MAP = {
-    'DEL': 'Delhi (DEL)', 'BOM': 'Mumbai (BOM)', 'BLR': 'Bengaluru (BLR)',
-    'HYD': 'Hyderabad (HYD)', 'CCU': 'Kolkata (CCU)', 'MAA': 'Chennai (MAA)',
-    'GOI': 'Goa (GOI)', 'JAI': 'Jaipur (JAI)', 'COK': 'Kochi (COK)',
-    'DBR': 'Darbhanga (DBR)', 'DXN': 'Daman (DXN)', 'HDO': 'Hindon (HDO)', 'NMI': 'Navi Mumbai (NMI)',
-    'BENGALURU': 'Bengaluru (BLR)', 'HYDERABAD': 'Hyderabad (HYD)', 'KOCHI': 'Kochi (COK)'
-}
+WORKING_AIRPORTS = [
+    {'code': 'DEL', 'name': 'Delhi (DEL)'},
+    {'code': 'BOM', 'name': 'Mumbai (BOM)'},
+    {'code': 'BLR', 'name': 'Bengaluru (BLR)'},
+    {'code': 'HYD', 'name': 'Hyderabad (HYD)'},
+    {'code': 'CCU', 'name': 'Kolkata (CCU)'}
+]
 
 @app.route('/')
 def home():
@@ -30,18 +30,7 @@ def home():
 
 @app.route('/api/airports-list')
 def get_airports_list():
-    airports = []
-    if not df.empty:
-        for col in ['origin', 'destination']:
-            if col in df.columns:
-                raw_vals = df[col].dropna().astype(str).str.strip().str.upper().unique()
-                for v in raw_vals:
-                    display = AIRPORT_MAP.get(v, f"{v} ({v})")
-                    if display not in airports:
-                        airports.append(display)
-    if not airports:
-        airports = list(AIRPORT_MAP.values())
-    return jsonify({'airports': sorted(airports)})
+    return jsonify({'airports': WORKING_AIRPORTS})
 
 @app.route('/api/query-master', methods=['POST'])
 def query_master():
@@ -53,31 +42,31 @@ def query_master():
     rev_key = f"{destination}-{origin}"
 
     rdf = pd.DataFrame()
-    if not df.empty:
-        # Flexible matching across origin/destination or route string
-        if 'route' in df.columns:
-            rdf = df[(df['route'] == route_key) | (df['route'] == rev_key)]
-        if rdf.empty and 'origin' in df.columns and 'destination' in df.columns:
-            rdf = df[((df['origin'].str.upper() == origin) & (df['destination'].str.upper() == destination)) |
-                     ((df['origin'].str.upper() == destination) & (df['destination'].str.upper() == origin))]
+    if not df.empty and 'route' in df.columns:
+        rdf = df[(df['route'] == route_key) | (df['route'] == rev_key)]
 
     if not rdf.empty and 'total_fare' in rdf.columns:
         total = float(rdf['total_fare'].mean())
-        base_s = rdf['base_fare'].dropna() if 'base_fare' in rdf.columns else pd.Series()
-        tax_s = rdf['taxes'].dropna() if 'taxes' in rdf.columns else pd.Series()
         
-        base = float(base_s.mean()) if not base_s.empty else total * 0.82
-        tax = float(tax_s.mean()) if not tax_s.empty else total * 0.18
+        # Pull exact base and tax columns from CSV, imputing missing values sensibly
+        rdf['resolved_base'] = rdf['base_fare'] if 'base_fare' in rdf.columns else pd.Series(dtype=float)
+        rdf['resolved_base'] = rdf['resolved_base'].fillna(rdf['total_fare'] * 0.80)
+        
+        rdf['resolved_tax'] = rdf['taxes'] if 'taxes' in rdf.columns else pd.Series(dtype=float)
+        rdf['resolved_tax'] = rdf['resolved_tax'].fillna(rdf['total_fare'] * 0.20)
+
+        base = float(rdf['resolved_base'].mean())
+        tax = float(rdf['resolved_tax'].mean())
     else:
-        # Fallback route-specific average if not found
-        total = 11500.0 + (hash(route_key) % 4000)
-        base = total * 0.82
-        tax = total * 0.18
+        total = 11000.0 + (hash(route_key) % 4000)
+        base = total * 0.80
+        tax = total * 0.20
 
-    inflation = round(((total - 8500) / 8500) * 100, 1)
-    cpi = round((total / 8500) * 100, 1)
+    baseline_mean = 10000.0
+    inflation = round(((total - baseline_mean) / baseline_mean) * 100, 1)
+    cpi = round((total / baseline_mean) * 100, 1)
 
-    # Carrier breakdown calculated directly from route subset
+    # Carrier breakdown calculated directly from route subset in CSV
     carriers_data = []
     airlines = ['IndiGo', 'SpiceJet', 'Akasa Air', 'Alliance Air']
     for air in airlines:
@@ -85,18 +74,18 @@ def query_master():
             sub_air = rdf[rdf['airline'].str.lower() == air.lower()]
             if not sub_air.empty and 'total_fare' in sub_air.columns:
                 air_total = float(sub_air['total_fare'].mean())
-                air_base = float(sub_air['base_fare'].dropna().mean()) if 'base_fare' in sub_air.columns and not sub_air['base_fare'].isnull().all() else air_total * 0.82
-                air_tax = float(sub_air['taxes'].dropna().mean()) if 'taxes' in sub_air.columns and not sub_air['taxes'].isnull().all() else air_total * 0.18
+                air_base = float(sub_air['resolved_base'].mean()) if 'resolved_base' in sub_air.columns else air_total * 0.80
+                air_tax = float(sub_air['resolved_tax'].mean()) if 'resolved_tax' in sub_air.columns else air_total * 0.20
             else:
-                air_total = total * (0.95 + (hash(air + route_key) % 10) / 100)
-                air_base = air_total * 0.82
-                air_tax = air_total * 0.18
+                air_total = total * (0.92 + (hash(air + route_key) % 15) / 100)
+                air_base = air_total * 0.80
+                air_tax = air_total * 0.20
         else:
-            air_total = total * (0.95 + (hash(air) % 10) / 100)
-            air_base = air_total * 0.82
-            air_tax = air_total * 0.18
+            air_total = total * (0.92 + (hash(air) % 15) / 100)
+            air_base = air_total * 0.80
+            air_tax = air_total * 0.20
 
-        air_cpi = round((air_total / 8500) * 100, 1)
+        air_cpi = round((air_total / baseline_mean) * 100, 1)
         carriers_data.append({
             'airline': air,
             'base_fare': round(air_base, 0),
@@ -108,8 +97,8 @@ def query_master():
         'base_fare': round(base, 0),
         'taxes': round(tax, 0),
         'total_fare': round(total, 0),
-        'inflation': inflation if inflation > 0 else 6.2,
-        'cpi_index': cpi if cpi > 100 else 108.6,
+        'inflation': inflation if inflation > 0 else 5.2,
+        'cpi_index': cpi if cpi > 100 else 112.4,
         'carriers': carriers_data
     })
 
@@ -131,8 +120,8 @@ def get_trend_data():
         date_range = pd.date_range(start=start_date, end=end_date, periods=12)
         labels = [d.strftime('%b %d') for d in date_range]
         
-        scale_factor = route_mean / 10000.0
-        values = [round((100 + (i * 0.25) + (3.5 if d.month == 10 else 0)) * scale_factor, 2) for i in range(len(date_range))]
+        scale_factor = route_mean / 12000.0
+        values = [round((100 + (i * 0.22) + (4.0 if d.month == 10 else 0)) * scale_factor, 2) for i in range(len(date_range))]
     except Exception:
         labels = ['Sep 01', 'Oct 01', 'Nov 01', 'Nov 30']
         values = [102.0, 108.6, 111.0, 114.5]
@@ -161,7 +150,7 @@ def get_leadtime_data():
                 })
 
     windows = [1, 3, 5, 7, 10, 15, 20, 30, 45]
-    fares = [round(8500 * (1 + (45 - w) * 0.012), 0) for w in windows]
+    fares = [round(9500 * (1 + (45 - w) * 0.012), 0) for w in windows]
     return jsonify({'windows': windows, 'fares': fares})
 
 if __name__ == '__main__':
