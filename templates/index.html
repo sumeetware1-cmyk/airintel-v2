@@ -24,7 +24,7 @@
 </head>
 <body class="h-full bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased transition-colors duration-200">
 
-<!-- HEADER WITH 2-PAGE TABS -->
+<!-- HEADER -->
 <header class="bg-white/90 dark:bg-mospi-card border-b border-slate-200 dark:border-mospi-border sticky top-0 z-50 backdrop-blur-xl">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <div class="flex items-center space-x-3">
@@ -209,7 +209,7 @@
             </div>
         </section>
 
-        <!-- Charts (Explicit height container to prevent collapse) -->
+        <!-- Charts -->
         <section class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-6 shadow-xl space-y-4">
             <div class="flex flex-wrap items-center justify-between pb-3 border-b border-mospi-border gap-4">
                 <h2 class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
@@ -381,7 +381,6 @@
             document.getElementById('tab-1').className = "px-4 py-1.5 rounded-lg text-xs font-bold bg-sky-500 text-slate-950 transition cursor-pointer";
             document.getElementById('tab-2').className = "px-4 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition cursor-pointer";
             
-            // Force charts to re-render when switching back to page 1
             setTimeout(() => {
                 if (trendChart) trendChart.resize();
                 if (leadTimeChart) leadTimeChart.resize();
