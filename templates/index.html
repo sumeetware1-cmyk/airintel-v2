@@ -24,7 +24,7 @@
 </head>
 <body class="h-full bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased transition-colors duration-200">
 
-<!-- HEADER WITH 2-PAGE TABS -->
+<!-- HEADER -->
 <header class="bg-white/90 dark:bg-mospi-card border-b border-slate-200 dark:border-mospi-border sticky top-0 z-50 backdrop-blur-xl">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <div class="flex items-center space-x-3">
@@ -474,9 +474,13 @@
                     else if (name.includes('akasa')) key = 'akasa';
                     else if (name.includes('alliance')) key = 'alliance';
                     
-                    document.getElementById(`base-${key}`).innerText = '₹' + Math.round(c.base_fare).toLocaleString();
-                    document.getElementById(`tax-${key}`).innerText = '₹' + Math.round(c.taxes).toLocaleString();
-                    document.getElementById(`idx-${key}`).innerHTML = `${c.api_index} <span class="text-xs font-normal text-slate-400">APIx</span>`;
+                    const baseEl = document.getElementById(`base-${key}`);
+                    const taxEl = document.getElementById(`tax-${key}`);
+                    const idxEl = document.getElementById(`idx-${key}`);
+
+                    if (baseEl) baseEl.innerText = '₹' + Math.round(c.base_fare).toLocaleString();
+                    if (taxEl) taxEl.innerText = '₹' + Math.round(c.taxes).toLocaleString();
+                    if (idxEl) idxEl.innerHTML = `${c.api_index} <span class="text-xs font-normal text-slate-400">APIx</span>`;
                 });
             }
 
