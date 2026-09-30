@@ -158,7 +158,7 @@
         <div class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-5 shadow-xl">
             <div class="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase tracking-widest">Composite Price Index</div>
             <div class="mt-2 flex items-baseline justify-between">
-                <div class="text-3xl font-black mono text-slate-900 dark:text-white" id="kpi-cpi">108.6</div>
+                <div class="text-3xl font-black mono text-slate-900 dark:text-white" id="kpi-cpi">112.4</div>
                 <span class="inline-flex items-center text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
                     <i class="fa-solid fa-arrow-trend-up mr-1"></i> +4.2% MoM
                 </span>
@@ -172,19 +172,19 @@
         <div class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-5 shadow-xl">
             <div class="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase tracking-widest">Baseline vs Spot Price</div>
             <div class="mt-2 flex items-baseline justify-between">
-                <div class="text-2xl font-black mono text-slate-900 dark:text-white" id="kpi-spot">₹7,405</div>
-                <span class="text-xs font-mono text-emerald-600 dark:text-emerald-400" id="kpi-base">Base: ₹6,800</span>
+                <div class="text-2xl font-black mono text-slate-900 dark:text-white" id="kpi-spot">₹12,450</div>
+                <span class="text-xs font-mono text-emerald-600 dark:text-emerald-400" id="kpi-base">Base: ₹10,200</span>
             </div>
             <div class="mt-2 text-[11px] text-slate-500 dark:text-slate-400 flex justify-between">
                 <span>Net Price Delta</span>
-                <span class="text-emerald-600 dark:text-emerald-400 font-bold">+₹605 (+8.9%)</span>
+                <span class="text-emerald-600 dark:text-emerald-400 font-bold">+₹2,250</span>
             </div>
         </div>
 
         <div class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-5 shadow-xl">
             <div class="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase tracking-widest">Inflation Status</div>
             <div class="mt-2 flex items-baseline justify-between">
-                <div class="text-2xl font-black mono text-emerald-600 dark:text-emerald-400" id="kpi-inflation">4.2%</div>
+                <div class="text-2xl font-black mono text-emerald-600 dark:text-emerald-400" id="kpi-inflation">5.2%</div>
                 <span class="text-xs font-mono bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20">Target Aligned</span>
             </div>
             <div class="mt-2 text-[11px] text-slate-500 dark:text-slate-400 flex justify-between">
@@ -327,9 +327,8 @@
             destSel.innerHTML = '';
 
             data.airports.forEach(ap => {
-                const code = ap.split(' ')[0];
-                originSel.add(new Option(ap, code));
-                destSel.add(new Option(ap, code));
+                originSel.add(new Option(ap.name, ap.code));
+                destSel.add(new Option(ap.name, ap.code));
             });
             originSel.value = 'BOM';
             destSel.value = 'DEL';
@@ -417,7 +416,7 @@
                     plugins: { legend: { display: false } },
                     scales: {
                         x: { grid: { color: 'rgba(100, 116, 139, 0.2)' }, ticks: { color: '#64748b', font: { family: 'Plus Jakarta Sans', size: 10 } } },
-                        y: { min: 95, max: 145, grid: { color: 'rgba(100, 116, 139, 0.2)' }, ticks: { color: '#64748b', font: { family: 'Plus Jakarta Sans', size: 10 } } }
+                        y: { min: 95, max: 155, grid: { color: 'rgba(100, 116, 139, 0.2)' }, ticks: { color: '#64748b', font: { family: 'Plus Jakarta Sans', size: 10 } } }
                     }
                 }
             });
