@@ -399,19 +399,19 @@
         if (html.classList.contains('dark')) {
             html.classList.remove('dark');
             localStorage.setItem('theme', 'light');
-            textSpan.textContent = 'Light';
+            textSpan.textContent = 'Light Mode';
             iconSpan.textContent = '☀️';
         } else {
             html.classList.add('dark');
             localStorage.setItem('theme', 'dark');
-            textSpan.textContent = 'Dark';
+            textSpan.textContent = 'Dark Mode';
             iconSpan.textContent = '🌙';
         }
     }
 
     if (localStorage.getItem('theme') === 'light') {
         document.documentElement.classList.remove('dark');
-        document.getElementById('theme-text').textContent = 'Light';
+        document.getElementById('theme-text').textContent = 'Light Mode';
         document.getElementById('theme-icon').textContent = '☀️';
     }
 
@@ -468,9 +468,11 @@
 
             if (data.carriers) {
                 data.carriers.forEach(c => {
-                    const key = c.airline.toLowerCase().includes('indigo') ? 'indigo' :
-                                c.airline.toLowerCase().includes('spice') ? 'spice' :
-                                c.airline.toLowerCase().includes('akasa') ? 'akasa' : 'alliance';
+                    const name = c.airline.toLowerCase();
+                    let key = 'indigo';
+                    if (name.includes('spice')) key = 'spice';
+                    else if (name.includes('akasa')) key = 'akasa';
+                    else if (name.includes('alliance')) key = 'alliance';
                     
                     document.getElementById(`base-${key}`).innerText = '₹' + Math.round(c.base_fare).toLocaleString();
                     document.getElementById(`tax-${key}`).innerText = '₹' + Math.round(c.taxes).toLocaleString();
