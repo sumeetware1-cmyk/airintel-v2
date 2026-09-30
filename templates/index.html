@@ -24,7 +24,7 @@
 </head>
 <body class="h-full bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased transition-colors duration-200">
 
-<!-- HEADER -->
+<!-- HEADER WITH 2-PAGE TABS -->
 <header class="bg-white/90 dark:bg-mospi-card border-b border-slate-200 dark:border-mospi-border sticky top-0 z-50 backdrop-blur-xl">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <div class="flex items-center space-x-3">
@@ -40,7 +40,6 @@
             </div>
         </div>
 
-        <!-- Navigation Tabs -->
         <div class="flex items-center space-x-3">
             <div class="bg-slate-200 dark:bg-slate-900 p-1 rounded-xl border border-slate-300 dark:border-mospi-border flex space-x-1">
                 <button onclick="switchPage(1)" id="tab-1" class="px-4 py-1.5 rounded-lg text-xs font-bold bg-sky-500 text-slate-950 transition cursor-pointer">
@@ -209,7 +208,7 @@
             </div>
         </section>
 
-        <!-- Charts -->
+        <!-- Charts with guaranteed height containers -->
         <section class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-6 shadow-xl space-y-4">
             <div class="flex flex-wrap items-center justify-between pb-3 border-b border-mospi-border gap-4">
                 <h2 class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
@@ -222,7 +221,7 @@
                     <input type="date" id="chart-end-date" value="2026-11-30" onchange="triggerGlobalQuery()" class="bg-slate-100 dark:bg-slate-900 text-xs font-mono text-sky-300 px-3 py-1.5 rounded-xl border border-mospi-border outline-none">
                 </div>
             </div>
-            <div style="height: 280px; position: relative; width: 100%;">
+            <div class="h-72 w-full relative">
                 <canvas id="trendChart"></canvas>
             </div>
         </section>
@@ -234,7 +233,7 @@
                 </h2>
                 <span class="text-xs text-sky-400 font-mono font-bold" id="leadtime-label">Synced with Global Origin & Destination</span>
             </div>
-            <div style="height: 280px; position: relative; width: 100%;">
+            <div class="h-72 w-full relative">
                 <canvas id="leadTimeChart"></canvas>
             </div>
         </section>
