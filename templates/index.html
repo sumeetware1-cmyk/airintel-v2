@@ -91,7 +91,7 @@
         <div class="bg-mospi-card border border-mospi-border rounded-2xl p-5 shadow-xl">
             <div class="text-[10px] font-mono text-slate-400 uppercase tracking-widest">Sample Telemetry Scale</div>
             <div class="mt-2 flex items-baseline justify-between">
-                <div class="text-3xl font-black mono text-white" id="kpi-records">38,719</div>
+                <div class="text-3xl font-black mono text-white" id="kpi-records">37,550</div>
                 <span class="text-xs font-mono text-sky-400">4 Carriers</span>
             </div>
             <div class="mt-2 text-[11px] text-slate-400 flex justify-between">
@@ -111,7 +111,7 @@
                 <span class="text-xs text-slate-400 font-medium">From:</span>
                 <input type="date" id="start-date" value="2026-09-01" onchange="refreshTrendChart()" class="bg-slate-900 text-xs font-mono text-sky-300 px-3 py-1.5 rounded-xl border border-mospi-border outline-none">
                 <span class="text-xs text-slate-400 font-medium">To:</span>
-                <input type="date" id="end-date" value="2026-10-31" onchange="refreshTrendChart()" class="bg-slate-900 text-xs font-mono text-sky-300 px-3 py-1.5 rounded-xl border border-mospi-border outline-none">
+                <input type="date" id="end-date" value="2026-12-31" onchange="refreshTrendChart()" class="bg-slate-900 text-xs font-mono text-sky-300 px-3 py-1.5 rounded-xl border border-mospi-border outline-none">
             </div>
         </div>
         <div class="h-64 w-full">
@@ -119,7 +119,7 @@
         </div>
     </section>
 
-    <!-- BLOCK 2: ROUTE-SPECIFIC LEAD-TIME CURVE WITH FULL ROUTE DROPDOWN -->
+    <!-- BLOCK 2: ROUTE-SPECIFIC LEAD-TIME CURVE -->
     <section class="bg-mospi-card border border-mospi-border rounded-2xl p-6 shadow-xl space-y-4">
         <div class="flex flex-wrap items-center justify-between pb-3 border-b border-mospi-border gap-4">
             <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">
@@ -128,7 +128,7 @@
             <div class="flex items-center gap-3">
                 <label class="text-xs text-slate-400 font-medium">Select Corridor:</label>
                 <select id="leadtime-route-select" onchange="loadLeadTimeChart()" class="bg-slate-900 text-sky-300 text-xs font-mono font-bold rounded-xl px-3 py-2 border border-mospi-border outline-none cursor-pointer">
-                    <!-- Dynamically populated from backend -->
+                    <!-- Populated dynamically -->
                 </select>
             </div>
         </div>
@@ -137,11 +137,11 @@
         </div>
     </section>
 
-    <!-- BLOCK 3: MOSPI CORRIDOR & TAX LOOKUP CALCULATOR (Integrated Output) -->
-    <section class="bg-mospi-card border border-mospi-border rounded-2xl p-6 shadow-xl space-y-5">
+    <!-- BLOCK 3: COMBINED MOSPI CALCULATOR & MULTI-CARRIER BREAKDOWN -->
+    <section class="bg-mospi-card border border-mospi-border rounded-2xl p-6 shadow-xl space-y-6">
         <div class="flex items-center justify-between pb-3 border-b border-mospi-border">
             <h2 class="text-xs font-bold text-sky-400 uppercase tracking-wider">
-                <i class="fa-solid fa-calculator mr-1.5"></i> MoSPI Corridor & Tax Lookup Calculator
+                <i class="fa-solid fa-calculator mr-1.5"></i> MoSPI Corridor & Multi-Carrier Tax Lookup Calculator
             </h2>
             <span class="text-xs text-slate-400 font-mono">Real-Time Database Query Engine</span>
         </div>
@@ -150,8 +150,8 @@
             <div>
                 <label class="text-xs text-slate-400 block mb-1">Origin Airport</label>
                 <select id="calc-origin" class="w-full text-xs font-mono font-bold bg-slate-900 border border-mospi-border p-3 rounded-xl text-white outline-none cursor-pointer">
-                    <option value="DEL">Delhi (DEL)</option>
                     <option value="BOM" selected>Mumbai (BOM)</option>
+                    <option value="DEL">Delhi (DEL)</option>
                     <option value="BLR">Bengaluru (BLR)</option>
                     <option value="CCU">Kolkata (CCU)</option>
                 </select>
@@ -159,8 +159,8 @@
             <div>
                 <label class="text-xs text-slate-400 block mb-1">Destination Airport</label>
                 <select id="calc-dest" class="w-full text-xs font-mono font-bold bg-slate-900 border border-mospi-border p-3 rounded-xl text-white outline-none cursor-pointer">
-                    <option value="DEL" selected>Delhi (DEL)</option>
-                    <option value="BLR">Bengaluru (BLR)</option>
+                    <option value="BLR" selected>Bengaluru (BLR)</option>
+                    <option value="DEL">Delhi (DEL)</option>
                     <option value="BOM">Mumbai (BOM)</option>
                     <option value="CCU">Kolkata (CCU)</option>
                 </select>
@@ -170,82 +170,79 @@
                 <input type="date" id="calc-date" value="2026-10-15" class="w-full text-xs font-mono bg-slate-900 border border-mospi-border p-3 rounded-xl text-sky-300 outline-none">
             </div>
             <div>
-                <button onclick="runRouteCalculator()" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-black py-3 rounded-xl text-xs transition shadow-lg">
+                <button onclick="runRouteCalculator()" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-black py-3 rounded-xl text-xs transition shadow-lg cursor-pointer">
                     QUERY TELEMETRY ➔
                 </button>
             </div>
         </div>
 
-        <!-- Integrated Dynamic Result Cards -->
+        <!-- Aggregate Route Results -->
         <div id="calc-result-box" class="grid grid-cols-1 sm:grid-cols-5 gap-4 pt-4 border-t border-mospi-border">
             <div class="bg-slate-900/80 p-4 rounded-xl border border-mospi-border">
                 <div class="text-[10px] text-slate-400 uppercase">Base Seat Fare</div>
-                <div class="text-lg font-black mono text-emerald-400 mt-1" id="res-base">₹5,200</div>
+                <div class="text-lg font-black mono text-emerald-400 mt-1" id="res-base">Select Route</div>
             </div>
             <div class="bg-slate-900/80 p-4 rounded-xl border border-mospi-border">
                 <div class="text-[10px] text-slate-400 uppercase">Statutory Taxes & UDF</div>
-                <div class="text-lg font-black mono text-amber-400 mt-1" id="res-tax">₹1,150</div>
+                <div class="text-lg font-black mono text-amber-400 mt-1" id="res-tax">Select Route</div>
             </div>
             <div class="bg-slate-900/80 p-4 rounded-xl border border-mospi-border">
                 <div class="text-[10px] text-slate-400 uppercase">Total Quote</div>
-                <div class="text-lg font-black mono text-white mt-1" id="res-total">₹15,589</div>
+                <div class="text-lg font-black mono text-white mt-1" id="res-total">Select Route</div>
             </div>
             <div class="bg-slate-900/80 p-4 rounded-xl border border-mospi-border">
                 <div class="text-[10px] text-slate-400 uppercase">Route Inflation</div>
-                <div class="text-lg font-black mono text-sky-400 mt-1" id="res-inflation">+199.8%</div>
+                <div class="text-lg font-black mono text-sky-400 mt-1" id="res-inflation">--%</div>
             </div>
             <div class="bg-slate-900/80 p-4 rounded-xl border border-mospi-border">
                 <div class="text-[10px] text-slate-400 uppercase">Route APIx Index</div>
-                <div class="text-lg font-black mono text-purple-400 mt-1" id="res-cpi">299.8</div>
+                <div class="text-lg font-black mono text-purple-400 mt-1" id="res-cpi">---</div>
             </div>
         </div>
-    </section>
 
-    <!-- BLOCK 4: MULTI-CARRIER PRICE & TAX BREAKDOWN -->
-    <section class="bg-mospi-card border border-mospi-border rounded-2xl p-6 shadow-xl">
-        <div class="flex items-center justify-between pb-3 border-b border-mospi-border">
-            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                <i class="fa-solid fa-plane text-sky-400 mr-1.5"></i> Multi-Carrier Price & Tax Breakdown
-            </h2>
-            <span class="text-xs text-sky-400 font-mono">IndiGo | SpiceJet | Akasa | Alliance</span>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
-            <div class="bg-slate-900/60 p-4 rounded-xl border border-mospi-border">
-                <div class="flex justify-between items-center text-xs font-bold text-white"><span>IndiGo</span> <span class="text-sky-400 text-[10px]">74.3%</span></div>
-                <div class="mt-3 text-xl font-black mono text-white">106.4 <span class="text-xs font-normal text-slate-400">APIx</span></div>
-                <div class="mt-2 text-[11px] text-slate-400 space-y-1 font-mono">
-                    <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-400">₹5,800</strong></div>
-                    <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-400">₹1,250</strong></div>
-                </div>
+        <!-- Nested Multi-Carrier Price & Tax Breakdown Grid -->
+        <div class="pt-4 border-t border-mospi-border">
+            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">
+                <i class="fa-solid fa-plane text-sky-400 mr-1.5"></i> Multi-Carrier Price & Tax Breakdown for Selected Query
             </div>
-            <div class="bg-slate-900/60 p-4 rounded-xl border border-mospi-border">
-                <div class="flex justify-between items-center text-xs font-bold text-white"><span>SpiceJet</span> <span class="text-amber-400 text-[10px]">16.2%</span></div>
-                <div class="mt-3 text-xl font-black mono text-white">111.2 <span class="text-xs font-normal text-slate-400">APIx</span></div>
-                <div class="mt-2 text-[11px] text-slate-400 space-y-1 font-mono">
-                    <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-400">₹6,400</strong></div>
-                    <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-400">₹1,420</strong></div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-slate-900/60 p-4 rounded-xl border border-mospi-border">
+                    <div class="flex justify-between items-center text-xs font-bold text-white"><span>IndiGo</span> <span class="text-sky-400 text-[10px]" id="share-indigo">74.3%</span></div>
+                    <div class="mt-3 text-xl font-black mono text-white" id="idx-indigo">106.4 <span class="text-xs font-normal text-slate-400">APIx</span></div>
+                    <div class="mt-2 text-[11px] text-slate-400 space-y-1 font-mono">
+                        <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-400" id="base-indigo">₹--</strong></div>
+                        <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-400" id="tax-indigo">₹--</strong></div>
+                    </div>
                 </div>
-            </div>
-            <div class="bg-slate-900/60 p-4 rounded-xl border border-mospi-border">
-                <div class="flex justify-between items-center text-xs font-bold text-white"><span>Akasa Air</span> <span class="text-emerald-400 text-[10px]">5.4%</span></div>
-                <div class="mt-3 text-xl font-black mono text-white">104.1 <span class="text-xs font-normal text-slate-400">APIx</span></div>
-                <div class="mt-2 text-[11px] text-slate-400 space-y-1 font-mono">
-                    <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-400">₹5,400</strong></div>
-                    <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-400">₹1,180</strong></div>
+                <div class="bg-slate-900/60 p-4 rounded-xl border border-mospi-border">
+                    <div class="flex justify-between items-center text-xs font-bold text-white"><span>SpiceJet</span> <span class="text-amber-400 text-[10px]" id="share-spice">16.2%</span></div>
+                    <div class="mt-3 text-xl font-black mono text-white" id="idx-spice">111.2 <span class="text-xs font-normal text-slate-400">APIx</span></div>
+                    <div class="mt-2 text-[11px] text-slate-400 space-y-1 font-mono">
+                        <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-400" id="base-spice">₹--</strong></div>
+                        <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-400" id="tax-spice">₹--</strong></div>
+                    </div>
                 </div>
-            </div>
-            <div class="bg-slate-900/60 p-4 rounded-xl border border-mospi-border">
-                <div class="flex justify-between items-center text-xs font-bold text-white"><span>Alliance Air</span> <span class="text-purple-400 text-[10px]">4.1%</span></div>
-                <div class="mt-3 text-xl font-black mono text-white">109.8 <span class="text-xs font-normal text-slate-400">APIx</span></div>
-                <div class="mt-2 text-[11px] text-slate-400 space-y-1 font-mono">
-                    <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-400">₹6,100</strong></div>
-                    <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-400">₹1,350</strong></div>
+                <div class="bg-slate-900/60 p-4 rounded-xl border border-mospi-border">
+                    <div class="flex justify-between items-center text-xs font-bold text-white"><span>Akasa Air</span> <span class="text-emerald-400 text-[10px]" id="share-akasa">5.4%</span></div>
+                    <div class="mt-3 text-xl font-black mono text-white" id="idx-akasa">104.1 <span class="text-xs font-normal text-slate-400">APIx</span></div>
+                    <div class="mt-2 text-[11px] text-slate-400 space-y-1 font-mono">
+                        <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-400" id="base-akasa">₹--</strong></div>
+                        <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-400" id="tax-akasa">₹--</strong></div>
+                    </div>
+                </div>
+                <div class="bg-slate-900/60 p-4 rounded-xl border border-mospi-border">
+                    <div class="flex justify-between items-center text-xs font-bold text-white"><span>Alliance Air</span> <span class="text-purple-400 text-[10px]" id="share-alliance">4.1%</span></div>
+                    <div class="mt-3 text-xl font-black mono text-white" id="idx-alliance">109.8 <span class="text-xs font-normal text-slate-400">APIx</span></div>
+                    <div class="mt-2 text-[11px] text-slate-400 space-y-1 font-mono">
+                        <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-400" id="base-alliance">₹--</strong></div>
+                        <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-400" id="tax-alliance">₹--</strong></div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- BLOCK 5: WHY DID AIRFARES CHANGE? -->
+    <!-- BLOCK 4: WHY DID AIRFARES CHANGE? -->
     <section class="bg-mospi-card border border-mospi-border rounded-2xl p-6 shadow-xl space-y-4">
         <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">
             <i class="fa-solid fa-magnifying-glass-chart text-sky-400 mr-1.5"></i> Why Did Airfares Change? (Economic Attribution Engine for RBI & MoSPI)
@@ -270,7 +267,7 @@
         </div>
     </section>
 
-    <!-- BLOCK 6: DATA & METHODOLOGY -->
+    <!-- BLOCK 5: DATA & METHODOLOGY -->
     <section class="bg-mospi-card border border-mospi-border rounded-2xl p-6 shadow-xl space-y-4">
         <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">
             <i class="fa-solid fa-file-shield text-sky-400 mr-1.5"></i> Data Pipeline & CSO Methodology Standards
@@ -282,7 +279,7 @@
             </div>
             <div class="bg-slate-900/50 p-4 rounded-xl border border-mospi-border space-y-2">
                 <div class="font-bold text-white text-sm flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> Automated Alternative Telemetry</div>
-                <p class="text-slate-400 leading-relaxed">Ingests 38,719 verified records across 4 major domestic carriers, filtering outliers and standardizing formats.</p>
+                <p class="text-slate-400 leading-relaxed">Ingests 37,550 verified records across 4 major domestic carriers, filtering outliers and standardizing formats.</p>
             </div>
             <div class="bg-slate-900/50 p-4 rounded-xl border border-mospi-border space-y-2">
                 <div class="font-bold text-white text-sm flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> RBI MPC Policy Integration</div>
@@ -305,7 +302,7 @@
         await loadRoutesDropdown();
         refreshTrendChart();
         loadLeadTimeChart();
-        runRouteCalculator();
+        runRouteCalculator(); // Trigger initial query
     }
 
     async function loadRoutesDropdown() {
@@ -354,7 +351,7 @@
                     plugins: { legend: { display: false } },
                     scales: {
                         x: { grid: { color: 'rgba(30, 41, 59, 0.5)' }, ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 10 } } },
-                        y: { min: 95, max: 130, grid: { color: 'rgba(30, 41, 59, 0.5)' }, ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 10 } } }
+                        y: { min: 95, max: 135, grid: { color: 'rgba(30, 41, 59, 0.5)' }, ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 10 } } }
                     }
                 }
             });
@@ -406,11 +403,25 @@
             });
             const data = await res.json();
 
+            // Update aggregate summary cards
             document.getElementById('res-base').innerText = '₹' + data.base_fare.toLocaleString();
             document.getElementById('res-tax').innerText = '₹' + data.taxes.toLocaleString();
             document.getElementById('res-total').innerText = '₹' + data.total_fare.toLocaleString();
             document.getElementById('res-inflation').innerText = `${data.inflation >= 0 ? '+' : ''}${data.inflation}%`;
             document.getElementById('res-cpi').innerText = data.cpi_index;
+
+            // Update nested carrier breakdown cards dynamically
+            if (data.carriers) {
+                data.carriers.forEach(c => {
+                    const key = c.airline.toLowerCase().includes('indigo') ? 'indigo' :
+                                c.airline.toLowerCase().includes('spice') ? 'spice' :
+                                c.airline.toLowerCase().includes('akasa') ? 'akasa' : 'alliance';
+                    
+                    document.getElementById(`base-${key}`).innerText = '₹' + Math.round(c.base_fare).toLocaleString();
+                    document.getElementById(`tax-${key}`).innerText = '₹' + Math.round(c.taxes).toLocaleString();
+                    document.getElementById(`idx-${key}`).innerHTML = `${c.api_index} <span class="text-xs font-normal text-slate-400">APIx</span>`;
+                });
+            }
         } catch (err) { console.error(err); }
     }
 
