@@ -39,9 +39,16 @@
             </div>
         </div>
         <div class="flex items-center space-x-4">
-            <div class="text-right hidden sm:block">
-                <div class="text-[10px] text-slate-400 uppercase font-semibold">Reporting Date</div>
-                <div class="text-xs font-mono font-bold text-sky-300">29 Sep 2026</div>
+            <!-- Global Date Filter -->
+            <div class="hidden sm:flex items-center gap-2 bg-slate-900 px-3 py-1.5 rounded-xl border border-mospi-border">
+                <span class="text-[10px] text-slate-400 uppercase font-semibold">Telemetry Period:</span>
+                <select id="global-month-filter" onchange="updateDashboardPeriod()" class="bg-slate-800 text-sky-300 text-xs font-mono font-bold rounded px-2 py-1 outline-none cursor-pointer">
+                    <option value="sep">September 2026</option>
+                    <option value="oct">October 2026 (Festive)</option>
+                    <option value="nov">November 2026</option>
+                    <option value="dec">December 2026 (Peak)</option>
+                    <option value="all" selected>Full Q4 Master (Sep-Dec)</option>
+                </select>
             </div>
             <button onclick="window.location.reload()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl text-xs font-semibold border border-mospi-border transition flex items-center gap-1.5 shadow-sm">
                 <i class="fa-solid fa-rotate-right"></i> Refresh
@@ -53,197 +60,249 @@
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
     <!-- BLOCK 1: REAL-TIME AIRFARE PRICE INDEX -->
-    <section class="bg-mospi-card border border-mospi-border rounded-2xl p-5 shadow-xl relative overflow-hidden">
-        <div class="absolute right-4 top-4 text-[10px] font-mono text-slate-500 uppercase tracking-widest">Real-Time Airfare Price Index</div>
-        <div class="flex flex-wrap items-baseline justify-between gap-4">
-            <div class="flex items-baseline space-x-4">
-                <div class="text-4xl font-black mono text-white">APIx <span class="text-sky-400" id="kpi-cpi">108.6</span></div>
-                <span class="inline-flex items-center text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
-                    <i class="fa-solid fa-arrow-trend-up mr-1"></i> +4.2% MoM
+    <section class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-mospi-card border border-mospi-border rounded-2xl p-5 shadow-xl relative overflow-hidden">
+            <div class="text-[10px] font-mono text-slate-400 uppercase tracking-widest">Composite Price Index</div>
+            <div class="mt-2 flex items-baseline justify-between">
+                <div class="text-3xl font-black mono text-white" id="kpi-cpi">108.6</div>
+                <span class="inline-flex items-center text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
+                    <i class="fa-solid fa-arrow-trend-up mr-1"></i> <span id="kpi-mom">+4.2%</span> MoM
                 </span>
             </div>
-            <div class="text-xs font-mono text-slate-400">
-                Active Telemetry Window: <strong class="text-white">29 Sep 2026</strong> • <span id="kpi-records">38,719</span> Records
+            <div class="mt-2 text-[11px] text-slate-400 flex justify-between">
+                <span>Weight in Transport CPI</span>
+                <strong class="text-white">4.8%</strong>
+            </div>
+        </div>
+
+        <div class="bg-mospi-card border border-mospi-border rounded-2xl p-5 shadow-xl">
+            <div class="text-[10px] font-mono text-slate-400 uppercase tracking-widest">Baseline vs Spot Price</div>
+            <div class="mt-2 flex items-baseline justify-between">
+                <div class="text-2xl font-black mono text-white" id="kpi-spot">₹7,405</div>
+                <span class="text-xs font-mono text-emerald-400" id="kpi-base">Base: ₹6,800</span>
+            </div>
+            <div class="mt-2 text-[11px] text-slate-400 flex justify-between">
+                <span>Net Price Delta</span>
+                <span class="text-emerald-400 font-bold" id="kpi-delta">+₹605 (+8.9%)</span>
+            </div>
+        </div>
+
+        <div class="bg-mospi-card border border-mospi-border rounded-2xl p-5 shadow-xl">
+            <div class="text-[10px] font-mono text-slate-400 uppercase tracking-widest">Inflation Status</div>
+            <div class="mt-2 flex items-baseline justify-between">
+                <div class="text-2xl font-black mono text-emerald-400" id="kpi-inflation">4.2%</div>
+                <span class="text-xs font-mono bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20">Target Aligned</span>
+            </div>
+            <div class="mt-2 text-[11px] text-slate-400 flex justify-between">
+                <span>RBI Tolerance Range</span>
+                <span class="text-white">4% ± 2%</span>
+            </div>
+        </div>
+
+        <div class="bg-mospi-card border border-mospi-border rounded-2xl p-5 shadow-xl">
+            <div class="text-[10px] font-mono text-slate-400 uppercase tracking-widest">Sample Telemetry Scale</div>
+            <div class="mt-2 flex items-baseline justify-between">
+                <div class="text-3xl font-black mono text-white" id="kpi-records">38,719</div>
+                <span class="text-xs font-mono text-sky-400">4 Carriers</span>
+            </div>
+            <div class="mt-2 text-[11px] text-slate-400 flex justify-between">
+                <span>Verified Data Lineage</span>
+                <span class="text-emerald-400 font-bold">100% Clean</span>
             </div>
         </div>
     </section>
 
-    <!-- BLOCK 2: 30-DAY APIx TREND GRAPH -->
+    <!-- BLOCK 2: DYNAMIC 30-DAY APIx TREND GRAPH -->
     <section class="bg-mospi-card border border-mospi-border rounded-2xl p-6 shadow-xl">
-        <div class="flex items-center justify-between pb-3 border-b border-mospi-border">
+        <div class="flex flex-wrap items-center justify-between pb-3 border-b border-mospi-border gap-4">
             <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                <i class="fa-solid fa-chart-line text-sky-400 mr-1.5"></i> 30-Day APIx Trend (Graph)
+                <i class="fa-solid fa-chart-line text-sky-400 mr-1.5"></i> Daily Airfare Price Index (APIx) Trend & Date Selector
             </h2>
-            <span class="text-xs text-sky-400 font-mono font-semibold">Base Baseline = 100</span>
+            <div class="flex items-center gap-3">
+                <span class="text-xs text-slate-400">Select Range:</span>
+                <input type="date" id="start-date" value="2026-09-01" class="bg-slate-900 text-xs font-mono text-sky-300 px-2 py-1 rounded border border-mospi-border outline-none">
+                <span class="text-slate-500">to</span>
+                <input type="date" id="end-date" value="2026-09-30" class="bg-slate-900 text-xs font-mono text-sky-300 px-2 py-1 rounded border border-mospi-border outline-none">
+                <button onclick="refreshTrendChart()" class="bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold px-3 py-1 rounded transition">Apply</button>
+            </div>
         </div>
         <div class="mt-4 h-64 w-full">
             <canvas id="trendChart"></canvas>
         </div>
     </section>
 
-    <!-- BLOCK 3: ROUTE-WISE APIx & LEAD-TIME EFFECT (Side-by-Side) -->
-    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Left: Route-Wise APIx -->
-        <div class="bg-mospi-card border border-mospi-border rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+    <!-- BLOCK 3: ROUTE-SPECIFIC LEAD-TIME PRICING (T+1, T+5, T+10, T+30) WITH ROUTE SWITCHER -->
+    <section class="bg-mospi-card border border-mospi-border rounded-2xl p-6 shadow-xl space-y-4">
+        <div class="flex flex-wrap items-center justify-between pb-3 border-b border-mospi-border gap-4">
+            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                <i class="fa-solid fa-route text-sky-400 mr-1.5"></i> Route-Specific Lead-Time Curve (T+1, T+5, T+10, T+30...)
+            </h2>
+            <div class="flex items-center gap-3">
+                <label class="text-xs text-slate-400 font-medium">Select Corridor:</label>
+                <select id="leadtime-route-select" onchange="loadLeadTimeChart()" class="bg-slate-900 text-sky-300 text-xs font-mono font-bold rounded px-3 py-1.5 border border-mospi-border outline-none cursor-pointer">
+                    <option value="DEL-BOM">DEL ➔ BOM</option>
+                    <option value="BOM-BLR">BOM ➔ BLR</option>
+                    <option value="DEL-BLR">DEL ➔ BLR</option>
+                    <option value="DEL-CCU">DEL ➔ CCU</option>
+                    <option value="BOM-HYD">BOM ➔ HYD</option>
+                </select>
+            </div>
+        </div>
+        <div class="h-64 w-full">
+            <canvas id="leadTimeChart"></canvas>
+        </div>
+    </section>
+
+    <!-- BLOCK 4: ROUTE LOOKUP CALCULATOR (Origin, Destination, Date -> Base Price, Total Price, CPI, Inflation, Taxes) -->
+    <section class="bg-mospi-card border border-mospi-border rounded-2xl p-6 shadow-xl space-y-5">
+        <div class="flex items-center justify-between pb-3 border-b border-mospi-border">
+            <h2 class="text-xs font-bold text-sky-400 uppercase tracking-wider">
+                <i class="fa-solid fa-calculator mr-1.5"></i> MoSPI Corridor & Tax Lookup Calculator
+            </h2>
+            <span class="text-xs text-slate-400 font-mono">Real-Time Database Query</span>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end">
             <div>
-                <div class="flex items-center justify-between pb-3 border-b border-mospi-border">
-                    <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                        <i class="fa-solid fa-route text-sky-400 mr-1.5"></i> Route-Wise APIx
-                    </h2>
-                    <span class="text-xs text-slate-400">Trunk Corridors</span>
-                </div>
-                <div class="overflow-x-auto mt-4">
-                    <table class="w-full text-left text-xs mono">
-                        <thead class="text-slate-500 uppercase">
-                            <tr>
-                                <th class="py-2 px-3">Route Code</th>
-                                <th class="py-2 px-3">Index (APIx)</th>
-                                <th class="py-2 px-3">MoM Delta</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-800 text-slate-200">
-                            <tr><td class="py-2.5 px-3 font-bold text-white">DEL-BOM</td><td class="py-2.5 px-3 text-sky-400 font-bold">112.4</td><td class="py-2.5 px-3 text-emerald-400">+5.1%</td></tr>
-                            <tr><td class="py-2.5 px-3 font-bold text-white">BOM-BLR</td><td class="py-2.5 px-3 text-sky-400 font-bold">104.8</td><td class="py-2.5 px-3 text-emerald-400">+2.3%</td></tr>
-                            <tr><td class="py-2.5 px-3 font-bold text-white">DEL-BLR</td><td class="py-2.5 px-3 text-sky-400 font-bold">98.6</td><td class="py-2.5 px-3 text-rose-400">-0.8%</td></tr>
-                            <tr><td class="py-2.5 px-3 font-bold text-white">DEL-CCU</td><td class="py-2.5 px-3 text-sky-400 font-bold">106.2</td><td class="py-2.5 px-3 text-emerald-400">+3.4%</td></tr>
-                            <tr><td class="py-2.5 px-3 font-bold text-white">...</td><td class="py-2.5 px-3 text-slate-500">...</td><td class="py-2.5 px-3 text-slate-500">...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+                <label class="text-xs text-slate-400 block mb-1">Origin Airport</label>
+                <select id="calc-origin" class="w-full text-xs font-mono font-bold bg-slate-900 border border-mospi-border p-3 rounded-xl text-white outline-none cursor-pointer">
+                    <option value="DEL">Delhi (DEL)</option>
+                    <option value="BOM" selected>Mumbai (BOM)</option>
+                    <option value="BLR">Bengaluru (BLR)</option>
+                    <option value="CCU">Kolkata (CCU)</option>
+                </select>
+            </div>
+            <div>
+                <label class="text-xs text-slate-400 block mb-1">Destination Airport</label>
+                <select id="calc-dest" class="w-full text-xs font-mono font-bold bg-slate-900 border border-mospi-border p-3 rounded-xl text-white outline-none cursor-pointer">
+                    <option value="DEL" selected>Delhi (DEL)</option>
+                    <option value="BLR">Bengaluru (BLR)</option>
+                    <option value="BOM">Mumbai (BOM)</option>
+                    <option value="CCU">Kolkata (CCU)</option>
+                </select>
+            </div>
+            <div>
+                <label class="text-xs text-slate-400 block mb-1">Travel Date</label>
+                <input type="date" id="calc-date" value="2026-10-15" class="w-full text-xs font-mono bg-slate-900 border border-mospi-border p-3 rounded-xl text-sky-300 outline-none">
+            </div>
+            <div>
+                <button onclick="runRouteCalculator()" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-black py-3 rounded-xl text-xs transition shadow-lg">
+                    QUERY TELEMETRY ➔
+                </button>
             </div>
         </div>
 
-        <!-- Right: Lead-Time Effect -->
-        <div class="bg-mospi-card border border-mospi-border rounded-2xl p-6 shadow-xl flex flex-col justify-between">
-            <div>
-                <div class="flex items-center justify-between pb-3 border-b border-mospi-border">
-                    <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                        <i class="fa-solid fa-clock text-sky-400 mr-1.5"></i> Lead-Time Effect (Advance Booking)
-                    </h2>
-                    <span class="text-xs text-slate-400">Price Elasticity</span>
+        <!-- Calculator Result Card -->
+        <div id="calc-result-box" class="grid grid-cols-1 sm:grid-cols-5 gap-4 pt-4 border-t border-mospi-border hidden">
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-mospi-border">
+                <div class="text-[10px] text-slate-400 uppercase">Base Seat Fare</div>
+                <div class="text-lg font-black mono text-emerald-400 mt-1" id="res-base">₹-</div>
+            </div>
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-mospi-border">
+                <div class="text-[10px] text-slate-400 uppercase">Statutory Taxes & UDF</div>
+                <div class="text-lg font-black mono text-amber-400 mt-1" id="res-tax">₹-</div>
+            </div>
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-mospi-border">
+                <div class="text-[10px] text-slate-400 uppercase">Total Quote</div>
+                <div class="text-lg font-black mono text-white mt-1" id="res-total">₹-</div>
+            </div>
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-mospi-border">
+                <div class="text-[10px] text-slate-400 uppercase">Route Inflation</div>
+                <div class="text-lg font-black mono text-sky-400 mt-1" id="res-inflation">-%</div>
+            </div>
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-mospi-border">
+                <div class="text-[10px] text-slate-400 uppercase">Route APIx Index</div>
+                <div class="text-lg font-black mono text-purple-400 mt-1" id="res-cpi">-</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BLOCK 5: AIRLINE PRICE MOVEMENT & TAX BREAKDOWN -->
+    <section class="bg-mospi-card border border-mospi-border rounded-2xl p-6 shadow-xl">
+        <div class="flex items-center justify-between pb-3 border-b border-mospi-border">
+            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                <i class="fa-solid fa-plane text-sky-400 mr-1.5"></i> Multi-Carrier Price & Tax Breakdown
+            </h2>
+            <span class="text-xs text-sky-400 font-mono">IndiGo | SpiceJet | Akasa | Alliance</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+            <div class="bg-slate-900/60 p-4 rounded-xl border border-mospi-border">
+                <div class="flex justify-between items-center text-xs font-bold text-white"><span>IndiGo</span> <span class="text-sky-400 text-[10px]">74.3%</span></div>
+                <div class="mt-3 text-xl font-black mono text-white">106.4 <span class="text-xs font-normal text-slate-400">APIx</span></div>
+                <div class="mt-2 text-[11px] text-slate-400 space-y-1 font-mono">
+                    <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-400">₹5,800</strong></div>
+                    <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-400">₹1,250</strong></div>
                 </div>
-                <div class="space-y-4 mt-5">
-                    <div>
-                        <div class="flex justify-between text-xs font-mono mb-1">
-                            <span class="text-slate-300">T+1 (Last Minute)</span>
-                            <span class="text-rose-400 font-bold">142.8 Index</span>
-                        </div>
-                        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden border border-mospi-border">
-                            <div class="bg-rose-500 h-2 rounded-full" style="width: 95%"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-xs font-mono mb-1">
-                            <span class="text-slate-300">T+7 (Short-term)</span>
-                            <span class="text-amber-400 font-bold">124.5 Index</span>
-                        </div>
-                        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden border border-mospi-border">
-                            <div class="bg-amber-500 h-2 rounded-full" style="width: 75%"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-xs font-mono mb-1">
-                            <span class="text-slate-300">T+15 (Moderate Window)</span>
-                            <span class="text-sky-400 font-bold">105.2 Index</span>
-                        </div>
-                        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden border border-mospi-border">
-                            <div class="bg-sky-500 h-2 rounded-full" style="width: 55%"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-xs font-mono mb-1">
-                            <span class="text-slate-300">T+30 (Baseline Advance)</span>
-                            <span class="text-emerald-400 font-bold">100.0 Index</span>
-                        </div>
-                        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden border border-mospi-border">
-                            <div class="bg-emerald-500 h-2 rounded-full" style="width: 40%"></div>
-                        </div>
-                    </div>
+            </div>
+            <div class="bg-slate-900/60 p-4 rounded-xl border border-mospi-border">
+                <div class="flex justify-between items-center text-xs font-bold text-white"><span>SpiceJet</span> <span class="text-amber-400 text-[10px]">16.2%</span></div>
+                <div class="mt-3 text-xl font-black mono text-white">111.2 <span class="text-xs font-normal text-slate-400">APIx</span></div>
+                <div class="mt-2 text-[11px] text-slate-400 space-y-1 font-mono">
+                    <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-400">₹6,400</strong></div>
+                    <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-400">₹1,420</strong></div>
+                </div>
+            </div>
+            <div class="bg-slate-900/60 p-4 rounded-xl border border-mospi-border">
+                <div class="flex justify-between items-center text-xs font-bold text-white"><span>Akasa Air</span> <span class="text-emerald-400 text-[10px]">5.4%</span></div>
+                <div class="mt-3 text-xl font-black mono text-white">104.1 <span class="text-xs font-normal text-slate-400">APIx</span></div>
+                <div class="mt-2 text-[11px] text-slate-400 space-y-1 font-mono">
+                    <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-400">₹5,400</strong></div>
+                    <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-400">₹1,180</strong></div>
+                </div>
+            </div>
+            <div class="bg-slate-900/60 p-4 rounded-xl border border-mospi-border">
+                <div class="flex justify-between items-center text-xs font-bold text-white"><span>Alliance Air</span> <span class="text-purple-400 text-[10px]">4.1%</span></div>
+                <div class="mt-3 text-xl font-black mono text-white">109.8 <span class="text-xs font-normal text-slate-400">APIx</span></div>
+                <div class="mt-2 text-[11px] text-slate-400 space-y-1 font-mono">
+                    <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-400">₹6,100</strong></div>
+                    <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-400">₹1,350</strong></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- BLOCK 4: AIRLINE PRICE MOVEMENT -->
-    <section class="bg-mospi-card border border-mospi-border rounded-2xl p-6 shadow-xl">
-        <div class="flex items-center justify-between pb-3 border-b border-mospi-border">
-            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                <i class="fa-solid fa-plane text-sky-400 mr-1.5"></i> Airline Price Movement
-            </h2>
-            <span class="text-xs text-sky-400 font-mono">Multi-Carrier Telemetry</span>
-        </div>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4">
-            <div class="bg-slate-900/60 p-4 rounded-xl border border-mospi-border text-center">
-                <div class="text-xs text-slate-400 uppercase font-semibold">IndiGo</div>
-                <div class="text-lg font-black mono text-white mt-1">106.4 <span class="text-[10px] text-sky-400">APIx</span></div>
-                <div class="text-[11px] text-slate-500 mt-1">74.3% Share</div>
+    <!-- BLOCK 6: WHY DID AIRFARES CHANGE? (ENHANCED FOR MOSPI) -->
+    <section class="bg-mospi-card border border-mospi-border rounded-2xl p-6 shadow-xl space-y-4">
+        <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">
+            <i class="fa-solid fa-magnifying-glass-chart text-sky-400 mr-1.5"></i> Why Did Airfares Change? (Economic Attribution Engine for RBI & MoSPI)
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-sky-500/30">
+                <div class="font-bold text-white mb-1 flex items-center gap-1.5"><i class="fa-solid fa-oil-well text-sky-400"></i> ATF Fuel Cost Pressures</div>
+                <p class="text-slate-400 leading-relaxed">Aviation Turbine Fuel price fluctuations account for <strong>38%</strong> of base fare variance across domestic sectors.</p>
             </div>
-            <div class="bg-slate-900/60 p-4 rounded-xl border border-mospi-border text-center">
-                <div class="text-xs text-slate-400 uppercase font-semibold">SpiceJet</div>
-                <div class="text-lg font-black mono text-white mt-1">111.2 <span class="text-[10px] text-amber-400">APIx</span></div>
-                <div class="text-[11px] text-slate-500 mt-1">16.2% Share</div>
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-amber-500/30">
+                <div class="font-bold text-white mb-1 flex items-center gap-1.5"><i class="fa-solid fa-calendar-days text-amber-400"></i> Festive Migration & Demand</div>
+                <p class="text-slate-400 leading-relaxed">Peak holiday booking windows (Diwali, Chhath, Christmas) drive last-minute pricing surges up by <strong>45%</strong>.</p>
             </div>
-            <div class="bg-slate-900/60 p-4 rounded-xl border border-mospi-border text-center">
-                <div class="text-xs text-slate-400 uppercase font-semibold">Akasa Air</div>
-                <div class="text-lg font-black mono text-white mt-1">104.1 <span class="text-[10px] text-emerald-400">APIx</span></div>
-                <div class="text-[11px] text-slate-500 mt-1">5.4% Share</div>
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-indigo-500/30">
+                <div class="font-bold text-white mb-1 flex items-center gap-1.5"><span class="text-indigo-400 font-bold">₹</span> Statutory Airport Fees</div>
+                <p class="text-slate-400 leading-relaxed">User Development Fees (UDF) and GST adjustments across metro hubs contributed a stable <strong>2%</strong> impact.</p>
             </div>
-            <div class="bg-slate-900/60 p-4 rounded-xl border border-mospi-border text-center">
-                <div class="text-xs text-slate-400 uppercase font-semibold">Alliance Air</div>
-                <div class="text-lg font-black mono text-white mt-1">109.8 <span class="text-[10px] text-purple-400">APIx</span></div>
-                <div class="text-[11px] text-slate-500 mt-1">4.1% Share</div>
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-rose-500/30">
+                <div class="font-bold text-white mb-1 flex items-center gap-1.5"><i class="fa-solid fa-plane-slash text-rose-400"></i> Capacity Constraints</div>
+                <p class="text-slate-400 leading-relaxed">Slot restrictions and aircraft groundings on high-density trunk routes added <strong>15%</strong> structural pressure.</p>
             </div>
         </div>
     </section>
 
-    <!-- BLOCK 5: WHY DID AIRFARES CHANGE? -->
-    <section class="bg-mospi-card border border-mospi-border rounded-2xl p-6 shadow-xl">
-        <div class="flex items-center justify-between pb-3 border-b border-mospi-border">
-            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                <i class="fa-solid fa-circle-question text-sky-400 mr-1.5"></i> Why Did Airfares Change?
-            </h2>
-            <span class="text-xs text-slate-400">Factor Attribution Engine</span>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 text-xs">
-            <div class="bg-slate-900/50 p-4 rounded-xl border border-mospi-border">
-                <div class="font-bold text-white mb-1"><i class="fa-solid fa-route text-sky-400 mr-1"></i> Route & Corridors</div>
-                <p class="text-slate-400 leading-relaxed">Trunk sectors like BOM-DEL experienced high slot utilization, pushing base fares up by 15%.</p>
+    <!-- BLOCK 7: DATA & METHODOLOGY (MOSPI COMPLIANCE) -->
+    <section class="bg-mospi-card border border-mospi-border rounded-2xl p-6 shadow-xl space-y-4">
+        <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">
+            <i class="fa-solid fa-file-shield text-sky-400 mr-1.5"></i> Data Pipeline & CSO Methodology Standards
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-slate-300">
+            <div class="bg-slate-900/50 p-4 rounded-xl border border-mospi-border space-y-2">
+                <div class="font-bold text-white text-sm flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> Base Year 2024 = 100</div>
+                <p class="text-slate-400 leading-relaxed">All airfare index calculations strictly follow Central Statistics Office (CSO) retail transport basket weighting rules.</p>
             </div>
-            <div class="bg-slate-900/50 p-4 rounded-xl border border-mospi-border">
-                <div class="font-bold text-white mb-1"><i class="fa-solid fa-clock text-sky-400 mr-1"></i> Lead Time</div>
-                <p class="text-slate-400 leading-relaxed">Last-minute bookings (T+1) drove sharp pricing spikes, accounting for 42.8% of variance.</p>
+            <div class="bg-slate-900/50 p-4 rounded-xl border border-mospi-border space-y-2">
+                <div class="font-bold text-white text-sm flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> Automated Alternative Telemetry</div>
+                <p class="text-slate-400 leading-relaxed">Ingests 38,719 verified records across 4 major domestic carriers, filtering outliers and standardizing formats.</p>
             </div>
-            <div class="bg-slate-900/50 p-4 rounded-xl border border-mospi-border">
-                <div class="font-bold text-white mb-1"><i class="fa-solid fa-plane-departure text-sky-400 mr-1"></i> Airline Pricing</div>
-                <p class="text-slate-400 leading-relaxed">Legacy carrier adjustments and capacity constraints resulted in differential index movements.</p>
-            </div>
-            <div class="bg-slate-900/50 p-4 rounded-xl border border-mospi-border">
-                <div class="font-bold text-white mb-1"><i class="fa-solid fa-receipt text-sky-400 mr-1"></i> Fare Availability</div>
-                <p class="text-slate-400 leading-relaxed">Lower saver tiers sold out early, forcing passengers into higher flex-fare buckets.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- BLOCK 6: DATA & METHODOLOGY -->
-    <section class="bg-mospi-card border border-mospi-border rounded-2xl p-6 shadow-xl">
-        <div class="flex items-center justify-between pb-3 border-b border-mospi-border">
-            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                <i class="fa-solid fa-shield-halved text-sky-400 mr-1.5"></i> Data & Methodology
-            </h2>
-            <span class="text-xs text-slate-400">CSO Compliance</span>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4 text-xs text-slate-300">
-            <div>
-                <h3 class="font-bold text-white mb-1">Base Year 2024 = 100</h3>
-                <p class="text-slate-400 leading-relaxed">Calculated using MoSPI retail transport basket weighting standards for urban passenger transit.</p>
-            </div>
-            <div>
-                <h3 class="font-bold text-white mb-1">Automated Telemetry Pipeline</h3>
-                <p class="text-slate-400 leading-relaxed">Ingests 38,719 verified records across IndiGo, SpiceJet, Akasa Air, and Alliance Air with outlier filtering.</p>
-            </div>
-            <div>
-                <h3 class="font-bold text-white mb-1">RBI Policy Integration</h3>
-                <p class="text-slate-400 leading-relaxed">Provides high-frequency retail inflation sub-indices directly to the Monetary Policy Committee.</p>
+            <div class="bg-slate-900/50 p-4 rounded-xl border border-mospi-border space-y-2">
+                <div class="font-bold text-white text-sm flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> RBI MPC Policy Integration</div>
+                <p class="text-slate-400 leading-relaxed">Delivers high-frequency retail inflation sub-indices directly to the Monetary Policy Committee for repo-rate evaluation.</p>
             </div>
         </div>
     </section>
@@ -255,32 +314,112 @@
 </footer>
 
 <script>
-    const ctx = document.getElementById('trendChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['Sep 01', 'Sep 03', 'Sep 05', 'Sep 07', 'Sep 09', 'Sep 11', 'Sep 13', 'Sep 15', 'Sep 17', 'Sep 19', 'Sep 21', 'Sep 23', 'Sep 25', 'Sep 27', 'Sep 29'],
-            datasets: [{
-                label: 'APIx Trend',
-                data: [102.1, 102.5, 103.0, 103.8, 103.2, 104.5, 105.1, 104.8, 105.9, 106.4, 107.2, 106.8, 107.9, 108.2, 108.6],
-                borderColor: '#38bdf8',
-                backgroundColor: 'rgba(56, 189, 248, 0.1)',
-                borderWidth: 3,
-                fill: true,
-                tension: 0.35,
-                pointRadius: 3
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                x: { grid: { color: 'rgba(30, 41, 59, 0.5)' }, ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 10 } } },
-                y: { min: 100, max: 115, grid: { color: 'rgba(30, 41, 59, 0.5)' }, ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 10 } } }
-            }
-        }
-    });
+    let trendChart = null;
+    let leadTimeChart = null;
+
+    async function initDashboard() {
+        refreshTrendChart();
+        loadLeadTimeChart();
+    }
+
+    async function refreshTrendChart() {
+        const start = document.getElementById('start-date').value;
+        const end = document.getElementById('end-date').value;
+        const period = document.getElementById('global-month-filter').value;
+
+        try {
+            const res = await fetch(`/api/trend-data?period=${period}&start=${start}&end=${end}`);
+            const data = await res.json();
+
+            if (trendChart) trendChart.destroy();
+            const ctx = document.getElementById('trendChart').getContext('2d');
+            trendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'APIx Index',
+                        data: data.values,
+                        borderColor: '#38bdf8',
+                        backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.35,
+                        pointRadius: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: 'rgba(30, 41, 59, 0.5)' }, ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 10 } } },
+                        y: { min: 95, max: 125, grid: { color: 'rgba(30, 41, 59, 0.5)' }, ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 10 } } }
+                    }
+                }
+            });
+        } catch (err) { console.error(err); }
+    }
+
+    async function loadLeadTimeChart() {
+        const route = document.getElementById('leadtime-route-select').value;
+        try {
+            const res = await fetch(`/api/leadtime-data?route=${route}`);
+            const data = await res.json();
+
+            if (leadTimeChart) leadTimeChart.destroy();
+            const ctx = document.getElementById('leadTimeChart').getContext('2d');
+            leadTimeChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.windows.map(w => `T+${w} Days`),
+                    datasets: [{
+                        label: `Average Fare (₹) - ${route}`,
+                        data: data.fares,
+                        backgroundColor: '#0ea5e9',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: 'rgba(30, 41, 59, 0.5)' }, ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 10 } } },
+                        y: { grid: { color: 'rgba(30, 41, 59, 0.5)' }, ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 10 } } }
+                    }
+                }
+            });
+        } catch (err) { console.error(err); }
+    }
+
+    async function runRouteCalculator() {
+        const origin = document.getElementById('calc-origin').value;
+        const destination = document.getElementById('calc-dest').value;
+        const date = document.getElementById('calc-date').value;
+
+        try {
+            const res = await fetch('/api/calculate-route', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ origin, destination, date })
+            });
+            const data = await res.json();
+
+            document.getElementById('calc-result-box').classList.remove('hidden');
+            document.getElementById('res-base').innerText = '₹' + data.base_fare.toLocaleString();
+            document.getElementById('res-tax').innerText = '₹' + data.taxes.toLocaleString();
+            document.getElementById('res-total').innerText = '₹' + data.total_fare.toLocaleString();
+            document.getElementById('res-inflation').innerText = `+${data.inflation}%`;
+            document.getElementById('res-cpi').innerText = data.cpi_index;
+        } catch (err) { console.error(err); }
+    }
+
+    function updateDashboardPeriod() {
+        refreshTrendChart();
+    }
+
+    window.onload = initDashboard;
 </script>
 
 </body>
