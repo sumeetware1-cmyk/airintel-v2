@@ -31,16 +31,14 @@ def home():
 def get_airports_list():
     airports = []
     if not df.empty:
-        if 'origin' in df.columns:
-            raw_orig = df['origin'].dropna().astype(str).str.strip().str.upper().unique()
-            for o in raw_orig:
-                if o in AIRPORT_MAP and AIRPORT_MAP[o] not in airports:
-                    airports.append(AIRPORT_MAP[o])
-        if 'destination' in df.columns:
-            raw_dest = df['destination'].dropna().astype(str).str.strip().str.upper().unique()
-            for d in raw_dest:
-                if d in AIRPORT_MAP and AIRPORT_MAP[d] not in airports:
-                    airports.append(AIRPORT_MAP[d])
+        for col in ['origin', 'destination']:
+            if col in df.columns:
+                raw_vals = df[col].dropna().astype(str).str.strip().str.upper().unique()
+                for v in raw_vals:
+                    # Map code or add directly
+                    display = AIRPORT_MAP.get(v, f"{v} ({v})")
+                    if display not in airports:
+                        airports.append(display)
     if not airports:
         airports = list(AIRPORT_MAP.values())
     return jsonify({'airports': sorted(airports)})
@@ -61,8 +59,12 @@ def query_master():
 
     if not rdf.empty and 'total_fare' in rdf.columns:
         total = float(rdf['total_fare'].mean())
-        base = total * 0.82
-        tax = total * 0.18
+        # Accurately compute base fare and taxes from actual dataset values if available
+        base_series = rdf['base_fare'].dropna() if 'base_fare' in rdf.columns else pd.Series()
+        tax_series = rdf['taxes'].dropna() if 'taxes' in rdf.columns else pd.Series()
+        
+        base = float(base_series.mean()) if not base_series.empty else total * 0.82
+        tax = float(tax_series.mean()) if not tax_series.empty else total * 0.18
     else:
         total = 12450.0
         base = 10200.0
@@ -71,13 +73,25 @@ def query_master():
     inflation = round(((total - 10500) / 10500) * 100, 1)
     cpi = round((total / 10500) * 100, 1)
 
-    # Carrier breakdown calculation
+    # Carrier breakdown calculation reflecting true dataset pricing
     carriers_data = []
     airline_shares = {'IndiGo': 0.743, 'SpiceJet': 0.162, 'Akasa Air': 0.054, 'Alliance Air': 0.041}
     for air, share in airline_shares.items():
-        air_total = total * (0.92 + (hash(air + route_key) % 15) / 100)
-        air_base = air_total * 0.82
-        air_tax = air_total * 0.18
+        if not rdf.empty and 'airline' in rdf.columns:
+            sub_air = rdf[rdf['airline'].str.lower() == air.lower()]
+            if not sub_air.empty:
+                air_total = float(sub_air['total_fare'].mean())
+                air_base = float(sub_air['base_fare'].mean()) if 'base_fare' in sub_air.columns and not sub_air['base_fare'].isnull().all() else air_total * 0.82
+                air_tax = float(sub_air['taxes'].mean()) if 'taxes' in sub_air.columns and not sub_air['taxes'].isnull().all() else air_total * 0.18
+            else:
+                air_total = total * (0.95 + (hash(air) % 10) / 100)
+                air_base = air_total * 0.82
+                air_tax = air_total * 0.18
+        else:
+            air_total = total * (0.95 + (hash(air) % 10) / 100)
+            air_base = air_total * 0.82
+            air_tax = air_total * 0.18
+
         air_cpi = round((air_total / 10500) * 100, 1)
         carriers_data.append({
             'airline': air,
