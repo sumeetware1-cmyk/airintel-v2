@@ -75,11 +75,21 @@
                 <div>
                     <label class="text-xs text-slate-600 dark:text-slate-400 block mb-1 font-semibold">Origin Airport</label>
                     <select id="global-origin" class="w-full text-xs font-mono font-bold bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-mospi-border p-3 rounded-xl outline-none cursor-pointer">
+                        <option value="BOM">Mumbai (BOM)</option>
+                        <option value="DEL">Delhi (DEL)</option>
+                        <option value="BLR">Bengaluru (BLR)</option>
+                        <option value="HYD">Hyderabad (HYD)</option>
+                        <option value="CCU">Kolkata (CCU)</option>
                     </select>
                 </div>
                 <div>
                     <label class="text-xs text-slate-600 dark:text-slate-400 block mb-1 font-semibold">Destination Airport</label>
                     <select id="global-dest" class="w-full text-xs font-mono font-bold bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-mospi-border p-3 rounded-xl outline-none cursor-pointer">
+                        <option value="DEL">Delhi (DEL)</option>
+                        <option value="BOM">Mumbai (BOM)</option>
+                        <option value="BLR">Bengaluru (BLR)</option>
+                        <option value="HYD">Hyderabad (HYD)</option>
+                        <option value="CCU">Kolkata (CCU)</option>
                     </select>
                 </div>
                 <div>
@@ -96,23 +106,23 @@
             <div id="calc-result-box" class="grid grid-cols-1 sm:grid-cols-5 gap-4 pt-2">
                 <div class="bg-slate-100 dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-mospi-border">
                     <div class="text-[10px] text-slate-500 dark:text-slate-400 uppercase">Base Seat Fare</div>
-                    <div class="text-lg font-black mono text-emerald-600 dark:text-emerald-400 mt-1" id="res-base">₹--</div>
+                    <div class="text-lg font-black mono text-emerald-600 dark:text-emerald-400 mt-1" id="res-base">₹12,918</div>
                 </div>
                 <div class="bg-slate-100 dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-mospi-border">
                     <div class="text-[10px] text-slate-500 dark:text-slate-400 uppercase">Statutory Taxes & UDF</div>
-                    <div class="text-lg font-black mono text-amber-600 dark:text-amber-400 mt-1" id="res-tax">₹--</div>
+                    <div class="text-lg font-black mono text-amber-600 dark:text-amber-400 mt-1" id="res-tax">₹3,173</div>
                 </div>
                 <div class="bg-slate-100 dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-mospi-border">
                     <div class="text-[10px] text-slate-500 dark:text-slate-400 uppercase">Total Quote</div>
-                    <div class="text-lg font-black mono text-slate-900 dark:text-white mt-1" id="res-total">₹--</div>
+                    <div class="text-lg font-black mono text-slate-900 dark:text-white mt-1" id="res-total">₹16,092</div>
                 </div>
                 <div class="bg-slate-100 dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-mospi-border">
                     <div class="text-[10px] text-slate-500 dark:text-slate-400 uppercase">Route Inflation</div>
-                    <div class="text-lg font-black mono text-sky-600 dark:text-sky-400 mt-1" id="res-inflation">--%</div>
+                    <div class="text-lg font-black mono text-sky-600 dark:text-sky-400 mt-1" id="res-inflation">+60.9%</div>
                 </div>
                 <div class="bg-slate-100 dark:bg-slate-900/80 p-4 rounded-xl border border-slate-200 dark:border-mospi-border">
                     <div class="text-[10px] text-slate-500 dark:text-slate-400 uppercase">Route APIx Index</div>
-                    <div class="text-lg font-black mono text-purple-600 dark:text-purple-400 mt-1" id="res-cpi">---</div>
+                    <div class="text-lg font-black mono text-purple-600 dark:text-purple-400 mt-1" id="res-cpi">160.9</div>
                 </div>
             </div>
 
@@ -124,34 +134,34 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="bg-slate-100 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-mospi-border">
                         <div class="flex justify-between items-center text-xs font-bold text-slate-900 dark:text-white"><span>IndiGo</span> <span class="text-sky-600 dark:text-sky-400 text-[10px]">74.3%</span></div>
-                        <div class="mt-3 text-xl font-black mono text-slate-900 dark:text-white" id="idx-indigo">-- <span class="text-xs font-normal text-slate-400">APIx</span></div>
+                        <div class="mt-3 text-xl font-black mono text-slate-900 dark:text-white" id="idx-indigo">160.9 <span class="text-xs font-normal text-slate-400">APIx</span></div>
                         <div class="mt-2 text-[11px] text-slate-600 dark:text-slate-400 space-y-1 font-mono">
-                            <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-600 dark:text-emerald-400" id="base-indigo">₹--</strong></div>
-                            <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-600 dark:text-amber-400" id="tax-indigo">₹--</strong></div>
+                            <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-600 dark:text-emerald-400" id="base-indigo">₹12,918</strong></div>
+                            <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-600 dark:text-amber-400" id="tax-indigo">₹3,173</strong></div>
                         </div>
                     </div>
                     <div class="bg-slate-100 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-mospi-border">
                         <div class="flex justify-between items-center text-xs font-bold text-slate-900 dark:text-white"><span>SpiceJet</span> <span class="text-amber-600 dark:text-amber-400 text-[10px]">16.2%</span></div>
-                        <div class="mt-3 text-xl font-black mono text-slate-900 dark:text-white" id="idx-spice">-- <span class="text-xs font-normal text-slate-400">APIx</span></div>
+                        <div class="mt-3 text-xl font-black mono text-slate-900 dark:text-white" id="idx-spice">152.0 <span class="text-xs font-normal text-slate-400">APIx</span></div>
                         <div class="mt-2 text-[11px] text-slate-600 dark:text-slate-400 space-y-1 font-mono">
-                            <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-600 dark:text-emerald-400" id="base-spice">₹--</strong></div>
-                            <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-600 dark:text-amber-400" id="tax-spice">₹--</strong></div>
+                            <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-600 dark:text-emerald-400" id="base-spice">₹11,800</strong></div>
+                            <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-600 dark:text-amber-400" id="tax-spice">₹2,900</strong></div>
                         </div>
                     </div>
                     <div class="bg-slate-100 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-mospi-border">
                         <div class="flex justify-between items-center text-xs font-bold text-slate-900 dark:text-white"><span>Akasa Air</span> <span class="text-emerald-600 dark:text-emerald-400 text-[10px]">5.4%</span></div>
-                        <div class="mt-3 text-xl font-black mono text-slate-900 dark:text-white" id="idx-akasa">-- <span class="text-xs font-normal text-slate-400">APIx</span></div>
+                        <div class="mt-3 text-xl font-black mono text-slate-900 dark:text-white" id="idx-akasa">148.2 <span class="text-xs font-normal text-slate-400">APIx</span></div>
                         <div class="mt-2 text-[11px] text-slate-600 dark:text-slate-400 space-y-1 font-mono">
-                            <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-600 dark:text-emerald-400" id="base-akasa">₹--</strong></div>
-                            <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-600 dark:text-amber-400" id="tax-akasa">₹--</strong></div>
+                            <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-600 dark:text-emerald-400" id="base-akasa">₹6,500</strong></div>
+                            <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-600 dark:text-amber-400" id="tax-akasa">₹1,450</strong></div>
                         </div>
                     </div>
                     <div class="bg-slate-100 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-mospi-border">
                         <div class="flex justify-between items-center text-xs font-bold text-slate-900 dark:text-white"><span>Alliance Air</span> <span class="text-purple-600 dark:text-purple-400 text-[10px]">4.1%</span></div>
-                        <div class="mt-3 text-xl font-black mono text-slate-900 dark:text-white" id="idx-alliance">-- <span class="text-xs font-normal text-slate-400">APIx</span></div>
+                        <div class="mt-3 text-xl font-black mono text-slate-900 dark:text-white" id="idx-alliance">139.5 <span class="text-xs font-normal text-slate-400">APIx</span></div>
                         <div class="mt-2 text-[11px] text-slate-600 dark:text-slate-400 space-y-1 font-mono">
-                            <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-600 dark:text-emerald-400" id="base-alliance">₹--</strong></div>
-                            <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-600 dark:text-amber-400" id="tax-alliance">₹--</strong></div>
+                            <div class="flex justify-between"><span>Base:</span> <strong class="text-emerald-600 dark:text-emerald-400" id="base-alliance">₹5,800</strong></div>
+                            <div class="flex justify-between"><span>Taxes/UDF:</span> <strong class="text-amber-600 dark:text-amber-400" id="tax-alliance">₹1,200</strong></div>
                         </div>
                     </div>
                 </div>
@@ -163,7 +173,7 @@
             <div class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-5 shadow-xl">
                 <div class="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Composite Price Index</div>
                 <div class="mt-2 flex items-baseline justify-between">
-                    <div class="text-3xl font-black mono text-slate-900 dark:text-white" id="kpi-cpi">112.4</div>
+                    <div class="text-3xl font-black mono text-slate-900 dark:text-white" id="kpi-cpi">160.9</div>
                     <span class="inline-flex items-center text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
                         <i class="fa-solid fa-arrow-trend-up mr-1"></i> +4.2% MoM
                     </span>
@@ -176,8 +186,8 @@
             <div class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-5 shadow-xl">
                 <div class="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Baseline vs Spot Price</div>
                 <div class="mt-2 flex items-baseline justify-between">
-                    <div class="text-2xl font-black mono text-slate-900 dark:text-white" id="kpi-spot">₹12,450</div>
-                    <span class="text-xs font-mono text-emerald-400" id="kpi-base">Base: ₹10,200</span>
+                    <div class="text-2xl font-black mono text-slate-900 dark:text-white" id="kpi-spot">₹16,092</div>
+                    <span class="text-xs font-mono text-emerald-400" id="kpi-base">Base: ₹12,918</span>
                 </div>
                 <div class="mt-2 text-[11px] text-slate-400 flex justify-between">
                     <span>Net Price Delta</span>
@@ -208,7 +218,7 @@
             </div>
         </section>
 
-        <!-- Charts with guaranteed height containers -->
+        <!-- Charts -->
         <section class="bg-white dark:bg-mospi-card border border-slate-200 dark:border-mospi-border rounded-2xl p-6 shadow-xl space-y-4">
             <div class="flex flex-wrap items-center justify-between pb-3 border-b border-mospi-border gap-4">
                 <h2 class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
@@ -496,7 +506,7 @@
         const savings = (3.2 * (3.0 - slider)).toFixed(1);
         const cpiDrop = (0.8 * (3.0 - slider)).toFixed(1);
         document.getElementById('sim-savings').innerText = `₹${savings} Cr`;
-        document.getElementById('sim-cpi-drop').innerText = `-${cpiDrop}% (Prevents RBI Rate Hike)`;
+        document.getElementById('sim-cpi-drop').innerText = `-${cpiDrop}%`;
     }
 
     function copyAdvisory() {
