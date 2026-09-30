@@ -189,7 +189,7 @@
                 </div>
                 <div class="mt-2 text-[11px] text-slate-500 dark:text-slate-400 flex justify-between">
                     <span>Net Price Delta</span>
-                    <span class="text-emerald-600 dark:text-emerald-400 font-bold">+₹2,250</span>
+                    <span class="text-emerald-600 dark:text-emerald-400 font-bold" id="kpi-delta">+₹2,250</span>
                 </div>
             </div>
 
@@ -474,7 +474,8 @@
 
             document.getElementById('kpi-cpi').innerText = data.cpi_index;
             document.getElementById('kpi-spot').innerText = '₹' + data.total_fare.toLocaleString();
-            document.getElementById('kpi-base').innerText = 'Base: ₹' + data.base_fare.toLocaleString();
+            document.getElementById('kpi-base').innerText = 'Base: ₹' + data.baseline_fare.toLocaleString();
+            document.getElementById('kpi-delta').innerText = `${data.net_delta >= 0 ? '+' : ''}₹${data.net_delta.toLocaleString()}`;
             document.getElementById('kpi-inflation').innerText = `${data.inflation}% Spike`;
 
             if (data.carriers) {
